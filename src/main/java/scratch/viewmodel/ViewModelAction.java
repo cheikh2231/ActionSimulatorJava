@@ -27,6 +27,7 @@ public class ViewModelAction {
 
     public void addToProg() {
         if (canAdd().get()) {
+            getSelectedAction().get().setCanAffiche();
             this.actionProg.add(getSelectedAction().get());
         }
     }
