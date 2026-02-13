@@ -3,22 +3,21 @@ package scratch;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
+
 import javafx.stage.Stage;
 import scratch.view.ViewActionPalette;
 import scratch.view.ViewActionProg;
+import scratch.viewmodel.ViewModelAction;
 
 public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
+        ViewModelAction vma = new ViewModelAction() ;
         HBox pane = new HBox();
-        pane.getChildren().addAll(new ViewActionPalette(),new ViewActionProg());
+        pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma));
         pane.setPadding(new Insets(10,10,10,10));
         Scene scene = new Scene(pane, 640, 480);
         primaryStage.setTitle("Scratch");

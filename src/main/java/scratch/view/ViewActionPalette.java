@@ -9,9 +9,10 @@ import scratch.model.Action;
 import scratch.model.ActionAvancer;
 import scratch.model.ActionTournerDroite;
 import scratch.model.ActionTournerGauche;
+import scratch.viewmodel.ViewModelAction;
 
 public class ViewActionPalette extends VBox {
-    private ViewActionProg viewActionProg = new ViewActionProg();
+    private ViewModelAction vma ;
     Label title = new Label("Palette d'actions");
     private ListView<Action> listAction = new ListView<>();
     private Button btnAdd = new Button("Ajouter au programme");
@@ -19,17 +20,17 @@ public class ViewActionPalette extends VBox {
     private ActionTournerGauche turnLeft = new ActionTournerGauche();
     private ActionTournerDroite turnRight = new ActionTournerDroite();
 
-    public ViewActionPalette() {
+    public ViewActionPalette(ViewModelAction vma) {
+        this.vma = vma;
         listAction.getItems().addAll(actionAvancer,turnLeft,turnRight);
         this.getChildren().addAll(title,listAction,btnAdd);
+        vma.getSelectedAction().bind(listAction.getSelectionModel().selectedItemProperty());
         manage();
     }
 
     public void manage(){
         btnAdd.setOnAction(e->{
-
-            viewActionProg.add(new ActionAvancer());
-            System.out.println(listAction.getSelectionModel().getSelectedItem());
+            vma.addToProg();
         });
     }
 }
