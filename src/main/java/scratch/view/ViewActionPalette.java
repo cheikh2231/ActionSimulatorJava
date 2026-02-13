@@ -25,6 +25,7 @@ public class ViewActionPalette extends VBox {
         listAction.getItems().addAll(actionAvancer,turnLeft,turnRight);
         this.getChildren().addAll(title,listAction,btnAdd);
         vma.getSelectedAction().bind(listAction.getSelectionModel().selectedItemProperty());
+        btnAdd.disableProperty().bind(vma.canAdd().not());
         manage();
     }
 

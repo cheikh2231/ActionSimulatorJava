@@ -1,7 +1,10 @@
 package scratch.viewmodel;
 
 import javafx.beans.Observable;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,9 +16,6 @@ public class ViewModelAction {
     private ObservableList<Action> actionProg = FXCollections.observableArrayList();
     private ObjectProperty<Action> selectedAction = new SimpleObjectProperty<>();
 
-    public ObservableList<Action> getActionPalette() {
-        return actionPalette;
-    }
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -26,7 +26,12 @@ public class ViewModelAction {
     }
 
     public void addToProg() {
-        if (getSelectedAction().get() != null)
+        if (canAdd().get()) {
             this.actionProg.add(getSelectedAction().get());
+        }
+    }
+
+    public BooleanBinding canAdd(){
+       return getSelectedAction().isNotNull();
     }
 }
