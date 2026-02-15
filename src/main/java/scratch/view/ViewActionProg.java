@@ -17,10 +17,11 @@ public class ViewActionProg extends VBox {
     private TextField textFieldHda = new TextField();
     private Label hdaLabelAction = new Label();
     private TitledPane detailsAction = new TitledPane("Details de l'action",getHda());
+
+
     public ListView<Action> getListProg() {
         return listProg;
     }
-
 
     public ViewActionProg(ViewModelAction vma) {
         this.vma = vma;
@@ -46,8 +47,9 @@ public class ViewActionProg extends VBox {
 
     public void bindings(){
         vma.getSelectedActionProg().bind(listProg.getSelectionModel().selectedItemProperty());
-        vma.getSelectedActionProg().addListener((obs,o,n)->{
-            hdaLabelAction.setText(n.toString());
-        });
+//        vma.getSelectedActionProg().addListener((obs,o,n)->{
+//            hdaLabelAction.setText(n.toString());
+//        });
+        hdaLabelAction.textProperty().bind(vma.getSelectedActionProgDetails());
     }
 }

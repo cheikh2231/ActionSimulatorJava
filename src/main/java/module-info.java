@@ -5,6 +5,7 @@ module scratch {
     requires org.controlsfx.controls;
     requires javafx.graphics;
     requires javafx.base;
+    requires java.scripting;
 //    requires scratch;
 
     opens scratch to javafx.fxml;
