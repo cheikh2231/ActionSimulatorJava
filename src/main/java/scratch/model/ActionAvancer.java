@@ -3,7 +3,7 @@ package scratch.model;
 
 import javafx.scene.control.*;
 
-public class ActionAvancer extends Action{
+public class ActionAvancer extends Action {
     private int distance ;
 
 

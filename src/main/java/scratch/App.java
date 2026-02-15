@@ -19,7 +19,7 @@ public class App extends Application {
         HBox pane = new HBox();
         pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma));
         pane.setPadding(new Insets(10,10,10,10));
-        Scene scene = new Scene(pane, 640, 480);
+        Scene scene = new Scene(pane, 640, 800);
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
         primaryStage.show();
