@@ -27,8 +27,9 @@ public class ViewModelAction {
 
     public void addToProg() {
         if (canAdd().get()) {
-            getSelectedAction().get().setCanAffiche();
-            this.actionProg.add(getSelectedAction().get());
+            Action actionCopy =  getSelectedAction().get().copy();
+            actionCopy.setCanAffiche(true);
+            this.actionProg.add(actionCopy);
         }
     }
 

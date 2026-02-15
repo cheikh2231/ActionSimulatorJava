@@ -30,6 +30,11 @@ public class ActionAvancer extends Action{
     }
 
     @Override
+    public Action copy() {
+        return new ActionAvancer();
+    }
+
+    @Override
     public String toString() {
         return  "Avancer de " + (isCanAffiche() ? + getDistance() : " " );
     }

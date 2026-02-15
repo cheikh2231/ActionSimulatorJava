@@ -5,11 +5,13 @@ public abstract class Action {
 
     abstract void deplacer(Cursor cursor);
 
-    public void setCanAffiche() {
-        this.canAffiche = !canAffiche;
+    public void setCanAffiche(boolean status) {
+        this.canAffiche = status;
     }
 
     public boolean isCanAffiche() {
         return canAffiche;
     }
+
+    public abstract Action copy();
 }

@@ -22,6 +22,11 @@ public class ActionTourner extends Action{
         return angle;
     }
 
+    @Override
+    public Action copy() {
+        return new ActionTourner();
+    }
+
     public String toString(){
         return "Tourner à ";
     }
