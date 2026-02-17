@@ -26,17 +26,29 @@ public class ViewModelAction {
         return selectedAction;
     }
 
-    public StringBinding getSelectedActionProgDetails(){
+    public StringBinding getSelectedActionProgDetailsName(){
 
         StringBinding details = Bindings.createStringBinding(() -> {
             Action actionSelected = getSelectedActionProg().get();
                     if(actionSelected != null){
-                        return actionSelected.toString();
+                        return actionSelected.getName();
                     }
                     return "No action selected";
                 },selectedActionProg
         );
+        return details;
+    }
 
+    public StringBinding getSelectedActionProgDetailsMesure(){
+
+        StringBinding details = Bindings.createStringBinding(() -> {
+            Action actionSelected = getSelectedActionProg().get();
+                    if(actionSelected != null){
+                        return String.valueOf(actionSelected.getMesure());
+                    }
+                    return "";
+                },selectedActionProg
+        );
         return details;
     }
 

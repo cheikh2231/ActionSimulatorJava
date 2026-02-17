@@ -12,7 +12,7 @@ public class ViewActionProg extends VBox {
     private Label title = new Label("Programme");
     private HBox hda = new HBox();
     private TextField textFieldHda = new TextField();
-    private Label hdaLabelAction = new Label();
+    private Label LabelActionHda = new Label();
     private TitledPane detailsAction = new TitledPane("Details de l'action",getHda());
 
 
@@ -30,7 +30,7 @@ public class ViewActionProg extends VBox {
     }
 
     public HBox getHda(){
-        hda.getChildren().addAll(hdaLabelAction,textFieldHda);
+        hda.getChildren().addAll(LabelActionHda,textFieldHda);
         return hda;
     }
 
@@ -47,7 +47,8 @@ public class ViewActionProg extends VBox {
 //        vma.getSelectedActionProg().addListener((obs,o,n)->{
 //            hdaLabelAction.setText(n.toString());
 //        });
-        hdaLabelAction.textProperty().bind(vma.getSelectedActionProgDetails());
+        LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
+        textFieldHda.textProperty().bind(vma.getSelectedActionProgDetailsMesure());
     }
 
     public void affichageListViewProg(){
