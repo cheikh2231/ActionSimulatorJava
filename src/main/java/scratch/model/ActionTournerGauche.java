@@ -1,7 +1,7 @@
 package scratch.model;
 
 public class ActionTournerGauche extends ActionTourner{
-
+    private String name = "gauche de ";
 
     @Override
     public Action copy() {
@@ -9,6 +9,6 @@ public class ActionTournerGauche extends ActionTourner{
     }
     @Override
     public String toString() {
-        return super.toString() + " gauche de "+(super.isCanAffiche()? super.getAngle() : "");
+        return  super.getName() + name +(super.isCanAffiche()? getMesure() : "");
     }
 }

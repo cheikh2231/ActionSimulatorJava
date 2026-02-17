@@ -1,26 +1,22 @@
 package scratch.model;
 
 public class ActionTourner extends Action{
-    private int angle;
 
-    public ActionTourner() {
-        this.angle = 90;
+
+    public ActionTourner(int mesure) {
+        super("Tourner a ",mesure);
     }
 
-    public ActionTourner(int angle) {
-        this.angle = angle;
-
+    public ActionTourner() {
+        super("Tourner a ",90);
     }
 
 
     @Override
     void deplacer(Cursor cursor) {
-        cursor.tourner(angle);
+        cursor.tourner(getMesure());
     }
 
-    public int getAngle() {
-        return angle;
-    }
 
     @Override
     public Action copy() {
@@ -28,6 +24,6 @@ public class ActionTourner extends Action{
     }
 
     public String toString(){
-        return "Tourner à ";
+        return getName();
     }
 }

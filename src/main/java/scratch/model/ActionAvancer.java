@@ -4,29 +4,18 @@ package scratch.model;
 import javafx.scene.control.*;
 
 public class ActionAvancer extends Action {
-    private int distance ;
 
-
-    public ActionAvancer(int distance) {
-        this.distance = distance;
+    public ActionAvancer(int mesure) {
+       super("Avancer de ",mesure);
     }
 
     public ActionAvancer() {
-        this.distance = 30;
-    }
-
-
-    public int getDistance() {
-        return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
+        super("Avancer de ",30);
     }
 
     @Override
     void deplacer(Cursor cursor) {
-        cursor.avancer(distance);
+        cursor.avancer(getMesure());
     }
 
     @Override
@@ -36,6 +25,6 @@ public class ActionAvancer extends Action {
 
     @Override
     public String toString() {
-        return  "Avancer de " + (isCanAffiche() ? + getDistance() : " " );
+        return  getName() + (isCanAffiche() ? + getMesure() : " " );
     }
 }
