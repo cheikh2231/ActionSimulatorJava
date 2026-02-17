@@ -42,19 +42,6 @@ public class ViewModelAction {
         );
         return details;
     }
-//
-//    public StringBinding getSelectedActionProgDetailsMesure(){
-//
-//        StringBinding details = Bindings.createStringBinding(() -> {
-//            Action actionSelected = getSelectedActionProg().get();
-//                    if(actionSelected != null){
-//                        return String.valueOf(actionSelected.getMesure());
-//                    }
-//                    return "";
-//                },selectedActionProg
-//        );
-//        return details;
-//    }
 
     public void addToProg() {
         if (canAdd().get()) {
@@ -82,20 +69,31 @@ public class ViewModelAction {
 
     public void listeners(){
         selectedActionProg.addListener((obs,o,n)->{
-            mesureProperty.set(String.valueOf(n.mesureProperty().get()));
+            if(n != null)
+                mesureProperty.set(String.valueOf(n.mesureProperty().get()));
+            else
+                mesureProperty.setValue("");
         });
 
         mesureProperty.addListener((obs,o,n)->{
-            if (!n.isEmpty() && Integer.valueOf(n) != selectedAction.get().getMesure()) {
+            if (!n.isEmpty()) {
                 setMesure(Integer.parseInt(n));
             }
         });
 
     }
 
-
     public void setMesure(int mesure){
         selectedActionProg.get().setMesure(mesure);
     }
 
+    public void removeAction(){
+        actionProg.remove(selectedActionProg.get());
+        selectedActionProg.setValue(null);
+//        mesureProperty.setValue("");
+    }
+
+    public void clearAllActions(){
+        actionProg.clear();
+    }
 }

@@ -14,10 +14,23 @@ public class ViewActionProg extends VBox {
     private TextField textFieldHda = new TextField();
     private Label LabelActionHda = new Label();
     private TitledPane detailsAction = new TitledPane("Details de l'action",getHda());
+    private Button btnMonter = new Button("Monter");
+    private Button btnDescendre = new Button("Descendre");
+    private Button btnDupliquer = new Button("Dupliquer");
+    private Button btnSupprimer = new Button("Supprimer");
+    private Button btnViderTout = new Button("Vider Tout");
 
 
     public ListView<Action> getListProg() {
         return listProg;
+    }
+
+    public HBox btnsManage(){
+        HBox btnsManager = new HBox();
+        btnsManager.getChildren().addAll(btnMonter,btnDescendre,btnDupliquer,btnSupprimer,btnViderTout);
+        btnSupprimer.setOnAction(actionEvent -> vma.removeAction());
+        btnViderTout.setOnAction(actionEvent -> vma.clearAllActions());
+        return btnsManager;
     }
 
     public ViewActionProg(ViewModelAction vma) {
@@ -26,7 +39,7 @@ public class ViewActionProg extends VBox {
         this.listProg.setItems(vma.getActionProg());
         manageTextfield();
         affichageListViewProg();
-        this.getChildren().addAll(title,listProg,detailsAction);
+        this.getChildren().addAll(title,listProg,btnsManage(),detailsAction);
     }
 
     public HBox getHda(){
@@ -44,11 +57,14 @@ public class ViewActionProg extends VBox {
 
     public void bindings(){
         vma.getSelectedActionProg().bind(listProg.getSelectionModel().selectedItemProperty());
-//        vma.getSelectedActionProg().addListener((obs,o,n)->{
-//            hdaLabelAction.setText(n.toString());
-//        });
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
+        textFieldHda.disableProperty().bind(vma.isSelectedAction().not());
+        btnMonter.disableProperty().bind(vma.isSelectedAction().not());
+        btnDescendre.disableProperty().bind(vma.isSelectedAction().not());
+        btnDupliquer.disableProperty().bind(vma.isSelectedAction().not());
+        btnSupprimer.disableProperty().bind(vma.isSelectedAction().not());
+        btnViderTout.disableProperty().bind(vma.isSelectedAction().not());
     }
 
     public void affichageListViewProg(){
@@ -62,21 +78,7 @@ public class ViewActionProg extends VBox {
                     textProperty().unbind();
                     setText(null);
                 }
-
             }
         });
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
