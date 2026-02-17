@@ -1,13 +1,22 @@
 package scratch.model;
 
 public class ActionTournerDroite extends ActionTourner{
-    private String name = "droite de ";
+
+
+    public ActionTournerDroite( int mesure) {
+        super("droite de ", mesure);
+    }
+
+    public ActionTournerDroite() {
+        super("droite de ");
+    }
+
     @Override
     public Action copy() {
         return new ActionTournerDroite();
     }
     @Override
     public String toString() {
-        return  super.getName() + name +(super.isCanAffiche()? getMesure() : "");
+        return  super.getName()  +(super.isCanAffiche()? getMesure() : "");
     }
 }

@@ -1,9 +1,6 @@
 package scratch.view;
 
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import scratch.model.Action;
@@ -28,7 +25,7 @@ public class ViewActionProg extends VBox {
         bindings();
         this.listProg.setItems(vma.getActionProg());
         manageTextfield();
-
+        affichageListViewProg();
         this.getChildren().addAll(title,listProg,detailsAction);
     }
 
@@ -52,4 +49,28 @@ public class ViewActionProg extends VBox {
 //        });
         hdaLabelAction.textProperty().bind(vma.getSelectedActionProgDetails());
     }
+
+    public void affichageListViewProg(){
+        listProg.setCellFactory(lc->new ListCell<>(){
+            @Override
+            protected void updateItem(Action action, boolean empty) {
+                super.updateItem(action, empty);
+                if(!(empty || action == null))
+                    setText(action.toString());
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

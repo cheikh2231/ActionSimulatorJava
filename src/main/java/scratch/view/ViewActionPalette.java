@@ -26,12 +26,24 @@ public class ViewActionPalette extends VBox {
         this.getChildren().addAll(title,listAction,btnAdd);
         vma.getSelectedAction().bind(listAction.getSelectionModel().selectedItemProperty());
         btnAdd.disableProperty().bind(vma.canAdd().not());
+        affichageListViewProg();
         manage();
     }
 
     public void manage(){
         btnAdd.setOnAction(e->{
             vma.addToProg();
+        });
+    }
+
+    public void affichageListViewProg(){
+        listAction.setCellFactory(lc->new ListCell<>(){
+            @Override
+            protected void updateItem(Action action, boolean empty) {
+                super.updateItem(action, empty);
+                if(!(empty || action == null))
+                    setText(action.getName());
+            }
         });
     }
 }

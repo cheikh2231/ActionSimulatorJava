@@ -3,12 +3,12 @@ package scratch.model;
 public class ActionTourner extends Action{
 
 
-    public ActionTourner(int mesure) {
-        super("Tourner a ",mesure);
+    public ActionTourner(String name ,int mesure) {
+        super("Tourner à " + name,mesure);
     }
 
-    public ActionTourner() {
-        super("Tourner a ",90);
+    public ActionTourner(String name) {
+        super("Tourner à " + name,90);
     }
 
 
@@ -20,7 +20,7 @@ public class ActionTourner extends Action{
 
     @Override
     public Action copy() {
-        return new ActionTourner();
+        return null;
     }
 
     public String toString(){
