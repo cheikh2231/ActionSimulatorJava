@@ -25,6 +25,6 @@ public class ActionAvancer extends Action {
 
     @Override
     public String toString() {
-        return  getName() + (isCanAffiche() ? + getMesure() : " " );
+        return  getName() + getMesure();
     }
 }

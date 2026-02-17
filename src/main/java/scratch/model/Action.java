@@ -36,18 +36,11 @@ public abstract class Action {
     }
 
     public void setMesure(int mesure) {
-        this.mesure.set(mesure);
+        this.mesure.setValue(mesure);
     }
 
     abstract void deplacer(Cursor cursor);
 
-    public void setCanAffiche(boolean status) {
-        this.canAffiche = status;
-    }
-
-    public boolean isCanAffiche() {
-        return canAffiche;
-    }
 
     public abstract Action copy();
 }

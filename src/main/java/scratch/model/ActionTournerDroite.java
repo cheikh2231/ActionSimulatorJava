@@ -17,6 +17,6 @@ public class ActionTournerDroite extends ActionTourner{
     }
     @Override
     public String toString() {
-        return  super.getName()  +(super.isCanAffiche()? getMesure() : "");
+        return  super.getName() + getMesure();
     }
 }

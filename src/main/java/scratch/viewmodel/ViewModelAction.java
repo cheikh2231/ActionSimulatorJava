@@ -17,9 +17,13 @@ public class ViewModelAction {
     private ObservableList<Action> actionProg = FXCollections.observableArrayList();
     private ObjectProperty<Action> selectedAction = new SimpleObjectProperty<>();
     private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
-
+    private StringProperty mesureProperty = new SimpleStringProperty();
     public ObservableList<Action> getActionProg() {
         return actionProg;
+    }
+
+    public ViewModelAction() {
+        listeners();
     }
 
     public ObjectProperty<Action> getSelectedAction() {
@@ -38,24 +42,23 @@ public class ViewModelAction {
         );
         return details;
     }
-
-    public StringBinding getSelectedActionProgDetailsMesure(){
-
-        StringBinding details = Bindings.createStringBinding(() -> {
-            Action actionSelected = getSelectedActionProg().get();
-                    if(actionSelected != null){
-                        return String.valueOf(actionSelected.getMesure());
-                    }
-                    return "";
-                },selectedActionProg
-        );
-        return details;
-    }
+//
+//    public StringBinding getSelectedActionProgDetailsMesure(){
+//
+//        StringBinding details = Bindings.createStringBinding(() -> {
+//            Action actionSelected = getSelectedActionProg().get();
+//                    if(actionSelected != null){
+//                        return String.valueOf(actionSelected.getMesure());
+//                    }
+//                    return "";
+//                },selectedActionProg
+//        );
+//        return details;
+//    }
 
     public void addToProg() {
         if (canAdd().get()) {
             Action actionCopy =  getSelectedAction().get().copy();
-            actionCopy.setCanAffiche(true);
             this.actionProg.add(actionCopy);
         }
     }
@@ -66,6 +69,29 @@ public class ViewModelAction {
 
     public BooleanBinding canAdd(){
        return getSelectedAction().isNotNull();
+    }
+
+
+    public StringProperty getMesureProperty(){
+        return mesureProperty;
+    }
+
+    public void listeners(){
+        selectedActionProg.addListener((obs,o,n)->{
+            mesureProperty.set(String.valueOf(n.mesureProperty().get()));
+        });
+
+        mesureProperty.addListener((obs,o,n)->{
+            if (!n.isEmpty()) {
+                setMesure(Integer.parseInt(n));
+            }
+        });
+
+    }
+
+
+    public void setMesure(int mesure){
+        selectedActionProg.get().setMesure(mesure);
     }
 
 }

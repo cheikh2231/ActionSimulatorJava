@@ -48,7 +48,7 @@ public class ViewActionProg extends VBox {
 //            hdaLabelAction.setText(n.toString());
 //        });
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
-        textFieldHda.textProperty().bind(vma.getSelectedActionProgDetailsMesure());
+        textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
     }
 
     public void affichageListViewProg(){
