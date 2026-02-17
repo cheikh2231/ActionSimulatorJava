@@ -31,6 +31,10 @@ public class ViewActionPalette extends VBox {
     }
 
     public void manage(){
+        listAction.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getClickCount() == 2)
+                vma.addToProg();
+        });
         btnAdd.setOnAction(e->{
             vma.addToProg();
         });

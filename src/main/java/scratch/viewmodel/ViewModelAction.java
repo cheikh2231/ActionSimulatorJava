@@ -71,6 +71,10 @@ public class ViewModelAction {
        return getSelectedAction().isNotNull();
     }
 
+    public BooleanBinding isSelectedAction(){
+       return getSelectedActionProg().isNotNull();
+    }
+
 
     public StringProperty getMesureProperty(){
         return mesureProperty;
@@ -82,7 +86,7 @@ public class ViewModelAction {
         });
 
         mesureProperty.addListener((obs,o,n)->{
-            if (!n.isEmpty()) {
+            if (!n.isEmpty() && Integer.valueOf(n) != selectedAction.get().getMesure()) {
                 setMesure(Integer.parseInt(n));
             }
         });

@@ -48,6 +48,7 @@ public class ViewActionProg extends VBox {
 //            hdaLabelAction.setText(n.toString());
 //        });
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
+        textFieldHda.disableProperty().bind(vma.isSelectedAction().not());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
     }
 
@@ -57,7 +58,7 @@ public class ViewActionProg extends VBox {
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
                 if(!(empty || action == null))
-                    setText(action.toString());
+                    textProperty().bind(action.nameProperty().concat(action.mesureProperty()));
             }
         });
     }
