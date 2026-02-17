@@ -89,8 +89,6 @@ public class ViewModelAction {
 
     public void removeAction(){
         actionProg.remove(selectedActionProg.get());
-        selectedActionProg.setValue(null);
-//        mesureProperty.setValue("");
     }
 
     public void clearAllActions(){
