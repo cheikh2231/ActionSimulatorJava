@@ -56,8 +56,13 @@ public class ViewActionProg extends VBox {
             @Override
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
-                if(!(empty || action == null))
-                    setText(action.toString());
+                if(!(empty || action == null)) {
+                    textProperty().bind(action.nameProperty().concat(action.mesureProperty()));
+                } else {
+                    textProperty().unbind();
+                    setText(null);
+                }
+
             }
         });
     }
