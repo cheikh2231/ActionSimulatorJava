@@ -33,6 +33,7 @@ public class ViewActionProg extends VBox {
         btnViderTout.setOnAction(actionEvent -> vma.clearAllActions());
         btnDupliquer.setOnAction(actionEvent -> vma.duplicateAction());
         btnMonter.setOnAction(actionEvent -> vma.moveUp());
+        btnDescendre.setOnAction(actionEvent -> vma.moveDown());
         return btnsManager;
     }
 
@@ -60,7 +61,9 @@ public class ViewActionProg extends VBox {
 
     public void bindings(){
         listProg.getSelectionModel().selectedItemProperty().addListener((obs,o,n)->{
+            System.out.println(n);
             vma.getSelectedActionProg().set(n);
+            System.out.println(vma.getSelectedAction());
         });
 
         vma.getSelectedActionProg().addListener((obs,o,n)->{
@@ -71,7 +74,7 @@ public class ViewActionProg extends VBox {
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
         textFieldHda.disableProperty().bind(vma.isSelectedAction().not());
         btnMonter.disableProperty().bind(vma.isSelectedAction().not().or(vma.canMoveUp().not()));
-        btnDescendre.disableProperty().bind(vma.isSelectedAction().not());
+        btnDescendre.disableProperty().bind(vma.isSelectedAction().not().or(vma.canMoveDown().not()));
         btnDupliquer.disableProperty().bind(vma.isSelectedAction().not());
         btnSupprimer.disableProperty().bind(vma.isSelectedAction().not());
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());

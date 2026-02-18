@@ -19,7 +19,7 @@ public class ViewModelAction {
     private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
     private StringProperty mesureProperty = new SimpleStringProperty();
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
-//    private BooleanProperty isEmptyActionProg = new SimpleBooleanProperty();
+
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -83,7 +83,6 @@ public class ViewModelAction {
                 setMesure(Integer.parseInt(n));
             }
         });
-
     }
 
     public void setMesure(int mesure){
@@ -115,12 +114,27 @@ public class ViewModelAction {
         },selectedActionProg);
     }
 
+    public BooleanBinding canMoveDown(){
+        return Bindings.createBooleanBinding(()->{
+            int index = actionProg.indexOf(selectedActionProg.get());
+            return index<size()-1;
+        },selectedActionProg);
+    }
+
     public void moveUp(){
         if (canMoveUp().get()) {
             int index = actionProg.indexOf(selectedActionProg.get());
             Action current = actionProg.remove(index);
             actionProg.add(index - 1, current);
             selectedActionProg.set(actionProg.get(index-1));
+        }
+    }
+    public void moveDown(){
+        if (canMoveDown().get()) {
+            int index = actionProg.indexOf(selectedActionProg.get());
+            Action current = actionProg.remove(index);
+            actionProg.add(index+1 , current);
+            selectedActionProg.set(actionProg.get(index+1));
         }
     }
 
