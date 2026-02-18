@@ -1,10 +1,8 @@
 package scratch.view;
 
-import javafx.beans.property.Property;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.action.ActionProxy;
 import scratch.model.Action;
 import scratch.viewmodel.ViewModelAction;
 
@@ -63,7 +61,7 @@ public class ViewActionProg extends VBox {
         listProg.getSelectionModel().selectedItemProperty().addListener((obs,o,n)->{
             System.out.println(n);
             vma.getSelectedActionProg().set(n);
-            System.out.println(vma.getSelectedAction());
+            System.out.println(vma.getSelectedActionProg());
         });
 
         vma.getSelectedActionProg().addListener((obs,o,n)->{
@@ -72,11 +70,11 @@ public class ViewActionProg extends VBox {
 
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
-        textFieldHda.disableProperty().bind(vma.isSelectedAction().not());
-        btnMonter.disableProperty().bind(vma.isSelectedAction().not().or(vma.canMoveUp().not()));
-        btnDescendre.disableProperty().bind(vma.isSelectedAction().not().or(vma.canMoveDown().not()));
-        btnDupliquer.disableProperty().bind(vma.isSelectedAction().not());
-        btnSupprimer.disableProperty().bind(vma.isSelectedAction().not());
+        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not());
+        btnMonter.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveUp().not()));
+        btnDescendre.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveDown().not()));
+        btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
+        btnSupprimer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
     }
 

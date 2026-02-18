@@ -8,14 +8,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.Action;
 
-import java.util.Collections;
-
 
 public class ViewModelAction {
 
     private ObservableList<Action> actionPalette = FXCollections.observableArrayList();
     private ObservableList<Action> actionProg = FXCollections.observableArrayList();
-    private ObjectProperty<Action> selectedAction = new SimpleObjectProperty<>();
+    private ObjectProperty<Action> selectedActionPalette = new SimpleObjectProperty<>();
     private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
     private StringProperty mesureProperty = new SimpleStringProperty();
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
@@ -29,8 +27,8 @@ public class ViewModelAction {
         listeners();
     }
 
-    public ObjectProperty<Action> getSelectedAction() {
-        return selectedAction;
+    public ObjectProperty<Action> getSelectedActionPalette() {
+        return selectedActionPalette;
     }
 
     public StringBinding getSelectedActionProgDetailsName(){
@@ -46,9 +44,9 @@ public class ViewModelAction {
         return details;
     }
 
-    public void addToProg() {
+    public void addPaletteToProg() {
         if (canAdd().get()) {
-            Action actionCopy =  getSelectedAction().get().copy();
+            Action actionCopy =  getSelectedActionPalette().get().copy();
             this.actionProg.add(actionCopy);
         }
     }
@@ -58,10 +56,10 @@ public class ViewModelAction {
     }
 
     public BooleanBinding canAdd(){
-       return getSelectedAction().isNotNull();
+       return getSelectedActionPalette().isNotNull();
     }
 
-    public BooleanBinding isSelectedAction(){
+    public BooleanBinding isSelectedActionProg(){
        return getSelectedActionProg().isNotNull();
     }
 
@@ -104,7 +102,10 @@ public class ViewModelAction {
     }
 
     public void duplicateAction(){
-        this.addToProg();
+       if(isSelectedActionProg().get()){
+           Action dupplicated = getSelectedActionProg().get().copy();
+           actionProg.add(dupplicated);
+       }
     }
 
     public BooleanBinding canMoveUp(){

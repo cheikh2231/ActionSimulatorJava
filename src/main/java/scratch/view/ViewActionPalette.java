@@ -4,7 +4,6 @@ import javafx.scene.layout.VBox;
 
 
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import scratch.model.Action;
 import scratch.model.ActionAvancer;
 import scratch.model.ActionTournerDroite;
@@ -24,7 +23,7 @@ public class ViewActionPalette extends VBox {
         this.vma = vma;
         listAction.getItems().addAll(actionAvancer,turnLeft,turnRight);
         this.getChildren().addAll(title,listAction,btnAdd);
-        vma.getSelectedAction().bind(listAction.getSelectionModel().selectedItemProperty());
+        vma.getSelectedActionPalette().bind(listAction.getSelectionModel().selectedItemProperty());
         btnAdd.disableProperty().bind(vma.canAdd().not());
         affichageListViewProg();
         manage();
@@ -33,10 +32,10 @@ public class ViewActionPalette extends VBox {
     public void manage(){
         listAction.setOnMouseClicked(mouseEvent -> {
             if(mouseEvent.getClickCount() == 2)
-                vma.addToProg();
+                vma.addPaletteToProg();
         });
         btnAdd.setOnAction(e->{
-            vma.addToProg();
+            vma.addPaletteToProg();
         });
     }
 
