@@ -1,14 +1,14 @@
 package scratch.viewmodel;
 
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
 import scratch.model.Action;
+
+import java.util.Collections;
 
 
 public class ViewModelAction {
@@ -18,6 +18,9 @@ public class ViewModelAction {
     private ObjectProperty<Action> selectedAction = new SimpleObjectProperty<>();
     private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
     private StringProperty mesureProperty = new SimpleStringProperty();
+    private IntegerProperty selectedIndex = new SimpleIntegerProperty();
+//    private BooleanProperty isEmptyActionProg = new SimpleBooleanProperty();
+
     public ObservableList<Action> getActionProg() {
         return actionProg;
     }
@@ -94,4 +97,35 @@ public class ViewModelAction {
     public void clearAllActions(){
         actionProg.clear();
     }
+
+    public BooleanBinding isEmptyActionProg(){
+        return Bindings.createBooleanBinding(()->{
+            return actionProg.isEmpty();
+        },actionProg);
+    }
+
+    public void duplicateAction(){
+        this.addToProg();
+    }
+
+    public BooleanBinding canMoveUp(){
+        return Bindings.createBooleanBinding(()->{
+            int index = actionProg.indexOf(selectedActionProg.get());
+            return index>0;
+        },selectedActionProg);
+    }
+
+    public void moveUp(){
+        if (canMoveUp().get()) {
+            int index = actionProg.indexOf(selectedActionProg.get());
+            Action current = actionProg.remove(index);
+            actionProg.add(index - 1, current);
+            selectedActionProg.set(actionProg.get(index-1));
+        }
+    }
+
+    public int size(){
+        return actionProg.size();
+    }
+
 }
