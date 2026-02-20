@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.BooleanProperty;
+
 public class ActionTourner extends Action{
 
 
@@ -25,5 +27,11 @@ public class ActionTourner extends Action{
 
     public String toString(){
         return getName();
+    }
+
+    @Override
+    public BooleanProperty isValidMesure() {
+        setIsValidMesure(getMesure()>0 && getMesure()<=180);
+        return getIsValidMesureProperty();
     }
 }

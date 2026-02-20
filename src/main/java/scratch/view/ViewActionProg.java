@@ -13,6 +13,7 @@ public class ViewActionProg extends VBox {
     private HBox hda = new HBox();
     private TextField textFieldHda = new TextField();
     private Label LabelActionHda = new Label();
+    private Label errorMesure = new Label("invalid value");
     private TitledPane detailsAction = new TitledPane("Details de l'action",getHda());
     private Button btnMonter = new Button("Monter");
     private Button btnDescendre = new Button("Descendre");
@@ -46,8 +47,10 @@ public class ViewActionProg extends VBox {
 
     public HBox getHda(){
         hda.getChildren().addAll(LabelActionHda,textFieldHda);
+        hda.getChildren().add(errorMesure);
         return hda;
     }
+
 
     public void add(Action action){
         listProg.getItems().add(action);
@@ -59,9 +62,7 @@ public class ViewActionProg extends VBox {
 
     public void bindings(){
         listProg.getSelectionModel().selectedItemProperty().addListener((obs,o,n)->{
-            System.out.println(n);
             vma.getSelectedActionProg().set(n);
-            System.out.println(vma.getSelectedActionProg());
         });
 
         vma.getSelectedActionProg().addListener((obs,o,n)->{
@@ -76,6 +77,7 @@ public class ViewActionProg extends VBox {
         btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnSupprimer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
+        errorMesure.visibleProperty().bind(vma.getIsValidMesureProperty().not());
     }
 
     public void affichageListViewProg(){

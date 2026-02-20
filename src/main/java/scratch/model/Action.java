@@ -1,18 +1,25 @@
 package scratch.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 
 public abstract class Action {
     private boolean canAffiche = false;
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty mesure = new SimpleIntegerProperty();
 
+    private static BooleanProperty isValidMesureProperty = new SimpleBooleanProperty();
+
     public Action(String name, Integer mesure) {
         setName(name);
         setMesure(mesure);
+    }
+
+    public static BooleanProperty getIsValidMesureProperty() {
+        return isValidMesureProperty;
+    }
+
+    public void setIsValidMesure(boolean isValidMesure) {
+        isValidMesureProperty.set(isValidMesure);
     }
 
     public String getName() {
@@ -43,4 +50,6 @@ public abstract class Action {
 
 
     public abstract Action copy();
+
+    public abstract BooleanProperty isValidMesure();
 }
