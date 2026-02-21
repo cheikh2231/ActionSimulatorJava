@@ -6,10 +6,7 @@ import javafx.beans.binding.StringBinding;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import scratch.model.Action;
-import scratch.model.ActionAvancer;
-import scratch.model.ActionTournerDroite;
-import scratch.model.ActionTournerGauche;
+import scratch.model.*;
 
 
 public class ViewModelAction {
@@ -17,7 +14,8 @@ public class ViewModelAction {
     private ActionAvancer actionAvancer = new ActionAvancer();
     private ActionTournerGauche actionTournerGauche = new ActionTournerGauche();
     private ActionTournerDroite actionTournerDroite = new ActionTournerDroite();
-
+    private ActionStylo actionStyloAbaisser = new ActionStylo(false);
+    private ActionStylo actionStyloLever = new ActionStylo(true);
     private ObservableList<Action> actionPalette = FXCollections.observableArrayList();
     private ObservableList<Action> actionProg = FXCollections.observableArrayList();
     private ObjectProperty<Action> selectedActionPalette = new SimpleObjectProperty<>();
@@ -25,6 +23,7 @@ public class ViewModelAction {
     private StringProperty mesureProperty = new SimpleStringProperty();
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
+    private BooleanProperty isDetaillable = new SimpleBooleanProperty(true);
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -35,7 +34,7 @@ public class ViewModelAction {
     }
 
     public ViewModelAction() {
-        actionPalette.addAll(actionAvancer,actionTournerGauche,actionTournerDroite);
+        actionPalette.addAll(actionAvancer,actionTournerGauche,actionTournerDroite,actionStyloAbaisser,actionStyloLever);
         listeners();
     }
 
@@ -75,6 +74,9 @@ public class ViewModelAction {
         return getSelectedActionProg().isNotNull();
     }
 
+    public BooleanProperty getIsDetaillable(){
+        return isDetaillable;
+    }
 
     public StringProperty getMesureProperty() {
         return mesureProperty;

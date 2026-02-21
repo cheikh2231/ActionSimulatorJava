@@ -74,7 +74,7 @@ public class ViewActionProg extends VBox {
 
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
-        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not());
+        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not().and(vma.getIsDetaillable()));
         btnMonter.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveUp().not()));
         btnDescendre.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveDown().not()));
         btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
@@ -90,7 +90,7 @@ public class ViewActionProg extends VBox {
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
                 if(!(empty || action == null)) {
-                    textProperty().bind(action.nameProperty().concat(action.mesureProperty()));
+                    textProperty().bind(action.nameProperty().concat(action.mesureProperty().get() != 0 ? action.mesureProperty() : ""));
                 } else {
                     textProperty().unbind();
                     setText(null);

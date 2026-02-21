@@ -43,6 +43,12 @@ public abstract class Action {
 
     public abstract Action copy();
 
-    public abstract boolean isValidMesure(int mesure);
+    public boolean isValidMesure(int mesure){
+        return false;
+    };
+
+    public boolean isDetaillable(boolean isDetaillable) {
+        return true;
+    }
 
 }
