@@ -15,13 +15,11 @@ public class ViewActionPalette extends VBox {
     Label title = new Label("Palette d'actions");
     private ListView<Action> listAction = new ListView<>();
     private Button btnAdd = new Button("Ajouter au programme");
-    private ActionAvancer actionAvancer = new ActionAvancer();
-    private ActionTournerGauche turnLeft = new ActionTournerGauche();
-    private ActionTournerDroite turnRight = new ActionTournerDroite();
+
 
     public ViewActionPalette(ViewModelAction vma) {
         this.vma = vma;
-        listAction.getItems().addAll(actionAvancer,turnLeft,turnRight);
+        listAction.setItems(vma.getActionPalette());
         this.getChildren().addAll(title,listAction,btnAdd);
         vma.getSelectedActionPalette().bind(listAction.getSelectionModel().selectedItemProperty());
         btnAdd.disableProperty().bind(vma.canAdd().not());

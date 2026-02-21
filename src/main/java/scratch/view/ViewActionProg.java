@@ -3,6 +3,7 @@ package scratch.view;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import scratch.model.Action;
 import scratch.viewmodel.ViewModelAction;
 
@@ -10,10 +11,10 @@ public class ViewActionProg extends VBox {
     private ListView<Action> listProg = new ListView<>();
     private ViewModelAction vma ;
     private Label title = new Label("Programme");
-    private HBox hda = new HBox();
+    private VBox hda = new VBox();
     private TextField textFieldHda = new TextField();
     private Label LabelActionHda = new Label();
-    private Label errorMesure = new Label("invalid value");
+    private Label errorMesure = new Label(" invalid value");
     private TitledPane detailsAction = new TitledPane("Details de l'action",getHda());
     private Button btnMonter = new Button("Monter");
     private Button btnDescendre = new Button("Descendre");
@@ -21,9 +22,6 @@ public class ViewActionProg extends VBox {
     private Button btnSupprimer = new Button("Supprimer");
     private Button btnViderTout = new Button("Vider Tout");
 
-    public ListView<Action> getListProg() {
-        return listProg;
-    }
 
     public HBox btnsManage(){
         HBox btnsManager = new HBox();
@@ -45,11 +43,21 @@ public class ViewActionProg extends VBox {
         this.getChildren().addAll(title,listProg,btnsManage(),detailsAction);
     }
 
-    public HBox getHda(){
+    public VBox getHda(){
+        VBox principal = new VBox();
+        HBox hda = new HBox();
         hda.getChildren().addAll(LabelActionHda,textFieldHda);
-        return hda;
+        principal.getChildren().addAll(hda,getLblError());
+        return principal;
     }
 
+
+    public HBox getLblError(){
+        HBox hlblError = new HBox();
+        errorMesure.setTextFill(Color.RED);
+        hlblError.getChildren().add(errorMesure);
+        return hlblError;
+    }
 
     public void manageTextfield(){
         textFieldHda.setPrefWidth(36);
@@ -72,7 +80,8 @@ public class ViewActionProg extends VBox {
         btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnSupprimer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
-
+        errorMesure.managedProperty().bind(vma.isValidMesureProperty().not());
+        errorMesure.visibleProperty().bind(vma.isValidMesureProperty().not());
     }
 
     public void affichageListViewProg(){

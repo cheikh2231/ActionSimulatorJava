@@ -29,5 +29,8 @@ public class ActionTourner extends Action{
         return getName();
     }
 
-
+    @Override
+    public boolean isValidMesure(int mesure) {
+        return mesure>0 && mesure<=180;
+    }
 }

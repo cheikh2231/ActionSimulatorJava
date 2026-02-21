@@ -34,12 +34,15 @@ public abstract class Action {
     }
 
     public void setMesure(int mesure) {
-        this.mesure.setValue(mesure);
+        if (isValidMesure(mesure))
+            this.mesure.setValue(mesure);
     }
 
     abstract void deplacer(Cursor cursor);
 
 
     public abstract Action copy();
+
+    public abstract boolean isValidMesure(int mesure);
 
 }

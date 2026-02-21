@@ -29,4 +29,8 @@ public class ActionAvancer extends Action {
         return  getName() + getMesure();
     }
 
+    @Override
+    public boolean isValidMesure(int mesure) {
+        return mesure>0 && mesure<=100;
+    }
 }
