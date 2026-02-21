@@ -23,7 +23,7 @@ public class ViewModelAction {
     private StringProperty mesureProperty = new SimpleStringProperty();
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
-    private BooleanProperty isDetaillableProperty = new SimpleBooleanProperty();
+    private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -74,9 +74,14 @@ public class ViewModelAction {
         return getSelectedActionProg().isNotNull();
     }
 
-    public BooleanProperty getIsDetaillable(){
-        return isDetaillableProperty;
+    public void setIsDetailableProperty(boolean isDetailableProperty) {
+        this.isDetailableProperty.set(isDetailableProperty);
     }
+
+    public BooleanProperty IsDetailableProperty(){
+        return isDetailableProperty;
+    }
+
 
     public StringProperty getMesureProperty() {
         return mesureProperty;
@@ -84,10 +89,15 @@ public class ViewModelAction {
 
     public void listeners() {
         selectedActionProg.addListener((obs, o, n) -> {
-            if (n != null)
+            if (n != null){
                 mesureProperty.set(String.valueOf(n.mesureProperty().get()));
-            else
+                this.setIsDetailableProperty(n.isDetailable());
+            }
+            else {
                 mesureProperty.setValue("");
+                this.setIsDetailableProperty(false);
+            }
+            isvalidMesureProperty.set(true);
         });
 
         mesureProperty.addListener((obs, o, n) -> {

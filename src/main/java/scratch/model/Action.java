@@ -47,7 +47,7 @@ public abstract class Action {
         return false;
     };
 
-    public boolean isDetaillable() {
+    public boolean isDetailable() {
         return true;
     }
 
