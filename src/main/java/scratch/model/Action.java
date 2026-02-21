@@ -7,19 +7,10 @@ public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty mesure = new SimpleIntegerProperty();
 
-    private static BooleanProperty isValidMesureProperty = new SimpleBooleanProperty();
 
     public Action(String name, Integer mesure) {
         setName(name);
         setMesure(mesure);
-    }
-
-    public static BooleanProperty getIsValidMesureProperty() {
-        return isValidMesureProperty;
-    }
-
-    public void setIsValidMesure(boolean isValidMesure) {
-        isValidMesureProperty.set(isValidMesure);
     }
 
     public String getName() {
@@ -51,5 +42,4 @@ public abstract class Action {
 
     public abstract Action copy();
 
-    public abstract BooleanProperty isValidMesure();
 }

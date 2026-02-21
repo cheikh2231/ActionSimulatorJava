@@ -47,14 +47,9 @@ public class ViewActionProg extends VBox {
 
     public HBox getHda(){
         hda.getChildren().addAll(LabelActionHda,textFieldHda);
-        hda.getChildren().add(errorMesure);
         return hda;
     }
 
-
-    public void add(Action action){
-        listProg.getItems().add(action);
-    }
 
     public void manageTextfield(){
         textFieldHda.setPrefWidth(36);
@@ -77,7 +72,7 @@ public class ViewActionProg extends VBox {
         btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnSupprimer.disableProperty().bind(vma.isSelectedActionProg().not());
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
-        errorMesure.visibleProperty().bind(vma.getIsValidMesureProperty().not());
+
     }
 
     public void affichageListViewProg(){

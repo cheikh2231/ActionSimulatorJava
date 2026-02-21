@@ -13,7 +13,7 @@ public class ActionTournerDroite extends ActionTourner{
 
     @Override
     public Action copy() {
-        return new ActionTournerDroite();
+        return new ActionTournerDroite(getMesure());
     }
     @Override
     public String toString() {

@@ -12,7 +12,7 @@ public class ActionTournerGauche extends ActionTourner{
 
     @Override
     public Action copy() {
-        return new ActionTournerGauche();
+        return new ActionTournerGauche(getMesure());
     }
     @Override
     public String toString() {

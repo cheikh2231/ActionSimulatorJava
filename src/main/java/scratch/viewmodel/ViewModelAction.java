@@ -19,8 +19,6 @@ public class ViewModelAction {
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
 
 
-    private BooleanProperty isValidMesureProperty = new SimpleBooleanProperty(true);
-
     public ObservableList<Action> getActionProg() {
         return actionProg;
     }
@@ -83,9 +81,6 @@ public class ViewModelAction {
             if (!n.isEmpty()) {
                 setMesure(Integer.parseInt(n));
             }
-
-            isValidMesureProperty.set(selectedActionProg.get().isValidMesure().get());
-
 
         });
     }
@@ -151,13 +146,5 @@ public class ViewModelAction {
         return actionProg.size();
     }
 
-    //    public BooleanProperty isValidMesureProperty(){
-//        if (selectedActionProg.isNotNull().get())
-//            return selectedActionProg.get().isValidMesure();
-//        return Action.getIsValidMesureProperty();
-//    }
-    public BooleanProperty getIsValidMesureProperty() {
-        return isValidMesureProperty;
-    }
 
 }

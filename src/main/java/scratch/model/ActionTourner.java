@@ -29,9 +29,5 @@ public class ActionTourner extends Action{
         return getName();
     }
 
-    @Override
-    public BooleanProperty isValidMesure() {
-        setIsValidMesure(getMesure()>0 && getMesure()<=180);
-        return getIsValidMesureProperty();
-    }
+
 }
