@@ -23,7 +23,7 @@ public class ViewModelAction {
     private StringProperty mesureProperty = new SimpleStringProperty();
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
-    private BooleanProperty isDetaillable = new SimpleBooleanProperty(true);
+    private BooleanProperty isDetaillableProperty = new SimpleBooleanProperty();
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -75,7 +75,7 @@ public class ViewModelAction {
     }
 
     public BooleanProperty getIsDetaillable(){
-        return isDetaillable;
+        return isDetaillableProperty;
     }
 
     public StringProperty getMesureProperty() {

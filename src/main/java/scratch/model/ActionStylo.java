@@ -39,7 +39,7 @@ public class ActionStylo extends Action{
     }
 
     @Override
-    public boolean isDetaillable(boolean isDetaillable) {
-        return super.isDetaillable(false);
+    public boolean isDetaillable() {
+        return false;
     }
 }

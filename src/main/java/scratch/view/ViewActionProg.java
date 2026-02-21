@@ -74,7 +74,7 @@ public class ViewActionProg extends VBox {
 
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
-        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not().and(vma.getIsDetaillable()));
+        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not().and(vma.getIsDetaillable().not()));
         btnMonter.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveUp().not()));
         btnDescendre.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveDown().not()));
         btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
