@@ -15,11 +15,15 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         ViewModelAction vma = new ViewModelAction() ;
         HBox pane = new HBox();
         pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma));
         pane.setPadding(new Insets(10,10,10,10));
         Scene scene = new Scene(pane, 640, 800);
+        scene.getStylesheets().add(
+                getClass().getResource("/style.css").toExternalForm()
+        );
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
         primaryStage.show();

@@ -1,0 +1,12 @@
+.text-blue{
+    -fx-fill:blue;
+    -fx-text-fill:blue;
+}
+.text-red{
+    -fx-fill:red;
+    -fx-text-fill:red;
+}
+.text-green{
+    -fx-fill:green;
+    -fx-text-fill:green;
+}
