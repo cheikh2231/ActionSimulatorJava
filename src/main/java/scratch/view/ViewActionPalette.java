@@ -8,9 +8,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
 import javafx.scene.shape.Circle;
 import scratch.model.Action;
-import scratch.model.ActionAvancer;
-import scratch.model.ActionTournerDroite;
-import scratch.model.ActionTournerGauche;
 import scratch.viewmodel.ViewModelAction;
 
 public class ViewActionPalette extends VBox {
@@ -54,22 +51,25 @@ public class ViewActionPalette extends VBox {
                     HBox box = new HBox(10, circle, label);
                     // On positione tout au centre de chaque ligne et sur la gauche de la ligne
                     box.setAlignment(Pos.CENTER_LEFT);
-                    // On met le name en lowercase dans uen variable pour utiliser contains dans notre if/else
-                    String name = action.getName().toLowerCase();
-
-                    if(name.contains("avancer")) {
-                        circle.getStyleClass().add("text-blue");
-                        label.getStyleClass().add("text-blue");
-                    } else if(name.contains("tourner")) {
-                        circle.getStyleClass().add("text-red");
-                        label.getStyleClass().add("text-red");
-                    } else {
-                        circle.getStyleClass().add("text-green");
-                        label.getStyleClass().add("text-green");
-                    }
+                    actionStyliser(action,circle,label);
                     setGraphic(box);
                 }
             }
         });
+    }
+
+    public void actionStyliser(Action action,Circle circle,Label label){
+        // On met le name en lowercase dans uen variable pour utiliser contains dans notre if/else
+        String name = action.getName().toLowerCase();
+        if(name.contains("avancer")) {
+            circle.getStyleClass().add("text-blue");
+            label.getStyleClass().add("text-blue");
+        } else if(name.contains("tourner")) {
+            circle.getStyleClass().add("text-red");
+            label.getStyleClass().add("text-red");
+        } else {
+            circle.getStyleClass().add("text-green");
+            label.getStyleClass().add("text-green");
+        }
     }
 }
