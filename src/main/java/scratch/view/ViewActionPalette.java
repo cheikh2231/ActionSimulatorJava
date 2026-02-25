@@ -1,13 +1,10 @@
 package scratch.view;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 
 import javafx.scene.control.*;
-import javafx.scene.shape.Circle;
-import scratch.ListStyliser;
+import scratch.ListStyliser.PaletteListStyliser;
 import scratch.model.Action;
 import scratch.viewmodel.ViewModelAction;
 
@@ -39,7 +36,7 @@ public class ViewActionPalette extends VBox {
     }
 
     public void affichageListViewPalette() {
-        listAction.setCellFactory(lc -> new ListStyliser() {
+        listAction.setCellFactory(lc -> new PaletteListStyliser() {
         });
     }
 }

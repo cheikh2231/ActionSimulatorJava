@@ -1,12 +1,10 @@
 package scratch.view;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import scratch.ListStyliser;
+import scratch.ListStyliser.ProgListStyliser;
 import scratch.model.Action;
 import scratch.viewmodel.ViewModelAction;
 
@@ -88,27 +86,8 @@ public class ViewActionProg extends VBox {
     }
 
     public void affichageListViewProg(){
-        listProg.setCellFactory(lc->new ListStyliser(){
-            @Override
-            protected void updateItem(Action action, boolean empty) {
-                super.updateItem(action, empty);
-                // Création d'un label pour le text
-                Label label = new Label();
-                if(!(empty || action == null)) {
-                    label.textProperty().bind(action.nameProperty().concat(action.mesureProperty().get() != 0 ? action.mesureProperty() : ""));
-                    // Création d'un cercle
-                    Circle circle = new Circle(5);
-                    // On met tout dans un hbox avec 10 d'écart entre le cercle et le label
-                    HBox box = new HBox(10, circle, label);
-                    // On positione tout au centre de chaque ligne et sur la gauche de la ligne
-                    box.setAlignment(Pos.CENTER_LEFT);
-                    actionStyliser(action,circle,label);
-                    setGraphic(box);
-                } else {
-                    label.textProperty().unbind();
-                    setGraphic(null);
-                }
-            }
+        listProg.setCellFactory(lc -> new ProgListStyliser() {
+
         });
     }
 }

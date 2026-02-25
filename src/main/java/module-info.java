@@ -11,4 +11,6 @@ module scratch {
 
     opens scratch to javafx.fxml;
     exports scratch;
+    exports scratch.ListStyliser;
+    opens scratch.ListStyliser to javafx.fxml;
 }
