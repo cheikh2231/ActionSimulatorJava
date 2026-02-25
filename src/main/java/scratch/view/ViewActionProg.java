@@ -91,10 +91,9 @@ public class ViewActionProg extends VBox {
             @Override
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
+                // Création d'un label pour le text
+                Label label = new Label();
                 if(!(empty || action == null)) {
-
-                    // Création d'un label pour le text
-                    Label label = new Label();
                     label.textProperty().bind(action.nameProperty().concat(action.mesureProperty().get() != 0 ? action.mesureProperty() : ""));
                     // Création d'un cercle
                     Circle circle = new Circle(5);
@@ -105,8 +104,8 @@ public class ViewActionProg extends VBox {
                     actionStyliser(action,circle,label);
                     setGraphic(box);
                 } else {
-                    textProperty().unbind();
-                    setText(null);
+                    label.textProperty().unbind();
+                    setGraphic(null);
                 }
             }
         });

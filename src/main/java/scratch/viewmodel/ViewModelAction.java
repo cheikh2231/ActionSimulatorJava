@@ -119,6 +119,7 @@ public class ViewModelAction {
 
     public void removeAction() {
         actionProg.remove(selectedActionProg.get());
+
     }
 
     public void clearAllActions() {
