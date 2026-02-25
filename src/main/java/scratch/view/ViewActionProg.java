@@ -92,9 +92,10 @@ public class ViewActionProg extends VBox {
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
                 if(!(empty || action == null)) {
-                    textProperty().bind(action.nameProperty().concat(action.mesureProperty().get() != 0 ? action.mesureProperty() : ""));
+
                     // Création d'un label pour le text
-                    Label label = new Label(action.getName());
+                    Label label = new Label();
+                    label.textProperty().bind(action.nameProperty().concat(action.mesureProperty().get() != 0 ? action.mesureProperty() : ""));
                     // Création d'un cercle
                     Circle circle = new Circle(5);
                     // On met tout dans un hbox avec 10 d'écart entre le cercle et le label

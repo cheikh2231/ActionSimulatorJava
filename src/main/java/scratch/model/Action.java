@@ -3,7 +3,6 @@ package scratch.model;
 import javafx.beans.property.*;
 
 public abstract class Action {
-    private boolean canAffiche = false;
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty mesure = new SimpleIntegerProperty();
 
