@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import scratch.view.ViewActionPalette;
 import scratch.view.ViewActionProg;
+import scratch.view.ViewActionScene;
 import scratch.viewmodel.ViewModelAction;
 
 public class App extends Application {
@@ -18,9 +19,9 @@ public class App extends Application {
 
         ViewModelAction vma = new ViewModelAction() ;
         HBox pane = new HBox();
-        pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma));
+        pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma),new ViewActionScene(vma));
         pane.setPadding(new Insets(10,10,10,10));
-        Scene scene = new Scene(pane, 640, 800);
+        Scene scene = new Scene(pane, 1040, 800);
         scene.getStylesheets().add(
                 getClass().getResource("/style.css").toExternalForm()
         );
