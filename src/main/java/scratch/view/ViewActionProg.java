@@ -12,6 +12,7 @@ public class ViewActionProg extends VBox {
     private ListView<Action> listProg = new ListView<>();
     private ViewModelAction vma ;
     private Label title = new Label("Programme");
+    private Label labelUnityHda = new Label();
     private VBox hda = new VBox();
     private TextField textFieldHda = new TextField();
     private Label LabelActionHda = new Label();
@@ -47,7 +48,7 @@ public class ViewActionProg extends VBox {
     public VBox getHda(){
         VBox principal = new VBox();
         HBox hda = new HBox();
-        hda.getChildren().addAll(LabelActionHda,textFieldHda);
+        hda.getChildren().addAll(LabelActionHda,textFieldHda,labelUnityHda);
         principal.getChildren().addAll(hda,getLblError());
         return principal;
     }
@@ -73,6 +74,7 @@ public class ViewActionProg extends VBox {
             listProg.getSelectionModel().select(n);
         });
 
+        labelUnityHda.textProperty().bind(vma.getSelectedActionProgDetailsUnity());
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
         textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.IsDetailableProperty().not()));

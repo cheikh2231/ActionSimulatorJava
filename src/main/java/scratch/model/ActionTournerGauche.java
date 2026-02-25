@@ -18,4 +18,9 @@ public class ActionTournerGauche extends ActionTourner{
     public String toString() {
         return  super.getName()  + getMesure();
     }
+
+    @Override
+    public String getDetailsName() {
+        return super.getDetailsName() + "gauche de ";
+    }
 }

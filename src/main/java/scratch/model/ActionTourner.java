@@ -1,7 +1,5 @@
 package scratch.model;
 
-import javafx.beans.property.BooleanProperty;
-
 public class ActionTourner extends Action{
 
 
@@ -32,5 +30,15 @@ public class ActionTourner extends Action{
     @Override
     public boolean isValidMesure(int mesure) {
         return mesure>0 && mesure<=180;
+    }
+
+    @Override
+    public String getUnity() {
+        return "degrés";
+    }
+
+    @Override
+    public String getDetailsName() {
+        return "Angle vers la ";
     }
 }

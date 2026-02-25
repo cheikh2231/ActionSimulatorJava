@@ -1,9 +1,6 @@
 package scratch.model;
 
 
-import javafx.beans.property.BooleanProperty;
-import javafx.scene.control.*;
-
 public class ActionAvancer extends Action {
 
     public ActionAvancer(int mesure) {
@@ -32,5 +29,15 @@ public class ActionAvancer extends Action {
     @Override
     public boolean isValidMesure(int mesure) {
         return mesure>0 && mesure<=100;
+    }
+
+    @Override
+    public String getDetailsName() {
+        return getName();
+    }
+
+    @Override
+    public String getUnity() {
+        return "pixels";
     }
 }

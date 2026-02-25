@@ -5,7 +5,7 @@ import javafx.beans.property.*;
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty mesure = new SimpleIntegerProperty();
-
+    private String unity ;
 
     public Action(String name, Integer mesure) {
         setName(name);
@@ -27,6 +27,8 @@ public abstract class Action {
     public int getMesure() {
         return mesure.get();
     }
+
+
 
     public IntegerProperty mesureProperty() {
         return mesure;
@@ -50,4 +52,7 @@ public abstract class Action {
         return true;
     }
 
+    public abstract String getUnity();
+
+    public abstract String getDetailsName();
 }

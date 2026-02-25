@@ -42,4 +42,14 @@ public class ActionStylo extends Action{
     public boolean isDetailable() {
         return false;
     }
+
+    @Override
+    public String getUnity() {
+        return "";
+    }
+
+    @Override
+    public String getDetailsName() {
+        return getName();
+    }
 }

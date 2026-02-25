@@ -47,12 +47,24 @@ public class ViewModelAction {
         StringBinding details = Bindings.createStringBinding(() -> {
                     Action actionSelected = getSelectedActionProg().get();
                     if (actionSelected != null) {
-                        return actionSelected.getName();
+                        return actionSelected.getDetailsName();
                     }
                     return " No action selected ";
                 }, selectedActionProg
         );
         return details;
+    }
+
+    public StringBinding getSelectedActionProgDetailsUnity(){
+        StringBinding detailsUnity = Bindings.createStringBinding(() -> {
+                    Action actionSelected = getSelectedActionProg().get();
+                    if (actionSelected != null) {
+                        return actionSelected.getUnity();
+                    }
+                    return "";
+                }, selectedActionProg
+        );
+        return detailsUnity;
     }
 
     public void addPaletteToProg() {
@@ -106,10 +118,15 @@ public class ViewModelAction {
                 isvalidMesureProperty.set(false);
                 return;
             }
-            Action action = getSelectedActionProg().get();
-            int val = Integer.parseInt(n);
-            setMesure(val);
-            isvalidMesureProperty.set(action.isValidMesure(val));
+            try {
+                Action action = getSelectedActionProg().get();
+                int val = Integer.parseInt(n);
+                setMesure(val);
+                isvalidMesureProperty.set(action.isValidMesure(val));
+            }catch (NumberFormatException e){
+                isvalidMesureProperty.set(false);
+            }
+
         });
     }
 
