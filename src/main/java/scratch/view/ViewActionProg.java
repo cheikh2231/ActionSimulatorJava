@@ -6,6 +6,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import scratch.ListStyliser;
 import scratch.model.Action;
 import scratch.viewmodel.ViewModelAction;
 
@@ -87,7 +88,7 @@ public class ViewActionProg extends VBox {
     }
 
     public void affichageListViewProg(){
-        listProg.setCellFactory(lc->new ListCell<>(){
+        listProg.setCellFactory(lc->new ListStyliser(){
             @Override
             protected void updateItem(Action action, boolean empty) {
                 super.updateItem(action, empty);
@@ -109,20 +110,5 @@ public class ViewActionProg extends VBox {
                 }
             }
         });
-    }
-
-    public void actionStyliser(Action action, Circle circle, Label label){
-        // On met le name en lowercase dans uen variable pour utiliser contains dans notre if/else
-        String name = action.getName().toLowerCase();
-        if(name.contains("avancer")) {
-            circle.getStyleClass().add("text-blue");
-            label.getStyleClass().add("text-blue");
-        } else if(name.contains("tourner")) {
-            circle.getStyleClass().add("text-red");
-            label.getStyleClass().add("text-red");
-        } else {
-            circle.getStyleClass().add("text-green");
-            label.getStyleClass().add("text-green");
-        }
     }
 }
