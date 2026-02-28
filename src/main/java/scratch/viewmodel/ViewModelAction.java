@@ -26,7 +26,7 @@ public class ViewModelAction {
     private IntegerProperty selectedIndex = new SimpleIntegerProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
-
+    private ObjectProperty<Action> selectedActionScene = new SimpleObjectProperty<>();
 
     public ObservableList<Action> getActionProg() {
         return actionProg;
@@ -153,6 +153,7 @@ public class ViewModelAction {
 
     public void clearAllActions() {
         actionProg.clear();
+        actionScene.clear();
     }
 
     public BooleanBinding isEmptyActionProg() {
@@ -212,5 +213,23 @@ public class ViewModelAction {
 
     public BooleanProperty isValidMesureProperty() {
         return isvalidMesureProperty;
+    }
+
+    public void setActionScene(){
+        this.selectedActionScene.set(actionProg.getFirst());
+        this.selectedActionProg.set(actionProg.getFirst());
+    }
+
+    public ObjectProperty<Action> getSelectedActionScene() {
+        return selectedActionScene;
+    }
+
+    public void getNext(){
+        int index = actionScene.indexOf(getSelectedActionScene().get());
+        if (canMoveDown().get()) {
+            Action suivant = actionScene.get(index + 1);
+            this.selectedActionScene.set(suivant);
+            this.selectedActionProg.set(suivant);
+        }
     }
 }

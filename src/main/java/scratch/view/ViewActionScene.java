@@ -38,21 +38,33 @@ public class ViewActionScene extends VBox {
         canvasDesign();
         drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
         this.getChildren().addAll(title,drawingPane,btnsManage());
+        this.listScene.setItems(vma.getActionScene());
         bindings();
     }
 
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
-        suivant.setOnAction(actionEvent -> setNewPosition());
+        suivant.setOnAction(actionEvent -> getNext());
         charger.setOnAction(actionEvent -> addProgToSceneList());
+        executer.setOnAction(actionEvent -> vma.setActionScene());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
         return btnsControls;
     }
 
     public void bindings(){
         charger.disableProperty().bind(vma.isEmptyActionProg());
+        charger.visibleProperty().bind(vma.isEmptyActionScene());
+        charger.managedProperty().bind(vma.isEmptyActionScene());
+        reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
+        reinitialiser.managedProperty().bind(charger.visibleProperty().not());
+
         executer.disableProperty().bind(vma.isEmptyActionScene());
+        executer.visibleProperty().bind(vma.getSelectedActionScene().isNull());
+        executer.managedProperty().bind(vma.getSelectedActionScene().isNull());
+        suivant.visibleProperty().bind(executer.visibleProperty().not());
+        suivant.managedProperty().bind(executer.visibleProperty().not());
+
     }
 
 
@@ -61,12 +73,16 @@ public class ViewActionScene extends VBox {
 
     }
 
-    public void setNewPosition(){
-        turtle.setTranslateY(turtle.getTranslateY()+20);
-        turtle.setTranslateX(turtle.getTranslateX()+20);
-        headTurtle.setTranslateX(headTurtle.getTranslateX()+20);
-        headTurtle.setTranslateY(headTurtle.getTranslateY()+20);
+    public void getNext(){
+        vma.getNext();
     }
+
+//    public void setNewPosition(){
+//        turtle.setTranslateY(turtle.getTranslateY()+20);
+//        turtle.setTranslateX(turtle.getTranslateX()+20);
+//        headTurtle.setTranslateX(headTurtle.getTranslateX()+20);
+//        headTurtle.setTranslateY(headTurtle.getTranslateY()+20);
+//    }
 
 
     public void canvasDesign(){
