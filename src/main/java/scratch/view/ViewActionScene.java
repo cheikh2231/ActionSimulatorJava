@@ -5,8 +5,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Polygon;
+import scratch.model.Cursor;
 import scratch.viewmodel.ViewModelAction;
 
 public class ViewActionScene extends VBox {
@@ -16,12 +20,18 @@ public class ViewActionScene extends VBox {
     private Button reinitialiser = new Button("Ré-initialiser");
     private Button suivant = new Button("Suivant");
     private HBox btnsControls= new HBox();
-
+    public int TURTLE_HEAD_SIZE = Cursor.TURTLE_HEAD_SIZE;
+    public int TURTLE_SIZE = Cursor.TURTLE_SIZE;
+    private final Circle headTurtle = new Circle(TURTLE_HEAD_SIZE);
+    private Polygon turtle ;
+    private Pane drawingPane = new Pane();
     public ViewActionScene(ViewModelAction vma) {
         this.vma=vma;
         btnsControls.getChildren().addAll(reinitialiser,suivant);
+        drawTurtle(200,200,0);
         canvasDesign();
-        this.getChildren().addAll(title,canvas,btnsControls);
+        drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
+        this.getChildren().addAll(title,drawingPane,btnsControls);
     }
 
     public void canvasDesign(){
@@ -41,4 +51,21 @@ public class ViewActionScene extends VBox {
             gcInside.strokeLine(i, 0, i, 400);// (x1, y1, x2, y2)
         }
     }
+
+    private void drawTurtle(double x, double y, double angle) {
+        // angle on degrees
+        double xP1 = x + TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.cos(Math.toRadians(angle + 90)),
+                yP1 = y - TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.sin(Math.toRadians(angle + 90)),
+                xP2 = x - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),
+                yP2 = y + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle)),
+                xP3 = x + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle)),
+                yP3 = y - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle));
+
+        this.turtle = new Polygon(xP1, yP1, xP2, yP2, xP3, yP3); // draw the body (triangle)
+        this.turtle.setFill(Color.DEEPSKYBLUE); // Color of the body
+        this.turtle.setStroke(Color.BLACK);
+        this.headTurtle.setTranslateX(xP1); // move the head of the turtle (circle)
+        this.headTurtle.setTranslateY(yP1);
+    }
+
 }

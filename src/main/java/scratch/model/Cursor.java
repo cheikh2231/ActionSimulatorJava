@@ -3,8 +3,9 @@ package scratch.model;
 public class Cursor {
     private Point position;
     private int angle;
-
-    public Cursor(int angle, Point position) {
+    public static int TURTLE_HEAD_SIZE = 3;
+    public static int TURTLE_SIZE = 17;
+    public Cursor(int angle, Point position ) {
         this.angle = angle;
         this.position = position;
     }
