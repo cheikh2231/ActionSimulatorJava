@@ -1,25 +1,31 @@
 package scratch.view;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import scratch.model.Action;
 import scratch.model.Cursor;
 import scratch.viewmodel.ViewModelAction;
 
 public class ViewActionScene extends VBox {
     private ViewModelAction vma;
+    private ListView<Action> listScene = new ListView<>();
+
     private Label title = new Label("Scene");
     private Canvas canvas = new Canvas(400,400);
     private Button reinitialiser = new Button("Ré-initialiser");
+    private Button charger = new Button("Charger");
+    private Button executer = new Button("Executer");
     private Button suivant = new Button("Suivant");
-
     public int TURTLE_HEAD_SIZE = Cursor.TURTLE_HEAD_SIZE;
     public int TURTLE_SIZE = Cursor.TURTLE_SIZE;
     private final Circle headTurtle = new Circle(TURTLE_HEAD_SIZE);
@@ -32,14 +38,27 @@ public class ViewActionScene extends VBox {
         canvasDesign();
         drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
         this.getChildren().addAll(title,drawingPane,btnsManage());
+        bindings();
     }
 
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
         suivant.setOnAction(actionEvent -> setNewPosition());
-        btnsControls.getChildren().addAll(reinitialiser,suivant);
+        charger.setOnAction(actionEvent -> addProgToSceneList());
+        btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
         return btnsControls;
+    }
+
+    public void bindings(){
+        charger.disableProperty().bind(vma.isEmptyActionProg());
+        executer.disableProperty().bind(vma.isEmptyActionScene());
+    }
+
+
+    public void addProgToSceneList(){
+        vma.addToListScene();
+
     }
 
     public void setNewPosition(){

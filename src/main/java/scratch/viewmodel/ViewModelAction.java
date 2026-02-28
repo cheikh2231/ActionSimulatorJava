@@ -18,6 +18,8 @@ public class ViewModelAction {
     private ActionStylo actionStyloLever = new ActionStylo(true);
     private ObservableList<Action> actionPalette = FXCollections.observableArrayList();
     private ObservableList<Action> actionProg = FXCollections.observableArrayList();
+    private ObservableList<Action> actionScene = FXCollections.observableArrayList();
+
     private ObjectProperty<Action> selectedActionPalette = new SimpleObjectProperty<>();
     private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
     private StringProperty mesureProperty = new SimpleStringProperty();
@@ -25,12 +27,21 @@ public class ViewModelAction {
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
 
+
     public ObservableList<Action> getActionProg() {
         return actionProg;
     }
 
     public ObservableList<Action> getActionPalette() {
         return actionPalette;
+    }
+
+    public ObservableList<Action> getActionScene() {
+        return actionScene;
+    }
+
+    public void addToListScene(){
+        this.actionScene.addAll(actionProg);
     }
 
     public ViewModelAction() {
@@ -53,6 +64,7 @@ public class ViewModelAction {
                 }, selectedActionProg
         );
         return details;
+
     }
 
     public StringBinding getSelectedActionProgDetailsUnity(){
@@ -147,6 +159,12 @@ public class ViewModelAction {
         return Bindings.createBooleanBinding(() -> {
             return actionProg.isEmpty();
         }, actionProg);
+    }
+
+    public BooleanBinding isEmptyActionScene(){
+        return Bindings.createBooleanBinding(() -> {
+            return actionScene.isEmpty();
+        },actionScene);
     }
 
     public void duplicateAction() {
