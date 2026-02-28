@@ -19,20 +19,36 @@ public class ViewActionScene extends VBox {
     private Canvas canvas = new Canvas(400,400);
     private Button reinitialiser = new Button("Ré-initialiser");
     private Button suivant = new Button("Suivant");
-    private HBox btnsControls= new HBox();
+
     public int TURTLE_HEAD_SIZE = Cursor.TURTLE_HEAD_SIZE;
     public int TURTLE_SIZE = Cursor.TURTLE_SIZE;
     private final Circle headTurtle = new Circle(TURTLE_HEAD_SIZE);
     private Polygon turtle ;
     private Pane drawingPane = new Pane();
+
     public ViewActionScene(ViewModelAction vma) {
         this.vma=vma;
-        btnsControls.getChildren().addAll(reinitialiser,suivant);
-        drawTurtle(200,200,0);
+        drawTurtle(canvas.getWidth()/2,canvas.getHeight()/2,0);
         canvasDesign();
         drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
-        this.getChildren().addAll(title,drawingPane,btnsControls);
+        this.getChildren().addAll(title,drawingPane,btnsManage());
     }
+
+
+    public HBox btnsManage(){
+        HBox btnsControls= new HBox();
+        suivant.setOnAction(actionEvent -> setNewPosition());
+        btnsControls.getChildren().addAll(reinitialiser,suivant);
+        return btnsControls;
+    }
+
+    public void setNewPosition(){
+        turtle.setTranslateY(turtle.getTranslateY()+20);
+        turtle.setTranslateX(turtle.getTranslateX()+20);
+        headTurtle.setTranslateX(headTurtle.getTranslateX()+20);
+        headTurtle.setTranslateY(headTurtle.getTranslateY()+20);
+    }
+
 
     public void canvasDesign(){
         // Design exterieur du canvas
@@ -66,6 +82,7 @@ public class ViewActionScene extends VBox {
         this.turtle.setStroke(Color.BLACK);
         this.headTurtle.setTranslateX(xP1); // move the head of the turtle (circle)
         this.headTurtle.setTranslateY(yP1);
+
     }
 
 }
