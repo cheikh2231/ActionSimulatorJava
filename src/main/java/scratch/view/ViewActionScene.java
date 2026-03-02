@@ -45,7 +45,7 @@ public class ViewActionScene extends VBox {
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
-        suivant.setOnAction(actionEvent -> getNext());
+//        suivant.setOnAction(actionEvent -> getNext());
         charger.setOnAction(actionEvent -> addProgToSceneList());
         executer.setOnAction(actionEvent -> vma.setActionScene());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
@@ -60,8 +60,8 @@ public class ViewActionScene extends VBox {
         reinitialiser.managedProperty().bind(charger.visibleProperty().not());
 
         executer.disableProperty().bind(vma.isEmptyActionScene());
-        executer.visibleProperty().bind(vma.getSelectedActionScene().isNull());
-        executer.managedProperty().bind(vma.getSelectedActionScene().isNull());
+//        executer.visibleProperty().bind(vma.getSelectedActionScene().isNull());
+//        executer.managedProperty().bind(vma.getSelectedActionScene().isNull());
         suivant.visibleProperty().bind(executer.visibleProperty().not());
         suivant.managedProperty().bind(executer.visibleProperty().not());
 
@@ -73,9 +73,9 @@ public class ViewActionScene extends VBox {
 
     }
 
-    public void getNext(){
-        vma.getNext();
-    }
+//    public void getNext(){
+//        vma.getNext();
+//    }
 
 //    public void setNewPosition(){
 //        turtle.setTranslateY(turtle.getTranslateY()+20);

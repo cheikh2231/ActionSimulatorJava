@@ -19,9 +19,9 @@ public class ViewActionPalette extends VBox {
         this.vma = vma;
         listAction.setItems(vma.getActionPalette());
         this.getChildren().addAll(title,listAction,btnAdd);
-        vma.getSelectedActionPalette().bind(listAction.getSelectionModel().selectedItemProperty());
-        btnAdd.disableProperty().bind(vma.canAdd().not());
         affichageListViewPalette();
+        bindings();
+
         manage();
     }
 
@@ -38,5 +38,10 @@ public class ViewActionPalette extends VBox {
     public void affichageListViewPalette() {
         listAction.setCellFactory(lc -> new PaletteListStyliser() {
         });
+    }
+
+    public void bindings(){
+        vma.paletteIndexProperty().bind(listAction.getSelectionModel().selectedIndexProperty());
+        btnAdd.disableProperty().bind(vma.paletteIndexProperty().lessThan(0));
     }
 }

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 
 import javafx.stage.Stage;
+import scratch.model.Programme;
 import scratch.view.ViewActionPalette;
 import scratch.view.ViewActionProg;
 import scratch.view.ViewActionScene;
@@ -16,8 +17,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
-        ViewModelAction vma = new ViewModelAction() ;
+        Programme programme = new Programme();
+        ViewModelAction vma = new ViewModelAction(programme) ;
         HBox pane = new HBox();
         pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma),new ViewActionScene(vma));
         pane.setPadding(new Insets(10,10,10,10));

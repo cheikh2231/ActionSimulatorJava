@@ -11,8 +11,10 @@ public abstract class AbstractListStyliser extends ListCell<Action> {
 
     @Override
     protected void updateItem(Action action, boolean empty) {
+
         super.updateItem(action, empty);
         if (empty || action == null) {
+
             setGraphic(null);
             return;
         }

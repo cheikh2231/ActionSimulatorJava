@@ -1,0 +1,27 @@
+package scratch.model;
+
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+public class Actions {
+
+    private static ObservableList<Action> actions = FXCollections.observableArrayList(
+            new ActionAvancer(),
+            new ActionTournerGauche(),
+            new ActionTournerDroite(),
+            new ActionStylo(false),
+            new ActionStylo(true)
+    );
+
+    public static ObservableList<Action> getActions() {
+        return FXCollections.unmodifiableObservableList(actions);
+    }
+
+
+    public static Action getAction(int idx){
+        return (idx>=0 && idx<actions.size() ? actions.get(idx) : null);
+    }
+
+
+}

@@ -66,14 +66,9 @@ public class ViewActionProg extends VBox {
     }
 
     public void bindings(){
-        listProg.getSelectionModel().selectedItemProperty().addListener((obs,o,n)->{
-            vma.getSelectedActionProg().set(n);
-        });
 
-        vma.getSelectedActionProg().addListener((obs,o,n)->{
-            listProg.getSelectionModel().select(n);
-        });
-
+        vma.progIndexProperty().addListener((observableValue, number, n) ->
+                listProg.getSelectionModel().select(n.intValue()));
         labelUnityHda.textProperty().bind(vma.getSelectedActionProgDetailsUnity());
         LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
         textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
@@ -85,6 +80,10 @@ public class ViewActionProg extends VBox {
         btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
         errorMesure.managedProperty().bind(vma.isValidMesureProperty().not());
         errorMesure.visibleProperty().bind(vma.isValidMesureProperty().not());
+        listProg.getSelectionModel().selectedIndexProperty().addListener((obs,o,n)->{
+            vma.progIndexProperty().set(n.intValue());
+        });
+
     }
 
     public void affichageListViewProg(){
