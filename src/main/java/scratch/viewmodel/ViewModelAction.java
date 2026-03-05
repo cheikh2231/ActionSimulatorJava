@@ -20,6 +20,12 @@ public class ViewModelAction {
     private StringProperty mesureProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
+    private ObjectProperty<Action> actionSelected= new SimpleObjectProperty<>();
+
+
+    public ObjectProperty<Action> actionSelectedProperty() {
+        return actionSelected;
+    }
 
     public ObservableList<Action> getActionsProg() {
         return programme.getActionsProg();
@@ -94,11 +100,10 @@ public class ViewModelAction {
     }
 
     public void listeners() {
-       progIndex.addListener((obs, o, n) -> {
-            if (n != null && n.intValue()>=0){
-                Action selected = programme.getActionProg(n.intValue());
-                mesureProperty.set(String.valueOf(selected.getMesure()));
-                this.setIsDetailableProperty(selected.isDetailable());
+       actionSelectedProperty().addListener((obs, o, n) -> {
+            if (n != null){
+                mesureProperty.set(String.valueOf(n.getMesure()));
+                this.setIsDetailableProperty(n.isDetailable());
             }
             else {
                 mesureProperty.setValue("");
@@ -114,9 +119,11 @@ public class ViewModelAction {
             }
             try {
                 Action action = programme.getActionProg(progIndex.get());
-                int val = Integer.parseInt(n);
-                setMesure(val);
-                isvalidMesureProperty.set(action.isValidMesure(val));
+                if(action!=null){
+                    int val = Integer.parseInt(n);
+                    setMesure(val);
+                    isvalidMesureProperty.set(action.isValidMesure(val));
+                }
             }catch (NumberFormatException e){
                 isvalidMesureProperty.set(false);
             }

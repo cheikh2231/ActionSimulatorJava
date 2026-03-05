@@ -83,7 +83,7 @@ public class ViewActionProg extends VBox {
         listProg.getSelectionModel().selectedIndexProperty().addListener((obs,o,n)->{
             vma.progIndexProperty().set(n.intValue());
         });
-
+        vma.actionSelectedProperty().bind(listProg.getSelectionModel().selectedItemProperty());
     }
 
     public void affichageListViewProg(){

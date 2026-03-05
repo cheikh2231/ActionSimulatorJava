@@ -9,13 +9,7 @@ public class Programme {
     public void ajouterAction(int idx) {
         Action action = Actions.getAction(idx);
         if (action != null)
-            actionsProg.add(action);
-    }
-
-    public void ajouterActionCopy(int idx) {
-        Action actionCopy = getActionProg(idx).copy();
-        if (actionCopy != null)
-            actionsProg.add(actionCopy);
+            actionsProg.add(action.copy());
     }
 
     public void removeAction(int idx) {
@@ -54,7 +48,7 @@ public class Programme {
 
     public void dupplicate(int idx){
         if(existIndex(idx)) {
-            ajouterActionCopy(idx);
+            actionsProg.add(actionsProg.get(idx).copy());
         }
     }
 
