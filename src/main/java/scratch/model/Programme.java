@@ -18,7 +18,7 @@ public class Programme {
             actionsProg.add(actionCopy);
     }
 
-    public void suprimerAction(int idx) {
+    public void removeAction(int idx) {
         if(existIndex(idx))
             actionsProg.remove(idx);
     }
@@ -33,7 +33,7 @@ public class Programme {
     }
 
     public void down(int idx){
-        if (idx>=0 && idx < actionsProg.size()-1){
+        if (canMoveDown(idx)){
             Action action = actionsProg.get(idx);
             Action actionSuivant = actionsProg.get(idx+1);
             actionsProg.set(idx+1,action);
@@ -51,9 +51,6 @@ public class Programme {
         return null;
     }
 
-    public int getActionProgSize(){
-        return actionsProg.size();
-    }
 
     public void dupplicate(int idx){
         if(existIndex(idx)) {
@@ -61,7 +58,24 @@ public class Programme {
         }
     }
 
+    public boolean canMoveDown(int idx){
+        return idx < size()-1 && idx >=0;
+    }
+
     public boolean existIndex(int idx){
         return idx>=0 && idx<actionsProg.size();
+    }
+
+    public int size(){
+        return actionsProg.size();
+    }
+
+
+    public void clear(){
+        actionsProg.clear();
+    }
+
+    public boolean isEmpty(){
+        return actionsProg.isEmpty();
     }
 }

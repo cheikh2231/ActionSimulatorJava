@@ -14,17 +14,14 @@ public class ViewModelAction {
 
     private final Programme programme;
     private ObservableList<Action> actionsPalette = Actions.getActions();
-//    private ObservableList<Action> actionProg = FXCollections.observableArrayList();
     private ObservableList<Action> actionScene = FXCollections.observableArrayList();
     private IntegerProperty paletteIndex = new SimpleIntegerProperty(-1);
     private IntegerProperty progIndex = new SimpleIntegerProperty(-1);
     private StringProperty mesureProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
-    private ObjectProperty<Action> selectedActionScene = new SimpleObjectProperty<>();
-    private ObjectProperty<Action> selectedActionProg = new SimpleObjectProperty<>();
 
-    public ObservableList<Action> getActionProg() {
+    public ObservableList<Action> getActionsProg() {
         return programme.getActionsProg();
     }
 
@@ -54,38 +51,28 @@ public class ViewModelAction {
         return progIndex;
     }
 
-    public ObjectProperty<Action> getSelectedActionProg(){
-        return selectedActionProg;
-    }
-
-    public void setSelectedActionProg(Action action) {
-        selectedActionProg.set(action);
-    }
-
     public StringBinding getSelectedActionProgDetailsName() {
 
-        StringBinding details = Bindings.createStringBinding(() -> {
-                    Action actionSelected = getSelectedActionProg().get();
+        return Bindings.createStringBinding(() -> {
+                    Action actionSelected = programme.getActionProg(progIndex.get());
                     if (actionSelected != null) {
                         return actionSelected.getDetailsName();
                     }
                     return " No action selected ";
-                }, progIndex
+                }, progIndex ,getActionsProg()
         );
-        return details;
 
     }
 
     public StringBinding getSelectedActionProgDetailsUnity(){
-        StringBinding detailsUnity = Bindings.createStringBinding(() -> {
-                    Action actionSelected = getSelectedActionProg().get();
+        return Bindings.createStringBinding(() -> {
+                    Action actionSelected = programme.getActionProg(progIndex.get());
                     if (actionSelected != null) {
                         return actionSelected.getUnity();
                     }
                     return "";
-                }, progIndex
+                }, progIndex , getActionsProg()
         );
-        return detailsUnity;
     }
 
     public void addPaletteToProg() {
@@ -107,10 +94,11 @@ public class ViewModelAction {
     }
 
     public void listeners() {
-        getSelectedActionProg().addListener((obs, o, n) -> {
-            if (n != null){
-                mesureProperty.set(String.valueOf(n.getMesure()));
-                this.setIsDetailableProperty(n.isDetailable());
+       progIndex.addListener((obs, o, n) -> {
+            if (n != null && n.intValue()>=0){
+                Action selected = programme.getActionProg(n.intValue());
+                mesureProperty.set(String.valueOf(selected.getMesure()));
+                this.setIsDetailableProperty(selected.isDetailable());
             }
             else {
                 mesureProperty.setValue("");
@@ -120,13 +108,12 @@ public class ViewModelAction {
         });
 
         mesureProperty.addListener((obs, o, n) -> {
-
             if (n.isEmpty()){
                 isvalidMesureProperty.set(false);
                 return;
             }
             try {
-                Action action = getSelectedActionProg().get();
+                Action action = programme.getActionProg(progIndex.get());
                 int val = Integer.parseInt(n);
                 setMesure(val);
                 isvalidMesureProperty.set(action.isValidMesure(val));
@@ -135,36 +122,29 @@ public class ViewModelAction {
             }
 
         });
-
-        progIndex.addListener((obs,o,n)->{
-            setSelectedActionProg(programme.getActionProg(n.intValue()));
-        });
     }
 
     public void setMesure(int mesure) {
-        getSelectedActionProg().get().setMesure(mesure);
+        Action action = programme.getActionProg(progIndex.get());
+        if (action != null){
+            action.setMesure(mesure);
+        }
     }
 
     public void removeAction() {
-        programme.getActionsProg().remove(selectedActionProg.get());
-
+        System.out.println(progIndex.get());
+        programme.removeAction(progIndex.get());
+        System.out.println(progIndex.get());
     }
 
     public void clearAllActions() {
-        programme.getActionsProg().clear();
-        actionScene.clear();
+        programme.clear();
     }
 
     public BooleanBinding isEmptyActionProg() {
         return Bindings.createBooleanBinding(() -> {
-            return programme.getActionsProg().isEmpty();
+            return programme.isEmpty();
         }, programme.getActionsProg());
-    }
-
-    public BooleanBinding isEmptyActionScene(){
-        return Bindings.createBooleanBinding(() -> {
-            return actionScene.isEmpty();
-        },actionScene);
     }
 
     public void duplicateAction() {
@@ -172,7 +152,7 @@ public class ViewModelAction {
     }
 
     public BooleanBinding isSelectedActionProg() {
-        return selectedActionProg.isNotNull();
+        return progIndex.greaterThanOrEqualTo(0);
     }
 
     public BooleanBinding canMoveUp() {
@@ -181,28 +161,28 @@ public class ViewModelAction {
 
     public BooleanBinding canMoveDown() {
         return Bindings.createBooleanBinding(() -> {
-            return progIndex.get() < programme.getActionProgSize()-1 && progIndex.get() >=0;
-        },selectedActionProg,progIndex);
+            return programme.canMoveDown(progIndex.get());
+        },progIndex,getActionsProg());
     }
 
     public void moveUp(){
-        programme.up(progIndex.get());
-        progIndex.set(progIndex.get()-1);
+        if (canMoveUp().get()) {
+            programme.up(progIndex.get());
+            progIndex.set(progIndex.get() - 1);
+        }
     }
 
     public void moveDown(){
-        programme.down(progIndex.get());
-        progIndex.set(progIndex.get()+1);
+        if (canMoveDown().get()) {
+            programme.down(progIndex.get());
+            progIndex.set(progIndex.get() + 1);
+        }
     }
 
     public BooleanProperty isValidMesureProperty() {
         return isvalidMesureProperty;
     }
 
-    public void setActionScene(){
-        this.selectedActionScene.set(programme.getActionsProg().getFirst());
-        this.selectedActionProg.set(programme.getActionsProg().getFirst());
-    }
 
 //    public ObjectProperty<Action> getSelectedActionScene() {
 //        return selectedActionScene;

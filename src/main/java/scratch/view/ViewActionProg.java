@@ -39,7 +39,7 @@ public class ViewActionProg extends VBox {
     public ViewActionProg(ViewModelAction vma) {
         this.vma = vma;
         bindings();
-        this.listProg.setItems(vma.getActionProg());
+        this.listProg.setItems(vma.getActionsProg());
         manageTextfield();
         affichageListViewProg();
         this.getChildren().addAll(title,listProg,btnsManage(),detailsAction);

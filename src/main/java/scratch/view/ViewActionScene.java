@@ -47,19 +47,19 @@ public class ViewActionScene extends VBox {
         HBox btnsControls= new HBox();
 //        suivant.setOnAction(actionEvent -> getNext());
         charger.setOnAction(actionEvent -> addProgToSceneList());
-        executer.setOnAction(actionEvent -> vma.setActionScene());
+//        executer.setOnAction(actionEvent -> vma.setActionScene());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
         return btnsControls;
     }
 
     public void bindings(){
         charger.disableProperty().bind(vma.isEmptyActionProg());
-        charger.visibleProperty().bind(vma.isEmptyActionScene());
-        charger.managedProperty().bind(vma.isEmptyActionScene());
+//        charger.visibleProperty().bind(vma.isEmptyActionScene());
+//        charger.managedProperty().bind(vma.isEmptyActionScene());
         reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
         reinitialiser.managedProperty().bind(charger.visibleProperty().not());
 
-        executer.disableProperty().bind(vma.isEmptyActionScene());
+//        executer.disableProperty().bind(vma.isEmptyActionScene());
 //        executer.visibleProperty().bind(vma.getSelectedActionScene().isNull());
 //        executer.managedProperty().bind(vma.getSelectedActionScene().isNull());
         suivant.visibleProperty().bind(executer.visibleProperty().not());
