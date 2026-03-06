@@ -38,7 +38,7 @@ public class ViewActionScene extends VBox {
         canvasDesign();
         drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
         this.getChildren().addAll(title,drawingPane,btnsManage());
-        this.listScene.setItems(vma.getActionScene());
+//        this.listScene.setItems(vma.getActionScene());
         bindings();
     }
 

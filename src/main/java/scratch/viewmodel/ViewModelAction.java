@@ -13,8 +13,8 @@ import scratch.model.*;
 public class ViewModelAction {
 
     private final Programme programme;
+    private final SceneActions sceneActions;
     private ObservableList<Action> actionsPalette = Actions.getActions();
-    private ObservableList<Action> actionScene = FXCollections.observableArrayList();
     private IntegerProperty paletteIndex = new SimpleIntegerProperty(-1);
     private IntegerProperty progIndex = new SimpleIntegerProperty(-1);
     private StringProperty mesureProperty = new SimpleStringProperty();
@@ -35,19 +35,12 @@ public class ViewModelAction {
         return FXCollections.unmodifiableObservableList(actionsPalette);
     }
 
-    public ObservableList<Action> getActionScene() {
-        return actionScene;
-    }
 
-    public void addToListScene(){
-        this.actionScene.addAll(programme.getActionsProg());
-    }
-
-    public ViewModelAction(Programme programme) {
+    public ViewModelAction(Programme programme,SceneActions sceneActions) {
         this.programme = programme;
+        this.sceneActions = sceneActions;
         listeners();
     }
-
 
     public IntegerProperty paletteIndexProperty() {
         return paletteIndex;
@@ -244,7 +237,7 @@ public class ViewModelAction {
     public void getNext() {
         int idx = progIndex.get();
         progIndex.set(++idx);
-
+        sceneActions.addDessin(new Line(new Point(4,5),new Point(104,5)));
     }
 
     public BooleanBinding existIndex(){
