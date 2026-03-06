@@ -21,7 +21,7 @@ public class ViewModelAction {
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
     private ObjectProperty<Action> actionSelected= new SimpleObjectProperty<>();
-
+    private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
 
     public ObjectProperty<Action> actionSelectedProperty() {
         return actionSelected;
@@ -149,9 +149,7 @@ public class ViewModelAction {
     }
 
     public BooleanBinding isEmptyActionProg() {
-        return Bindings.createBooleanBinding(() -> {
-            return programme.isEmpty();
-        }, programme.getActionsProg());
+        return Bindings.createBooleanBinding(programme::isEmpty, programme.getActionsProg());
     }
 
     public void duplicateAction() {
@@ -191,18 +189,40 @@ public class ViewModelAction {
     }
 
 
-//    public ObjectProperty<Action> getSelectedActionScene() {
-//        return selectedActionScene;
-//    }
-//
-//    public void getNext(){
-//        int index = actionScene.indexOf(getSelectedActionScene().get());
-//        if (canMoveDown().get()) {
-//            Action suivant = actionScene.get(index + 1);
-//            this.selectedActionScene.set(suivant);
-//            this.selectedActionProg.set(suivant);
-//        }
-//    }
+    public BooleanBinding hasAnomalies(){
+        return Bindings.createBooleanBinding(()->{
+            return hasDuplicate() || isEmptyActionProg().get();
+        },getActionsProg());
+    }
 
+    public BooleanBinding hasActionsProgChange(){
+        return Bindings.createBooleanBinding(()->{
+            if (hasChargerScene.get()){
+                hasChargerScene.set(false);
+                return true;
+            }
+            return false;
+        },getActionsProg());
+    }
 
+    private boolean hasDuplicate(){
+        boolean abaisser = true;
+        for (Action action: getActionsProg() ) {
+               if (action instanceof ActionStylo actionStylo){
+                   if (actionStylo.getEtatStyloAbaisser() == abaisser)
+                       return true;
+                   else
+                       abaisser = actionStylo.getEtatStyloAbaisser();
+               }
+        }
+        return false;
+    }
+
+    public void setHasChargerScene(boolean hasChargerScene) {
+        this.hasChargerScene.set(hasChargerScene);
+    }
+
+    public BooleanProperty hasChargerSceneProperty() {
+        return hasChargerScene;
+    }
 }

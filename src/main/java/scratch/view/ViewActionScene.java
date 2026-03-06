@@ -46,16 +46,16 @@ public class ViewActionScene extends VBox {
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
 //        suivant.setOnAction(actionEvent -> getNext());
-        charger.setOnAction(actionEvent -> addProgToSceneList());
+        charger.setOnAction(actionEvent -> vma.setHasChargerScene(true));
 //        executer.setOnAction(actionEvent -> vma.setActionScene());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
         return btnsControls;
     }
 
     public void bindings(){
-        charger.disableProperty().bind(vma.isEmptyActionProg());
-//        charger.visibleProperty().bind(vma.isEmptyActionScene());
-//        charger.managedProperty().bind(vma.isEmptyActionScene());
+        charger.disableProperty().bind(vma.hasAnomalies());
+        charger.visibleProperty().bind(vma.hasChargerSceneProperty().not().or(vma.hasActionsProgChange()));
+        charger.managedProperty().bind(vma.hasChargerSceneProperty().not());
         reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
         reinitialiser.managedProperty().bind(charger.visibleProperty().not());
 
@@ -68,10 +68,6 @@ public class ViewActionScene extends VBox {
     }
 
 
-    public void addProgToSceneList(){
-        vma.addToListScene();
-
-    }
 
 //    public void getNext(){
 //        vma.getNext();
