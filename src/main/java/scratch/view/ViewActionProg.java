@@ -66,7 +66,6 @@ public class ViewActionProg extends VBox {
     }
 
     public void bindings(){
-
         vma.progIndexProperty().addListener((observableValue, number, n) ->
                 listProg.getSelectionModel().select(n.intValue()));
         labelUnityHda.textProperty().bind(vma.getSelectedActionProgDetailsUnity());

@@ -205,6 +205,21 @@ public class ViewModelAction {
         },getActionsProg());
     }
 
+    public void charger(){
+        setHasChargerScene(true);
+        progIndex.set(-1);
+    }
+
+    public void executer(){
+        if(!programme.isEmpty())
+            progIndex.set(0);
+    }
+
+    public void reinitialiser(){
+        progIndex.set(0);
+        // vider le tableau de dessin et recharger la scene
+    }
+
     private boolean hasDuplicate(){
         boolean abaisser = true;
         for (Action action: getActionsProg() ) {
