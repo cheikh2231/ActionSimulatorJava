@@ -54,7 +54,7 @@ public class ViewActionScene extends VBox {
 
     public void bindings(){
         charger.disableProperty().bind(vma.hasAnomalies());
-        charger.visibleProperty().bind(vma.hasChargerSceneProperty().not().or(vma.hasActionsProgChange()));
+        charger.visibleProperty().bind(vma.hasActionsProgChange().or(vma.hasChargerSceneProperty().not()));
         charger.managedProperty().bind(vma.hasChargerSceneProperty().not());
         reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
         reinitialiser.managedProperty().bind(charger.visibleProperty().not());
