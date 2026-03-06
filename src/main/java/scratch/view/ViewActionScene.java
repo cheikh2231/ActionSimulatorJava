@@ -45,7 +45,7 @@ public class ViewActionScene extends VBox {
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
-//        suivant.setOnAction(actionEvent -> getNext());
+        suivant.setOnAction(actionEvent -> vma.getNext());
         charger.setOnAction(actionEvent -> vma.charger());
         executer.setOnAction(actionEvent -> vma.executer());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
@@ -59,11 +59,11 @@ public class ViewActionScene extends VBox {
         reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
         reinitialiser.managedProperty().bind(charger.visibleProperty().not());
 
-        executer.disableProperty().bind(vma.hasChargerSceneProperty().not());
+        executer.disableProperty().bind(vma.hasChargerSceneProperty().not().or(vma.existIndex()));
         executer.visibleProperty().bind(suivant.visibleProperty().not());
         executer.managedProperty().bind(suivant.visibleProperty().not());
-        suivant.visibleProperty().bind(vma.hasChargerSceneProperty().and(vma.progIndexProperty().isEqualTo(0)));
-        suivant.managedProperty().bind(vma.hasChargerSceneProperty().and(vma.progIndexProperty().isEqualTo(0)));
+        suivant.visibleProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex()));
+        suivant.managedProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex()));
 
     }
 

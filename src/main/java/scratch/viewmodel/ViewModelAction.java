@@ -240,4 +240,16 @@ public class ViewModelAction {
     public BooleanProperty hasChargerSceneProperty() {
         return hasChargerScene;
     }
+
+    public void getNext() {
+        int idx = progIndex.get();
+        progIndex.set(++idx);
+
+    }
+
+    public BooleanBinding existIndex(){
+        return Bindings.createBooleanBinding(()->{
+            return programme.existIndex(progIndex.get());
+        },progIndex);
+    }
 }

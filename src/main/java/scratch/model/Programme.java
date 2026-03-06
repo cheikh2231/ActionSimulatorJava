@@ -72,4 +72,8 @@ public class Programme {
     public boolean isEmpty(){
         return actionsProg.isEmpty();
     }
+
+    public boolean hasNext(int idx){
+        return idx+1 < size();
+    }
 }
