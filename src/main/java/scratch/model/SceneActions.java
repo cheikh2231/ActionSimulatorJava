@@ -33,7 +33,7 @@ public class SceneActions {
     }
 
     public void tourner(int angle){
-        cursor.tourner( angle);
+        cursor.tourner(angle);
     }
 
     public List<Line> getLines() {

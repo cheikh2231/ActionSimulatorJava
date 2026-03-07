@@ -54,20 +54,13 @@ public class ViewActionScene extends VBox {
             drawTurtle(x, y, angle);
             drawingPane.getChildren().addAll(turtle, headTurtle);
         });
-        charger.setOnAction(actionEvent -> vma.charger());
+        charger.setOnAction(actionEvent -> {
+            resetCanvas();
+            vma.charger();
+        });
         executer.setOnAction(actionEvent -> vma.executer());
         reinitialiser.setOnAction(actionEvent -> {
-            // On supprime le canvas et la tortue
-            canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawingPane.getChildren().removeAll(turtle, headTurtle);
-            // on redessine un canvas
-            canvasDesign();
-            //reset position
-            vma.getCursor().getPosition().setX(canvas.getWidth() / 2);
-            vma.getCursor().getPosition().setY(canvas.getHeight() / 2);
-            // on ajout une nouvelle tortue a la bonne position
-            drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
-            drawingPane.getChildren().addAll(turtle, headTurtle);
+            resetCanvas();
             // On réinitialiser notre liste
             vma.reinitialiser();
         });
@@ -79,10 +72,10 @@ public class ViewActionScene extends VBox {
         charger.disableProperty().bind(vma.hasAnomalies());
         charger.visibleProperty().bind(vma.hasActionsProgChange().or(vma.hasChargerSceneProperty().not()));
         charger.managedProperty().bind(vma.hasChargerSceneProperty().not());
-        reinitialiser.visibleProperty().bind(charger.visibleProperty().not());
-        reinitialiser.managedProperty().bind(charger.visibleProperty().not());
+        reinitialiser.visibleProperty().bind(vma.hasActionsProgChange().not().and(vma.hasChargerSceneProperty()));
+        reinitialiser.managedProperty().bind(vma.hasActionsProgChange().not().and(vma.hasChargerSceneProperty()));
 
-        executer.disableProperty().bind(vma.hasChargerSceneProperty().not().or(vma.existIndex()));
+        executer.disableProperty().bind(vma.hasChargerSceneProperty().not().or(vma.allParcoured()));
         executer.visibleProperty().bind(suivant.visibleProperty().not());
         executer.managedProperty().bind(suivant.visibleProperty().not());
         suivant.visibleProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex()));
@@ -130,9 +123,25 @@ public class ViewActionScene extends VBox {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
-        Line lastLine = vma.getLines().getLast();
+        if(!vma.getLines().isEmpty()) {
+            Line lastLine = vma.getLines().getLast();
             gc.strokeLine(lastLine.getPointDepart().getX(), lastLine.getPointDepart().getY(), lastLine.getPointArrive().getX(), lastLine.getPointArrive().getY());
+        }
     }
 
+    private void resetCanvas(){
+        // On supprime le canvas et la tortue
+        canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawingPane.getChildren().removeAll(turtle, headTurtle);
+        // on redessine un canvas
+        canvasDesign();
+        //reset position
+        vma.getCursor().getPosition().setX(canvas.getWidth() / 2);
+        vma.getCursor().getPosition().setY(canvas.getHeight() / 2);
+        vma.getCursor().setAngle(0);
+        // on ajout une nouvelle tortue a la bonne position
+        drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
+        drawingPane.getChildren().addAll(turtle, headTurtle);
+    }
 
 }

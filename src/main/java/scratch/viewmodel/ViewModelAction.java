@@ -191,8 +191,8 @@ public class ViewModelAction {
     }
 
     public void charger(){
+        reinitialiser();
         setHasChargerScene(true);
-        progIndex.set(-1);
     }
 
     public void executer(){
@@ -252,7 +252,12 @@ public class ViewModelAction {
     public List<Line> getLines(){
         return sceneActions.getLines();
     }
-
+    public BooleanBinding allParcoured(){
+        System.out.println(getLines());
+        return Bindings.createBooleanBinding(()->{
+            return programme.size() == getLines().size();
+        },progIndex);
+    }
     public Cursor getCursor(){
         return sceneActions.getCursor();
     }
