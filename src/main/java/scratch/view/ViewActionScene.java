@@ -45,6 +45,7 @@ public class ViewActionScene extends VBox {
     public HBox btnsManage() {
         HBox btnsControls = new HBox();
         suivant.setOnAction(actionEvent -> {
+
             vma.executeAction();
             drawLine();
             drawingPane.getChildren().removeAll(turtle, headTurtle);
@@ -53,6 +54,7 @@ public class ViewActionScene extends VBox {
             double angle = (vma.getCursor().getAngle());
             drawTurtle(x, y, angle);
             drawingPane.getChildren().addAll(turtle, headTurtle);
+
         });
         charger.setOnAction(actionEvent -> {
             resetCanvas();
@@ -75,11 +77,11 @@ public class ViewActionScene extends VBox {
         reinitialiser.visibleProperty().bind(vma.hasActionsProgChange().not().and(vma.hasChargerSceneProperty()));
         reinitialiser.managedProperty().bind(vma.hasActionsProgChange().not().and(vma.hasChargerSceneProperty()));
 
-        executer.disableProperty().bind(vma.hasChargerSceneProperty().not().or(vma.allParcoured()));
+        executer.disableProperty().bind(vma.hasChargerSceneProperty().not().or(vma.fullyTraversedSceneList()));
         executer.visibleProperty().bind(suivant.visibleProperty().not());
         executer.managedProperty().bind(suivant.visibleProperty().not());
-        suivant.visibleProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex()));
-        suivant.managedProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex()));
+        suivant.visibleProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex().and(vma.fullyTraversedSceneList().not())));
+        suivant.managedProperty().bind(vma.hasChargerSceneProperty().and(vma.existIndex().and(vma.fullyTraversedSceneList().not())));
 
     }
 

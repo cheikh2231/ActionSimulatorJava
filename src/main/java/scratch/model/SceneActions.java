@@ -2,13 +2,15 @@ package scratch.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SceneActions {
 
-    private List<Line> lines= new ArrayList<>();
+    private ObservableList<Line> lines= FXCollections.observableArrayList();
     private Cursor cursor;
 
     public SceneActions(Cursor cursor) {
@@ -36,7 +38,7 @@ public class SceneActions {
         cursor.tourner(angle);
     }
 
-    public List<Line> getLines() {
+    public ObservableList<Line> getLines() {
         return lines;
     }
 

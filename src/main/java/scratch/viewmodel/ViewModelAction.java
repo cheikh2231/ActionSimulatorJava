@@ -1,9 +1,6 @@
 package scratch.viewmodel;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
+import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +21,7 @@ public class ViewModelAction {
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
     private ObjectProperty<Action> actionSelected= new SimpleObjectProperty<>();
     private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
-
+    private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
     public ObjectProperty<Action> actionSelectedProperty() {
         return actionSelected;
     }
@@ -124,6 +121,7 @@ public class ViewModelAction {
             }
 
         });
+
     }
     public void removeAction() {
         programme.removeAction(progIndex.get());
@@ -202,6 +200,7 @@ public class ViewModelAction {
 
     public void reinitialiser(){
         progIndex.set(-1);
+        sceneIndex.set(0);
         sceneActions.resetLines();
     }
 
@@ -227,11 +226,14 @@ public class ViewModelAction {
     }
 
     public void getNext() {
-        int idx = progIndex.get();
-        progIndex.set(++idx);
+        int idx = sceneIndex.get();
+
+        sceneIndex.set(idx+1);
+        progIndex.set(sceneIndex.get());
     }
+
     public void executeAction(){
-        Action action = actionSelected.get();
+        Action action = programme.getActionProg(sceneIndex.get());
         if(action != null){
             switch (action) {
                 case ActionAvancer actionAvancer -> sceneActions.avancer(actionAvancer.getMesure());
@@ -249,16 +251,17 @@ public class ViewModelAction {
         },progIndex);
     }
 
+
     public List<Line> getLines(){
         return sceneActions.getLines();
     }
-    public BooleanBinding allParcoured(){
-        System.out.println(getLines());
-        return Bindings.createBooleanBinding(()->{
-            return programme.size() == getLines().size();
-        },progIndex);
+
+    public BooleanBinding fullyTraversedSceneList(){
+        return Bindings.createBooleanBinding(()-> sceneIndex.get() == programme.size(), sceneIndex,getActionsProg());
     }
+
     public Cursor getCursor(){
         return sceneActions.getCursor();
     }
+
 }
