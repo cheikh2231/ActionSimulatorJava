@@ -21,9 +21,9 @@ public class SceneActions {
 
 
     public void avancer(double distance){
-        Point oldPoints = cursor.getPosition();
+        Point oldPoints = new Point(cursor.getPosition().getX(),cursor.getPosition().getY());
         cursor.avancer(distance);
-        Point newPoints = cursor.getPosition();
+        Point newPoints = new Point(cursor.getPosition().getX(),cursor.getPosition().getY());
         Line line = new Line(oldPoints,newPoints);
         addDessin(line);
     }
