@@ -201,7 +201,7 @@ public class ViewModelAction {
     }
 
     public void reinitialiser(){
-        progIndex.set(0);
+        progIndex.set(-1);
         sceneActions.resetLines();
     }
 
@@ -230,13 +230,16 @@ public class ViewModelAction {
         int idx = progIndex.get();
         progIndex.set(++idx);
     }
-    public void avancer(){
+    public void executeAction(){
         Action action = actionSelected.get();
         if(action != null){
-            if(action instanceof ActionAvancer)
-                sceneActions.avancer(actionSelected.get().getMesure());
-//            if(action instanceof ActionTourner)
-//                System.out.println(".");
+            switch (action) {
+                case ActionAvancer actionAvancer -> sceneActions.avancer(actionAvancer.getMesure());
+                case ActionTournerGauche actionTournerGauche -> sceneActions.tourner((getCursor().getAngle() + actionTournerGauche.getMesure())%360);
+                case ActionTournerDroite actionTournerDroite -> sceneActions.tourner((getCursor().getAngle() - actionTournerDroite.getMesure() + 360)%360);
+                default -> {
+                }
+            }
         }
         getNext();
     }

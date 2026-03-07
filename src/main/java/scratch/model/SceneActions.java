@@ -25,10 +25,15 @@ public class SceneActions {
 
     public void avancer(double distance){
         Point oldPoints = new Point(cursor.getPosition().getX(),cursor.getPosition().getY());
+        double angle = cursor.getAngle();
         cursor.avancer(distance);
         Point newPoints = new Point(cursor.getPosition().getX(),cursor.getPosition().getY());
         Line line = new Line(oldPoints,newPoints);
         addDessin(line);
+    }
+
+    public void tourner(int angle){
+        cursor.tourner( angle);
     }
 
     public List<Line> getLines() {

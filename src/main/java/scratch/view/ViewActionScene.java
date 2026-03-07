@@ -21,7 +21,7 @@ import scratch.viewmodel.ViewModelAction;
 public class ViewActionScene extends VBox {
     private ViewModelAction vma;
     private Label title = new Label("Scene");
-    private Canvas canvas = new Canvas(400,400);
+    private Canvas canvas = new Canvas(400, 400);
     private Button reinitialiser = new Button("Ré-initialiser");
     private Button charger = new Button("Charger");
     private Button executer = new Button("Executer");
@@ -29,50 +29,53 @@ public class ViewActionScene extends VBox {
     public int TURTLE_HEAD_SIZE = Cursor.TURTLE_HEAD_SIZE;
     public int TURTLE_SIZE = Cursor.TURTLE_SIZE;
     private final Circle headTurtle = new Circle(TURTLE_HEAD_SIZE);
-    private Polygon turtle ;
+    private Polygon turtle;
     private Pane drawingPane = new Pane();
 
     public ViewActionScene(ViewModelAction vma) {
-        this.vma=vma;
-        drawTurtle(canvas.getWidth()/2,canvas.getHeight()/2,0);
+        this.vma = vma;
+        drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         canvasDesign();
-        drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
-        this.getChildren().addAll(title,drawingPane,btnsManage());
+        drawingPane.getChildren().addAll(canvas, headTurtle, turtle);
+        this.getChildren().addAll(title, drawingPane, btnsManage());
         bindings();
     }
 
 
-    public HBox btnsManage(){
-        HBox btnsControls= new HBox();
+    public HBox btnsManage() {
+        HBox btnsControls = new HBox();
         suivant.setOnAction(actionEvent -> {
-            vma.avancer();
+            vma.executeAction();
             drawLine();
-            drawingPane.getChildren().removeAll(turtle,headTurtle);
+            drawingPane.getChildren().removeAll(turtle, headTurtle);
             double x = vma.getCursor().getPosition().getX();
             double y = vma.getCursor().getPosition().getY();
-            double angle = vma.getCursor().getAngle();
-            drawTurtle(x,y,angle);
-            drawingPane.getChildren().addAll(turtle,headTurtle);
+            double angle = (vma.getCursor().getAngle());
+            drawTurtle(x, y, angle);
+            drawingPane.getChildren().addAll(turtle, headTurtle);
         });
         charger.setOnAction(actionEvent -> vma.charger());
         executer.setOnAction(actionEvent -> vma.executer());
         reinitialiser.setOnAction(actionEvent -> {
             // On supprime le canvas et la tortue
-            canvas.getGraphicsContext2D().clearRect(0,0,canvas.getWidth(),canvas.getHeight());
-            drawingPane.getChildren().removeAll(turtle,headTurtle);
+            canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawingPane.getChildren().removeAll(turtle, headTurtle);
             // on redessine un canvas
             canvasDesign();
-           // on ajout une nouvelle tortue a la bonne position
-            drawTurtle(canvas.getWidth()/2,canvas.getHeight()/2,0);
-            drawingPane.getChildren().addAll(turtle,headTurtle);
+            //reset position
+            vma.getCursor().getPosition().setX(canvas.getWidth() / 2);
+            vma.getCursor().getPosition().setY(canvas.getHeight() / 2);
+            // on ajout une nouvelle tortue a la bonne position
+            drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
+            drawingPane.getChildren().addAll(turtle, headTurtle);
             // On réinitialiser notre liste
             vma.reinitialiser();
         });
-        btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
+        btnsControls.getChildren().addAll(charger, reinitialiser, executer, suivant);
         return btnsControls;
     }
 
-    public void bindings(){
+    public void bindings() {
         charger.disableProperty().bind(vma.hasAnomalies());
         charger.visibleProperty().bind(vma.hasActionsProgChange().or(vma.hasChargerSceneProperty().not()));
         charger.managedProperty().bind(vma.hasChargerSceneProperty().not());
@@ -87,21 +90,7 @@ public class ViewActionScene extends VBox {
 
     }
 
-
-
-//    public void getNext(){
-//        vma.getNext();
-//    }
-
-//    public void setNewPosition(){
-//        turtle.setTranslateY(turtle.getTranslateY()+20);
-//        turtle.setTranslateX(turtle.getTranslateX()+20);
-//        headTurtle.setTranslateX(headTurtle.getTranslateX()+20);
-//        headTurtle.setTranslateY(headTurtle.getTranslateY()+20);
-//    }
-
-
-    public void canvasDesign(){
+    public void canvasDesign() {
         // Design exterieur du canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLACK);
@@ -111,10 +100,10 @@ public class ViewActionScene extends VBox {
         GraphicsContext gcInside = canvas.getGraphicsContext2D();
         gcInside.setStroke(Color.LIGHTGRAY);
         gcInside.setLineWidth(1);
-        for (int i = 40; i<400;i+=40) {
+        for (int i = 40; i < 400; i += 40) {
             gcInside.strokeLine(0, i, 400, i);// (x1, y1, x2, y2)
         }
-        for (int i = 40; i<400;i+=40) {
+        for (int i = 40; i < 400; i += 40) {
             gcInside.strokeLine(i, 0, i, 400);// (x1, y1, x2, y2)
         }
     }
@@ -137,13 +126,12 @@ public class ViewActionScene extends VBox {
     }
 
 
-    private void drawLine(){
+    private void drawLine() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
         Line lastLine = vma.getLines().getLast();
-        gc.strokeLine(lastLine.getPointDepart().getX(),lastLine.getPointDepart().getY(),lastLine.getPointArrive().getX(),lastLine.getPointArrive().getY());
-
+            gc.strokeLine(lastLine.getPointDepart().getX(), lastLine.getPointDepart().getY(), lastLine.getPointArrive().getX(), lastLine.getPointArrive().getY());
     }
 
 
