@@ -9,7 +9,6 @@ import java.util.List;
 public class SceneActions {
 
     private List<Line> lines= new ArrayList<>();
-    private IntegerProperty lineIndex = new SimpleIntegerProperty(-1);
     private Cursor cursor;
 
     public SceneActions(Cursor cursor) {
@@ -20,13 +19,6 @@ public class SceneActions {
         this.lines.add(line);
     }
 
-    public void executeDessin(){
-        lineIndex.set(lineIndex.get()+1);
-    }
-
-    public int getSize(){
-        return lines.size();
-    }
 
     public void avancer(double distance){
         Point oldPoints = cursor.getPosition();
@@ -36,4 +28,11 @@ public class SceneActions {
         addDessin(line);
     }
 
+    public List<Line> getLines() {
+        return lines;
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
 }

@@ -17,7 +17,7 @@ public class Cursor {
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
         position.setX(position.getX()+diffX);
-        position.setY(position.getY()+diffY);
+        position.setY(position.getY()-diffY);
     }
 
     public void tourner(int angle){
@@ -27,6 +27,11 @@ public class Cursor {
     public void setPosition(Point position) {
         this.position = position;
     }
+
+    public int getAngle() {
+        return angle;
+    }
+
     public Point getPosition(){
         return position;
     }

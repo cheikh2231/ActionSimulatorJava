@@ -14,12 +14,12 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import scratch.model.Action;
 import scratch.model.Cursor;
+import scratch.model.Line;
+import scratch.model.Point;
 import scratch.viewmodel.ViewModelAction;
 
 public class ViewActionScene extends VBox {
     private ViewModelAction vma;
-    private ListView<Action> listScene = new ListView<>();
-
     private Label title = new Label("Scene");
     private Canvas canvas = new Canvas(400,400);
     private Button reinitialiser = new Button("Ré-initialiser");
@@ -38,14 +38,22 @@ public class ViewActionScene extends VBox {
         canvasDesign();
         drawingPane.getChildren().addAll(canvas,headTurtle,turtle);
         this.getChildren().addAll(title,drawingPane,btnsManage());
-//        this.listScene.setItems(vma.getActionScene());
         bindings();
     }
 
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
-        suivant.setOnAction(actionEvent -> vma.avancer());
+        suivant.setOnAction(actionEvent -> {
+            vma.avancer();
+            drawLine();
+            drawingPane.getChildren().removeAll(turtle,headTurtle);
+            double x = vma.getCursor().getPosition().getX();
+            double y = vma.getCursor().getPosition().getY();
+            double angle = vma.getCursor().getAngle();
+            drawTurtle(x,y,angle);
+            drawingPane.getChildren().addAll(turtle,headTurtle);
+        });
         charger.setOnAction(actionEvent -> vma.charger());
         executer.setOnAction(actionEvent -> vma.executer());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
@@ -115,5 +123,17 @@ public class ViewActionScene extends VBox {
         this.headTurtle.setTranslateY(yP1);
 
     }
+
+
+    private void drawLine(){
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setStroke(Color.BLUE);
+        gc.setLineWidth(2);
+        for (Line l : vma.getLines()){
+            gc.strokeLine(l.getPointDepart().getX(),l.getPointDepart().getY(),l.getPointArrive().getX(),l.getPointArrive().getY());
+        }
+    }
+
+
 
 }

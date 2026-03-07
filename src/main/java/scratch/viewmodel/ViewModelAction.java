@@ -9,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
 
+import java.util.List;
+
 
 public class ViewModelAction {
 
@@ -111,10 +113,10 @@ public class ViewModelAction {
                 return;
             }
             try {
-                Action action = programme.getActionProg(progIndex.get());
+                Action action = actionSelected.get();
                 if(action!=null){
                     int val = Integer.parseInt(n);
-                    setMesure(val);
+                    action.setMesure(val);
                     isvalidMesureProperty.set(action.isValidMesure(val));
                 }
             }catch (NumberFormatException e){
@@ -123,18 +125,8 @@ public class ViewModelAction {
 
         });
     }
-
-    public void setMesure(int mesure) {
-        Action action = programme.getActionProg(progIndex.get());
-        if (action != null){
-            action.setMesure(mesure);
-        }
-    }
-
     public void removeAction() {
-        System.out.println(progIndex.get());
         programme.removeAction(progIndex.get());
-        System.out.println(progIndex.get());
     }
 
     public void clearAllActions() {
@@ -252,5 +244,13 @@ public class ViewModelAction {
         return Bindings.createBooleanBinding(()->{
             return programme.existIndex(progIndex.get());
         },progIndex);
+    }
+
+    public List<Line> getLines(){
+        return sceneActions.getLines();
+    }
+
+    public Cursor getCursor(){
+        return sceneActions.getCursor();
     }
 }
