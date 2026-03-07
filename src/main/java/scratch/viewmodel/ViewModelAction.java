@@ -229,7 +229,10 @@ public class ViewModelAction {
         int idx = sceneIndex.get();
 
         sceneIndex.set(idx+1);
-        progIndex.set(sceneIndex.get());
+        if (fullyTraversedSceneList().get()){
+            progIndex.set(programme.size()-1);
+        }else
+            progIndex.set(sceneIndex.get());
     }
 
     public void executeAction(){
