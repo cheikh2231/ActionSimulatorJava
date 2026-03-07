@@ -19,6 +19,9 @@ public class SceneActions {
         this.lines.add(line);
     }
 
+    public void resetLines(){
+        this.lines.clear();
+    }
 
     public void avancer(double distance){
         Point oldPoints = new Point(cursor.getPosition().getX(),cursor.getPosition().getY());

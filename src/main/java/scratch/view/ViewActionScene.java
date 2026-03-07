@@ -56,6 +56,18 @@ public class ViewActionScene extends VBox {
         });
         charger.setOnAction(actionEvent -> vma.charger());
         executer.setOnAction(actionEvent -> vma.executer());
+        reinitialiser.setOnAction(actionEvent -> {
+            // On supprime le canvas et la tortue
+            canvas.getGraphicsContext2D().clearRect(0,0,canvas.getWidth(),canvas.getHeight());
+            drawingPane.getChildren().removeAll(turtle,headTurtle);
+            // on redessine un canvas
+            canvasDesign();
+           // on ajout une nouvelle tortue a la bonne position
+            drawTurtle(canvas.getWidth()/2,canvas.getHeight()/2,0);
+            drawingPane.getChildren().addAll(turtle,headTurtle);
+            // On réinitialiser notre liste
+            vma.reinitialiser();
+        });
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
         return btnsControls;
     }
@@ -129,9 +141,9 @@ public class ViewActionScene extends VBox {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
-        for (Line l : vma.getLines()){
-            gc.strokeLine(l.getPointDepart().getX(),l.getPointDepart().getY(),l.getPointArrive().getX(),l.getPointArrive().getY());
-        }
+        Line lastLine = vma.getLines().getLast();
+        gc.strokeLine(lastLine.getPointDepart().getX(),lastLine.getPointDepart().getY(),lastLine.getPointArrive().getX(),lastLine.getPointArrive().getY());
+
     }
 
 

@@ -16,7 +16,7 @@ public class Cursor {
         // Par rapport à la position actuelle de la tortue, on calcule alors les différences en X et en Y de la manière suivante :
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
-        position.setX(position.getX()+diffX);
+        position.setX(position.getX()-diffX);
         position.setY(position.getY()-diffY);
     }
 

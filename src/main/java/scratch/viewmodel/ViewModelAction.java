@@ -202,7 +202,7 @@ public class ViewModelAction {
 
     public void reinitialiser(){
         progIndex.set(0);
-        // vider le tableau de dessin et recharger la scene
+        sceneActions.resetLines();
     }
 
     private boolean hasDuplicate(){
