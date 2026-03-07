@@ -4,17 +4,20 @@ public class Cursor {
     private int angle;
     public static int TURTLE_HEAD_SIZE = 3;
     public static int TURTLE_SIZE = 17;
+
     public Cursor(int angle, Point position ) {
         this.angle = angle;
         this.position = position;
     }
 
-    public void avancer(int distance){
-//        int dx = (int) (distance * Math.cos(Math.toRadians(angle)));
-//        int dy = (int) (distance * Math.sin(Math.toRadians(angle)));
-//
-//        position.setX(dx);
-//        position.setY(dy);
+    public void avancer(double distance){
+        // angle étant exprimé en degré, on le transforme en radians et on ajoute 90° (Math.PI / 2)
+        double radians = Math.toRadians(angle) + Math.PI / 2;
+        // Par rapport à la position actuelle de la tortue, on calcule alors les différences en X et en Y de la manière suivante :
+        double diffX = distance * Math.cos(radians);
+        double diffY = distance * Math.sin(radians);
+        position.setX(position.getX()+diffX);
+        position.setY(position.getY()+diffY);
     }
 
     public void tourner(int angle){
@@ -24,7 +27,9 @@ public class Cursor {
     public void setPosition(Point position) {
         this.position = position;
     }
-
+    public Point getPosition(){
+        return position;
+    }
     public void setAngle(int angle) {
         this.angle = angle;
     }

@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 
 import javafx.stage.Stage;
+import scratch.model.Cursor;
+import scratch.model.Point;
 import scratch.model.Programme;
 import scratch.model.SceneActions;
 import scratch.view.ViewActionPalette;
@@ -19,7 +21,8 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         Programme programme = new Programme();
-        SceneActions sceneActions = new SceneActions();
+        Cursor cursor = new Cursor(0,new Point(200,200));
+        SceneActions sceneActions = new SceneActions(cursor);
         ViewModelAction vma = new ViewModelAction(programme,sceneActions) ;
         HBox pane = new HBox();
         pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma),new ViewActionScene(vma));

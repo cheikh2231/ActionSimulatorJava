@@ -237,9 +237,17 @@ public class ViewModelAction {
     public void getNext() {
         int idx = progIndex.get();
         progIndex.set(++idx);
-        sceneActions.addDessin(new Line(new Point(4,5),new Point(104,5)));
     }
-
+    public void avancer(){
+        Action action = actionSelected.get();
+        if(action != null){
+            if(action instanceof ActionAvancer)
+                sceneActions.avancer(actionSelected.get().getMesure());
+//            if(action instanceof ActionTourner)
+//                System.out.println(".");
+        }
+        getNext();
+    }
     public BooleanBinding existIndex(){
         return Bindings.createBooleanBinding(()->{
             return programme.existIndex(progIndex.get());

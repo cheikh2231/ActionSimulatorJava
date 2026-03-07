@@ -45,7 +45,7 @@ public class ViewActionScene extends VBox {
 
     public HBox btnsManage(){
         HBox btnsControls= new HBox();
-        suivant.setOnAction(actionEvent -> vma.getNext());
+        suivant.setOnAction(actionEvent -> vma.avancer());
         charger.setOnAction(actionEvent -> vma.charger());
         executer.setOnAction(actionEvent -> vma.executer());
         btnsControls.getChildren().addAll(charger,reinitialiser,executer,suivant);
