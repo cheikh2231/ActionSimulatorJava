@@ -6,11 +6,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import scratch.ListStyliser.ProgListStyliser;
 import scratch.model.Action;
-import scratch.viewmodel.ViewModelAction;
+import scratch.viewmodel.ActionViewModel;
 
-public class ViewActionProg extends VBox {
+public class ActionProgView extends VBox {
     private ListView<Action> listProg = new ListView<>();
-    private ViewModelAction vma ;
+    private ActionViewModel actionVm ;
     private Label title = new Label("Programme");
     private Label labelUnityHda = new Label();
     private VBox hda = new VBox();
@@ -28,18 +28,18 @@ public class ViewActionProg extends VBox {
     public HBox btnsManage(){
         HBox btnsManager = new HBox();
         btnsManager.getChildren().addAll(btnMonter,btnDescendre,btnDupliquer,btnSupprimer,btnViderTout);
-        btnSupprimer.setOnAction(actionEvent -> vma.removeAction());
-        btnViderTout.setOnAction(actionEvent -> vma.clearAllActions());
-        btnDupliquer.setOnAction(actionEvent -> vma.duplicateAction());
-        btnMonter.setOnAction(actionEvent -> vma.moveUp());
-        btnDescendre.setOnAction(actionEvent -> vma.moveDown());
+        btnSupprimer.setOnAction(actionEvent -> actionVm.removeAction());
+        btnViderTout.setOnAction(actionEvent -> actionVm.clearAllActions());
+        btnDupliquer.setOnAction(actionEvent -> actionVm.duplicateAction());
+        btnMonter.setOnAction(actionEvent -> actionVm.moveUp());
+        btnDescendre.setOnAction(actionEvent -> actionVm.moveDown());
         return btnsManager;
     }
 
-    public ViewActionProg(ViewModelAction vma) {
-        this.vma = vma;
+    public ActionProgView(ActionViewModel actionVm) {
+        this.actionVm = actionVm;
         bindings();
-        this.listProg.setItems(vma.getActionsProg());
+        this.listProg.setItems(actionVm.getActionsProg());
         manageTextfield();
         affichageListViewProg();
         this.getChildren().addAll(title,listProg,btnsManage(),detailsAction);
@@ -66,23 +66,23 @@ public class ViewActionProg extends VBox {
     }
 
     public void bindings(){
-        vma.progIndexProperty().addListener((observableValue, number, n) ->
+        actionVm.progIndexProperty().addListener((observableValue, number, n) ->
                 listProg.getSelectionModel().select(n.intValue()));
-        labelUnityHda.textProperty().bind(vma.getSelectedActionProgDetailsUnity());
-        LabelActionHda.textProperty().bind(vma.getSelectedActionProgDetailsName());
-        textFieldHda.textProperty().bindBidirectional(vma.getMesureProperty());
-        textFieldHda.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.IsDetailableProperty().not()));
-        btnMonter.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveUp().not()));
-        btnDescendre.disableProperty().bind(vma.isSelectedActionProg().not().or(vma.canMoveDown().not()));
-        btnDupliquer.disableProperty().bind(vma.isSelectedActionProg().not());
-        btnSupprimer.disableProperty().bind(vma.isSelectedActionProg().not());
-        btnViderTout.disableProperty().bind(vma.isEmptyActionProg());
-        errorMesure.managedProperty().bind(vma.isValidMesureProperty().not());
-        errorMesure.visibleProperty().bind(vma.isValidMesureProperty().not());
+        labelUnityHda.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
+        LabelActionHda.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
+        textFieldHda.textProperty().bindBidirectional(actionVm.getMesureProperty());
+        textFieldHda.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
+        btnMonter.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
+        btnDescendre.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
+        btnDupliquer.disableProperty().bind(actionVm.isSelectedActionProg().not());
+        btnSupprimer.disableProperty().bind(actionVm.isSelectedActionProg().not());
+        btnViderTout.disableProperty().bind(actionVm.isEmptyActionProg());
+        errorMesure.managedProperty().bind(actionVm.isValidMesureProperty().not());
+        errorMesure.visibleProperty().bind(actionVm.isValidMesureProperty().not());
         listProg.getSelectionModel().selectedIndexProperty().addListener((obs,o,n)->{
-            vma.progIndexProperty().set(n.intValue());
+            actionVm.progIndexProperty().set(n.intValue());
         });
-        vma.actionSelectedProperty().bind(listProg.getSelectionModel().selectedItemProperty());
+        actionVm.actionSelectedProperty().bind(listProg.getSelectionModel().selectedItemProperty());
     }
 
     public void affichageListViewProg(){

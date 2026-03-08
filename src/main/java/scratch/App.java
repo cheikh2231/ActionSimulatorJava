@@ -8,10 +8,12 @@ import javafx.scene.layout.HBox;
 
 import javafx.stage.Stage;
 import scratch.model.*;
-import scratch.view.ViewActionPalette;
-import scratch.view.ViewActionProg;
-import scratch.view.ViewActionScene;
-import scratch.viewmodel.ViewModelAction;
+import scratch.view.ActionPaletteView;
+import scratch.view.ActionProgView;
+import scratch.view.ActionSceneView;
+import scratch.view.MainView;
+import scratch.viewmodel.ActionViewModel;
+import scratch.viewmodel.MainViewModel;
 
 public class App extends Application {
 
@@ -21,19 +23,22 @@ public class App extends Application {
         Cursor cursor = new Cursor(0,new Point(200,200));
         ActionStylo actionStylo = new ActionStylo(true);
         SceneActions sceneActions = new SceneActions(cursor,actionStylo);
-        ViewModelAction vma = new ViewModelAction(programme,sceneActions) ;
-        HBox pane = new HBox();
-        pane.getChildren().addAll(new ViewActionPalette(vma),new ViewActionProg(vma),new ViewActionScene(vma));
-        pane.setPadding(new Insets(10,10,10,10));
-        Scene scene = new Scene(pane, 1040, 800);
+
+        MainViewModel vm = new MainViewModel(programme,sceneActions);
+
+        var mainView = new MainView(vm);
+        createScene(primaryStage,mainView);
+        primaryStage.show();
+
+    }
+
+    private void createScene(Stage stage, MainView view){
+        Scene scene = new Scene(view, 1040, 800);
         scene.getStylesheets().add(
                 getClass().getResource("/style.css").toExternalForm()
         );
-        primaryStage.setTitle("Scratch");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-
+        stage.setTitle("Scratch");
+        stage.setScene(scene);
     }
 
     public static void main(String[] args) {

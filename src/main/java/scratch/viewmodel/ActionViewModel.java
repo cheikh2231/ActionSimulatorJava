@@ -9,7 +9,7 @@ import scratch.model.*;
 import java.util.List;
 
 
-public class ViewModelAction {
+public class ActionViewModel {
 
     private final Programme programme;
     private final SceneActions sceneActions;
@@ -35,7 +35,7 @@ public class ViewModelAction {
     }
 
 
-    public ViewModelAction(Programme programme,SceneActions sceneActions) {
+    public ActionViewModel(Programme programme, SceneActions sceneActions) {
         this.programme = programme;
         this.sceneActions = sceneActions;
         listeners();

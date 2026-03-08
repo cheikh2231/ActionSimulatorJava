@@ -6,18 +6,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.control.*;
 import scratch.ListStyliser.PaletteListStyliser;
 import scratch.model.Action;
-import scratch.viewmodel.ViewModelAction;
+import scratch.viewmodel.ActionViewModel;
 
-public class ViewActionPalette extends VBox {
-    private ViewModelAction vma ;
+public class ActionPaletteView extends VBox {
+    private ActionViewModel actionVm ;
     Label title = new Label("Palette d'actions");
     private ListView<Action> listAction = new ListView<>();
     private Button btnAdd = new Button("Ajouter au programme");
 
 
-    public ViewActionPalette(ViewModelAction vma) {
-        this.vma = vma;
-        listAction.setItems(vma.getActionPalette());
+    public ActionPaletteView(ActionViewModel actionVm) {
+        this.actionVm = actionVm;
+        listAction.setItems(actionVm.getActionPalette());
         this.getChildren().addAll(title,listAction,btnAdd);
         affichageListViewPalette();
         bindings();
@@ -28,10 +28,10 @@ public class ViewActionPalette extends VBox {
     public void manage(){
         listAction.setOnMouseClicked(mouseEvent -> {
             if(mouseEvent.getClickCount() == 2)
-                vma.addPaletteToProg();
+                actionVm.addPaletteToProg();
         });
         btnAdd.setOnAction(e->{
-            vma.addPaletteToProg();
+            actionVm.addPaletteToProg();
         });
     }
 
@@ -41,7 +41,7 @@ public class ViewActionPalette extends VBox {
     }
 
     public void bindings(){
-        vma.paletteIndexProperty().bind(listAction.getSelectionModel().selectedIndexProperty());
-        btnAdd.disableProperty().bind(vma.paletteIndexProperty().lessThan(0));
+        actionVm.paletteIndexProperty().bind(listAction.getSelectionModel().selectedIndexProperty());
+        btnAdd.disableProperty().bind(actionVm.paletteIndexProperty().lessThan(0));
     }
 }
