@@ -20,22 +20,22 @@ public class FileView extends HBox{
     public FileView(ActionViewModel actionVm,Stage stage) {
         this.actionVm = actionVm;
         // Création de la barre de menu, ajout d'un Menu principal "File"
-        MenuBar barreDeMenu = new MenuBar();
-        Menu menuFile = new Menu("File");
+        MenuBar menuBar = new MenuBar();
+        Menu fileMenu = new Menu("File");
         // Création des items pour le menu
-        MenuItem buttonNew = new MenuItem("New..");
-        buttonNew.setOnAction(actionEvent -> resetAll());
-        MenuItem buttonOpen = new MenuItem("Open..");
-        buttonOpen.setOnAction(actionEvent -> openFile(stage));
-        MenuItem buttonSaveAs = new MenuItem("Save As..");
-        buttonSaveAs.setOnAction(actionEvent -> fileSaveAs(stage));
-        MenuItem buttonExit = new MenuItem("Exit");
-        buttonExit.setOnAction(actionEvent -> System.exit(0));
+        MenuItem newMenuItem = new MenuItem("New..");
+        newMenuItem.setOnAction(actionEvent -> resetAll());
+        MenuItem openMenuItem = new MenuItem("Open..");
+        openMenuItem.setOnAction(actionEvent -> openFile(stage));
+        MenuItem saveAsMenuItem = new MenuItem("Save As..");
+        saveAsMenuItem.setOnAction(actionEvent -> saveFileAs(stage));
+        MenuItem exitMenuItem = new MenuItem("Exit");
+        exitMenuItem.setOnAction(actionEvent -> System.exit(0));
         BorderPane root = new BorderPane();
-        root.setTop(barreDeMenu);
-        barreDeMenu.getMenus().add(menuFile);
-        barreDeMenu.prefWidthProperty().bind(stage.widthProperty());
-        menuFile.getItems().addAll(buttonNew,buttonOpen,buttonSaveAs,buttonExit);
+        root.setTop(menuBar);
+        menuBar.getMenus().add(fileMenu);
+        menuBar.prefWidthProperty().bind(stage.widthProperty());
+        fileMenu.getItems().addAll(newMenuItem,openMenuItem,saveAsMenuItem,exitMenuItem);
         this.getChildren().add(root);
     }
 
@@ -53,14 +53,14 @@ public class FileView extends HBox{
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             try {
-                Scanner fileScan = new Scanner(selectedFile);
-                while(fileScan.hasNextLine()){
-                    String line = fileScan.nextLine();
-                    int mesureStart = line.indexOf(";");
-                    int actionMesure = Integer.parseInt(line.substring(mesureStart+1));
-                    String actionType = line.substring(0,mesureStart);
+                Scanner fileScanner = new Scanner(selectedFile);
+                while(fileScanner.hasNextLine()){
+                    String line = fileScanner.nextLine();
+                    int separatorIndex = line.indexOf(";");
+                    int actionMeasure = Integer.parseInt(line.substring(separatorIndex+1));
+                    String actionType = line.substring(0,separatorIndex);
 
-                    actionVm.generateActionAndAddToProg(actionType,actionMesure);
+                    actionVm.generateActionAndAddToProg(actionType,actionMeasure);
                 }
             }catch (Exception e) {
                 throw new RuntimeException(e);
@@ -68,7 +68,7 @@ public class FileView extends HBox{
         }
     }
 
-    public void fileSaveAs(Stage stage){
+    public void saveFileAs(Stage stage){
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extension = new FileChooser.ExtensionFilter("Scratch files","*.scr");
         fileChooser.getExtensionFilters().add(extension);

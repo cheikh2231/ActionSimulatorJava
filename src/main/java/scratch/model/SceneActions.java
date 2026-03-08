@@ -48,9 +48,9 @@ public class SceneActions {
         newY = Math.max(0, Math.min(newY, 500));
 
         Point newPoints = new Point(newX, newY);
-
+        System.out.println(oldPoints.getX() + " " + oldPoints.getX() +"  \n  " + newPoints.getX() + " " + newPoints.getY());
         cursor.setPosition(newPoints);
-
+        System.out.println(getLines());
         // dessine sssi stylo abaisse
         if(getCurrentActionStylo()) {
             Line line = new Line(oldPoints, newPoints);
