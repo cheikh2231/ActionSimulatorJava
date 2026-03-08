@@ -295,8 +295,9 @@ public class ActionViewModel {
             case "PEN_DOWN" -> new ActionPen(true);
             default -> null;
         };
-       if(action !=null)
+       if(action !=null) {
            getActionsProg().add(action);
+       }
     }
 
     public BooleanBinding canAddToProgram() {
