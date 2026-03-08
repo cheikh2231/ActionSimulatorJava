@@ -10,7 +10,7 @@ public class Cursor {
         this.position = position;
     }
 
-    public void avancer(double distance){
+    public void moveForward(double distance){
         // angle étant exprimé en degré, on le transforme en radians et on ajoute 90° (Math.PI / 2)
         double radians = Math.toRadians(angle) + Math.PI / 2;
         // Par rapport à la position actuelle de la tortue, on calcule alors les différences en X et en Y de la manière suivante :
@@ -20,7 +20,7 @@ public class Cursor {
         position.setY(position.getY()-diffY);
     }
 
-    public void tourner(int angle){
+    public void turn(int angle){
         setAngle(angle);
     }
 

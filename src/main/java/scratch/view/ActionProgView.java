@@ -10,30 +10,29 @@ import scratch.model.Action;
 import scratch.viewmodel.ActionViewModel;
 
 public class ActionProgView extends VBox {
-    private ListView<Action> listProg = new ListView<>();
-    private ActionViewModel actionVm;
-    private Label title = new Label("Programme");
-    private Label labelUnityHda = new Label();
-    private VBox hda = new VBox();
-    private TextField textFieldHda = new TextField();
-    private Label LabelActionHda = new Label();
-    private Label errorMesure = new Label(" invalid value");
-    private TitledPane detailsAction = new TitledPane("Details de l'action", getHda());
-    private Button btnMonter = new Button("Monter");
-    private Button btnDescendre = new Button("Descendre");
-    private Button btnDupliquer = new Button("Dupliquer");
-    private Button btnSupprimer = new Button("Supprimer");
-    private Button btnViderTout = new Button("Vider Tout");
+    private final ListView<Action> progListView = new ListView<>();
+    private final ActionViewModel actionVm;
+    private final Label actionProgLabel = new Label("Programme");
+    private final Label measureUnitLabel = new Label();
+    private final TextField measureTextField = new TextField();
+    private final Label actionNameLabel = new Label();
+    private final Label measureErrorLabel = new Label(" invalid value");
+    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
+    private final Button btnUp = new Button("Monter");
+    private final Button btnDown = new Button("Descendre");
+    private final Button btnDuplicate = new Button("Dupliquer");
+    private final Button btnDelete = new Button("Supprimer");
+    private final Button btnClear = new Button("Vider Tout");
 
 
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
-        btnsManager.getChildren().addAll(btnMonter, btnDescendre, btnDupliquer, btnSupprimer, btnViderTout);
-        btnSupprimer.setOnAction(actionEvent -> actionVm.removeAction());
-        btnViderTout.setOnAction(actionEvent -> actionVm.clearAllActionsProg());
-        btnDupliquer.setOnAction(actionEvent -> actionVm.duplicateAction());
-        btnMonter.setOnAction(actionEvent -> actionVm.moveUp());
-        btnDescendre.setOnAction(actionEvent -> actionVm.moveDown());
+        btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
+        btnDelete.setOnAction(actionEvent -> actionVm.removeAction());
+        btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProg());
+        btnDuplicate.setOnAction(actionEvent -> actionVm.duplicateAction());
+        btnUp.setOnAction(actionEvent -> actionVm.moveUp());
+        btnDown.setOnAction(actionEvent -> actionVm.moveDown());
         btnsManager.setSpacing(12);
         return btnsManager;
     }
@@ -41,62 +40,64 @@ public class ActionProgView extends VBox {
     public ActionProgView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         bindings();
-        design();
-        this.listProg.setItems(actionVm.getActionsProg());
-        manageTextfield();
-        affichageListViewProg();
+        setupLayout();
+        this.progListView.setItems(actionVm.getActionsProg());
+        setupMeasureTextfield();
+        configListViewProg();
 
-        this.getChildren().addAll(title, listProg, btnsManage(), detailsAction);
+        this.getChildren().addAll(actionProgLabel, progListView, btnsManage(), detailsAction);
     }
 
-    public VBox getHda() {
-        VBox principal = new VBox();
-        HBox hda = new HBox();
-        hda.getChildren().addAll(LabelActionHda, textFieldHda, labelUnityHda);
-        principal.getChildren().addAll(hda, getLblError());
-        return principal;
+    private VBox createActionDetailsBox() {
+        final VBox principalBox = new VBox();
+        final HBox detailsHBox = new HBox();
+
+        detailsHBox.getChildren().addAll(actionNameLabel, measureTextField, measureUnitLabel);
+        principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
+
+        return principalBox;
     }
 
 
-    public HBox getLblError() {
-        HBox hlblError = new HBox();
-        errorMesure.setTextFill(Color.RED);
-        hlblError.getChildren().add(errorMesure);
-        return hlblError;
+    private HBox createErrorLabelBox() {
+        final HBox errorBox = new HBox();
+        measureErrorLabel.setTextFill(Color.RED);
+        errorBox.getChildren().add(measureErrorLabel);
+        return errorBox;
     }
 
-    public void manageTextfield() {
-        textFieldHda.setPrefWidth(36);
-        textFieldHda.setAlignment(Pos.CENTER);
+    private void setupMeasureTextfield() {
+        measureTextField.setPrefWidth(36);
+        measureTextField.setAlignment(Pos.CENTER);
     }
 
-    public void bindings() {
+    private void bindings() {
         actionVm.progIndexProperty().addListener((observableValue, number, n) ->
-                listProg.getSelectionModel().select(n.intValue()));
-        labelUnityHda.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
-        LabelActionHda.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
-        textFieldHda.textProperty().bindBidirectional(actionVm.getMesureProperty());
-        textFieldHda.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
-        btnMonter.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
-        btnDescendre.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
-        btnDupliquer.disableProperty().bind(actionVm.isSelectedActionProg().not());
-        btnSupprimer.disableProperty().bind(actionVm.isSelectedActionProg().not());
-        btnViderTout.disableProperty().bind(actionVm.isEmptyActionProg());
-        errorMesure.managedProperty().bind(actionVm.isValidMesureProperty().not());
-        errorMesure.visibleProperty().bind(actionVm.isValidMesureProperty().not());
-        listProg.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
+                progListView.getSelectionModel().select(n.intValue()));
+        measureUnitLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
+        actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
+        measureTextField.textProperty().bindBidirectional(actionVm.getMesureProperty());
+        measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
+        btnUp.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
+        btnDown.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
+        btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
+        btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
+        btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
+        measureErrorLabel.managedProperty().bind(actionVm.isValidMesureProperty().not());
+        measureErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not());
+        progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
-        actionVm.actionSelectedProperty().bind(listProg.getSelectionModel().selectedItemProperty());
+        actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
     }
 
-    public void affichageListViewProg() {
-        listProg.setCellFactory(lc -> new ProgListStyliser() {
+    private void configListViewProg() {
+        progListView.setCellFactory(lc -> new ProgListStyliser() {
 
         });
     }
 
-    private void design() {
+    private void setupLayout() {
         this.setSpacing(16);
     }
 }

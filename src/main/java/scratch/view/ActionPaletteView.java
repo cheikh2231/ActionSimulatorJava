@@ -10,19 +10,19 @@ import scratch.model.Action;
 import scratch.viewmodel.ActionViewModel;
 
 public class ActionPaletteView extends VBox {
-    private ActionViewModel actionVm ;
-    Label title = new Label("Palette d'actions");
-    private ListView<Action> listAction = new ListView<>();
-    private Button btnAdd = new Button("Ajouter au programme");
+    private final ActionViewModel actionVm ;
+    private final Label title = new Label("Palette d'actions");
+    private final ListView<Action> listAction = new ListView<>();
+    private final Button btnAdd = new Button("Ajouter au programme");
 
 
     public ActionPaletteView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         listAction.setItems(actionVm.getActionPalette());
         this.getChildren().addAll(title,listAction,btnAdd);
-        affichageListViewPalette();
+        configListViewPalette();
         bindings();
-        design();
+        setupLayout();
         manage();
     }
 
@@ -36,17 +36,17 @@ public class ActionPaletteView extends VBox {
         });
     }
 
-    public void affichageListViewPalette() {
+    public void configListViewPalette() {
         listAction.setCellFactory(lc -> new PaletteListStyliser() {
         });
     }
 
     public void bindings(){
         actionVm.paletteIndexProperty().bind(listAction.getSelectionModel().selectedIndexProperty());
-        btnAdd.disableProperty().bind(actionVm.paletteIndexProperty().lessThan(0));
+        btnAdd.disableProperty().bind(actionVm.canAddToProgram().not());
     }
 
-    private void design() {
+    private void setupLayout() {
         this.setSpacing(10);
         this.setPadding(new Insets(5));
     }

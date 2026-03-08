@@ -1,22 +1,14 @@
 package scratch.model;
 
-public class ActionTourner extends Action{
+public abstract class ActionTurn extends Action{
 
-
-    public ActionTourner(String name ,int mesure) {
+    public ActionTurn(String name , int mesure) {
         super("Tourner à " + name,mesure);
     }
 
-    public ActionTourner(String name) {
+    public ActionTurn(String name) {
         super("Tourner à " + name,90);
     }
-
-
-    @Override
-    void deplacer(Cursor cursor) {
-        cursor.tourner(getMesure());
-    }
-
 
     @Override
     public Action copy() {
@@ -28,7 +20,7 @@ public class ActionTourner extends Action{
     }
 
     @Override
-    public boolean isValidMesure(int mesure) {
+    public boolean isValidMeasure(int mesure) {
         return mesure>0 && mesure<=180;
     }
 
@@ -46,6 +38,5 @@ public class ActionTourner extends Action{
     public String getFormatName() {
         return "TURN_";
     }
-
 
 }

@@ -3,10 +3,10 @@ package scratch.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class Programme {
+public class Program {
     private ObservableList<Action> actionsProg = FXCollections.observableArrayList();
 
-    public void ajouterAction(int idx) {
+    public void addAction(int idx) {
         Action action = Actions.getAction(idx);
         if (action != null)
             actionsProg.add(action.copy());
@@ -35,7 +35,7 @@ public class Programme {
         }
     }
 
-    public ObservableList<Action> getActionsProg() {
+    public ObservableList<Action> getActionsProgList() {
         return actionsProg;
     }
 
@@ -73,7 +73,4 @@ public class Programme {
         return actionsProg.isEmpty();
     }
 
-    public boolean hasNext(int idx){
-        return idx+1 < size();
-    }
 }

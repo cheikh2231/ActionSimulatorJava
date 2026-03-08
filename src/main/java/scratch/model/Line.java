@@ -1,19 +1,19 @@
 package scratch.model;
 
 public class Line {
-    private Point pointDepart;
-    private Point pointArrive;
+    private final Point start;
+    private final Point stop;
 
-    public Point getPointDepart() {
-        return pointDepart;
+    public Point getStart() {
+        return start;
     }
 
-    public Point getPointArrive() {
-        return pointArrive;
+    public Point getStop() {
+        return stop;
     }
 
-    public Line(Point pointDepart, Point pointArrive) {
-        this.pointDepart = pointDepart;
-        this.pointArrive = pointArrive;
+    public Line(Point start, Point stop) {
+        this.start = start;
+        this.stop = stop;
     }
 }

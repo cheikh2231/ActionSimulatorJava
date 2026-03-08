@@ -4,12 +4,11 @@ import javafx.beans.property.*;
 
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
-    private IntegerProperty mesure = new SimpleIntegerProperty();
-    private String unity ;
+    private IntegerProperty measure = new SimpleIntegerProperty();
 
-    public Action(String name, Integer mesure) {
+    public Action(String name, Integer measure) {
         setName(name);
-        setMesure(mesure);
+        setMeasure(measure);
     }
 
     public String getName() {
@@ -24,29 +23,24 @@ public abstract class Action {
         this.name.set(name);
     }
 
-    public int getMesure() {
-        return mesure.get();
+    public int getMeasure() {
+        return measure.get();
     }
 
-
-
-    public IntegerProperty mesureProperty() {
-        return mesure;
+    public IntegerProperty measureProperty() {
+        return measure;
     }
 
-    public void setMesure(int mesure) {
-        if (isValidMesure(mesure))
-            this.mesure.setValue(mesure);
+    public void setMeasure(int measure) {
+        if (isValidMeasure(measure))
+            this.measure.setValue(measure);
     }
-
-    abstract void deplacer(Cursor cursor);
-
 
     public abstract Action copy();
 
-    public boolean isValidMesure(int mesure){
+    public boolean isValidMeasure(int mesure) {
         return false;
-    };
+    }
 
     public boolean isDetailable() {
         return true;

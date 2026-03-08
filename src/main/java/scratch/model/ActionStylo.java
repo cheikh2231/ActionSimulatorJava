@@ -29,11 +29,6 @@ public class ActionStylo extends Action{
     }
 
     @Override
-    void deplacer(Cursor cursor) {
-
-    }
-
-    @Override
     public String toString() {
         return getName();
     }

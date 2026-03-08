@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ActionViewModel {
 
-    private final Programme programme;
+    private final Program program;
     private final SceneActions sceneActions;
     private ObservableList<Action> actionsPalette = Actions.getActions();
     private IntegerProperty paletteIndex = new SimpleIntegerProperty(-1);
@@ -36,7 +36,7 @@ public class ActionViewModel {
     }
 
     public ObservableList<Action> getActionsProg() {
-        return programme.getActionsProg();
+        return program.getActionsProgList();
     }
 
     public ObservableList<Action> getActionPalette() {
@@ -44,8 +44,8 @@ public class ActionViewModel {
     }
 
 
-    public ActionViewModel(Programme programme, SceneActions sceneActions) {
-        this.programme = programme;
+    public ActionViewModel(Program program, SceneActions sceneActions) {
+        this.program = program;
         this.sceneActions = sceneActions;
         listeners();
 
@@ -62,7 +62,7 @@ public class ActionViewModel {
     public StringBinding getSelectedActionProgDetailsName() {
 
         return Bindings.createStringBinding(() -> {
-                    Action actionSelected = programme.getActionProg(progIndex.get());
+                    Action actionSelected = program.getActionProg(progIndex.get());
                     if (actionSelected != null) {
                         return actionSelected.getDetailsName();
                     }
@@ -74,7 +74,7 @@ public class ActionViewModel {
 
     public StringBinding getSelectedActionProgDetailsUnity(){
         return Bindings.createStringBinding(() -> {
-                    Action actionSelected = programme.getActionProg(progIndex.get());
+                    Action actionSelected = program.getActionProg(progIndex.get());
                     if (actionSelected != null) {
                         return actionSelected.getUnity();
                     }
@@ -85,7 +85,8 @@ public class ActionViewModel {
 
     public void addPaletteToProg() {
         int idx = paletteIndexProperty().get();
-        programme.ajouterAction(idx);
+        if (canAddToProgram().get())
+            program.addAction(idx);
     }
 
     public void setIsDetailableProperty(boolean isDetailableProperty) {
@@ -104,7 +105,7 @@ public class ActionViewModel {
     public void listeners() {
        actionSelectedProperty().addListener((obs, o, n) -> {
             if (n != null){
-                mesureProperty.set(String.valueOf(n.getMesure()));
+                mesureProperty.set(String.valueOf(n.getMeasure()));
                 this.setIsDetailableProperty(n.isDetailable());
             }
             else {
@@ -123,8 +124,8 @@ public class ActionViewModel {
                 Action action = actionSelected.get();
                 if(action!=null){
                     int val = Integer.parseInt(n);
-                    action.setMesure(val);
-                    isvalidMesureProperty.set(action.isValidMesure(val));
+                    action.setMeasure(val);
+                    isvalidMesureProperty.set(action.isValidMeasure(val));
                 }
             }catch (NumberFormatException e){
                 isvalidMesureProperty.set(false);
@@ -134,19 +135,19 @@ public class ActionViewModel {
 
     }
     public void removeAction() {
-        programme.removeAction(progIndex.get());
+        program.removeAction(progIndex.get());
     }
 
     public void clearAllActionsProg() {
-        programme.clear();
+        program.clear();
     }
 
     public BooleanBinding isEmptyActionProg() {
-        return Bindings.createBooleanBinding(programme::isEmpty, programme.getActionsProg());
+        return Bindings.createBooleanBinding(program::isEmpty, program.getActionsProgList());
     }
 
     public void duplicateAction() {
-        programme.dupplicate(progIndex.get());
+        program.dupplicate(progIndex.get());
     }
 
     public BooleanBinding isSelectedActionProg() {
@@ -159,20 +160,20 @@ public class ActionViewModel {
 
     public BooleanBinding canMoveDown() {
         return Bindings.createBooleanBinding(() -> {
-            return programme.canMoveDown(progIndex.get());
+            return program.canMoveDown(progIndex.get());
         },progIndex,getActionsProg());
     }
 
     public void moveUp(){
         if (canMoveUp().get()) {
-            programme.up(progIndex.get());
+            program.up(progIndex.get());
             progIndex.set(progIndex.get() - 1);
         }
     }
 
     public void moveDown(){
         if (canMoveDown().get()) {
-            programme.down(progIndex.get());
+            program.down(progIndex.get());
             progIndex.set(progIndex.get() + 1);
         }
     }
@@ -200,12 +201,12 @@ public class ActionViewModel {
 
     public void charger(){
         reinitialiserListeScene();
-        sceneActions.setActuActionStylo(true);
+        sceneActions.setCurrentActionStylo(true);
         setHasChargerScene(true);
     }
 
     public void executer(){
-        if(!programme.isEmpty())
+        if(!program.isEmpty())
             progIndex.set(0);
     }
 
@@ -241,18 +242,18 @@ public class ActionViewModel {
 
         sceneIndex.set(idx+1);
         if (fullyTraversedSceneList().get()){
-            progIndex.set(programme.size()-1);
+            progIndex.set(program.size()-1);
         }else
             progIndex.set(sceneIndex.get());
     }
 
     public void executeAction(){
-        Action action = programme.getActionProg(sceneIndex.get());
+        Action action = program.getActionProg(sceneIndex.get());
         if(action != null){
             switch (action) {
-                case ActionAvancer actionAvancer -> sceneActions.avancer(actionAvancer.getMesure());
-                case ActionTournerGauche actionTournerGauche -> sceneActions.tourner((getCursor().getAngle() + actionTournerGauche.getMesure())%360);
-                case ActionTournerDroite actionTournerDroite -> sceneActions.tourner((getCursor().getAngle() - actionTournerDroite.getMesure() + 360)%360);
+                case ActionMoveForward actionMoveForward -> sceneActions.moveForward(actionMoveForward.getMeasure());
+                case ActionTurnLeft actionTurnLeft -> sceneActions.turn((getCursor().getAngle() + actionTurnLeft.getMeasure())%360);
+                case ActionTurnRight actionTournerDroite -> sceneActions.turn((getCursor().getAngle() - actionTournerDroite.getMeasure() + 360)%360);
                 case ActionStylo actionStylo -> sceneActions.changeEtatStylo();
                 default -> {
                     return ;
@@ -263,7 +264,7 @@ public class ActionViewModel {
     }
     public BooleanBinding existIndex(){
         return Bindings.createBooleanBinding(()->{
-            return programme.existIndex(progIndex.get());
+            return program.existIndex(progIndex.get());
         },progIndex);
     }
 
@@ -273,7 +274,7 @@ public class ActionViewModel {
     }
 
     public BooleanBinding fullyTraversedSceneList(){
-        return Bindings.createBooleanBinding(()-> sceneIndex.get() == programme.size(), sceneIndex,getActionsProg());
+        return Bindings.createBooleanBinding(()-> sceneIndex.get() == program.size(), sceneIndex,getActionsProg());
     }
 
     public Cursor getCursor(){
@@ -282,14 +283,18 @@ public class ActionViewModel {
 
     public void generateActionAndAddToProg(String actionType,int actionMesure){
        Action action = switch (actionType){
-            case "MOVE_FORWARD" -> new ActionAvancer(actionMesure);
-            case "TURN_RIGHT" -> new ActionTournerDroite(actionMesure);
-            case "TURN_LEFT" -> new ActionTournerGauche(actionMesure);
+            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
+            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
+            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
             case "PEN_UP" -> new ActionStylo(false);
             case "PEN_DOWN" -> new ActionStylo(true);
             default -> null;
         };
        getActionsProg().add(action);
+    }
+
+    public BooleanBinding canAddToProgram() {
+        return paletteIndex.greaterThanOrEqualTo(0);
     }
 
 

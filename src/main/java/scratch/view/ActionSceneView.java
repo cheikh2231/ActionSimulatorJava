@@ -135,7 +135,7 @@ public class ActionSceneView extends VBox {
         gc.setLineWidth(2);
         if (!actionVm.getLines().isEmpty()) {
             Line lastLine = actionVm.getLines().getLast();
-            gc.strokeLine(lastLine.getPointDepart().getX(), lastLine.getPointDepart().getY(), lastLine.getPointArrive().getX(), lastLine.getPointArrive().getY());
+            gc.strokeLine(lastLine.getStart().getX(), lastLine.getStart().getY(), lastLine.getStop().getX(), lastLine.getStop().getY());
         }
     }
 

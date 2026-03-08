@@ -1,33 +1,29 @@
 package scratch.model;
 
 
-public class ActionAvancer extends Action {
+public class ActionMoveForward extends Action {
 
-    public ActionAvancer(int mesure) {
+    public ActionMoveForward(int mesure) {
        super("Avancer de ",mesure);
     }
 
-    public ActionAvancer() {
+    public ActionMoveForward() {
         super("Avancer de ",30);
     }
 
-    @Override
-    void deplacer(Cursor cursor) {
-        cursor.avancer(getMesure());
-    }
 
     @Override
     public Action copy() {
-        return new ActionAvancer(getMesure());
+        return new ActionMoveForward(getMeasure());
     }
 
     @Override
     public String toString() {
-        return  getName() + getMesure();
+        return  getName() + getMeasure();
     }
 
     @Override
-    public boolean isValidMesure(int mesure) {
+    public boolean isValidMeasure(int mesure) {
         return mesure>0 && mesure<=100;
     }
 

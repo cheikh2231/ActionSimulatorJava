@@ -7,9 +7,9 @@ import javafx.collections.ObservableList;
 public class Actions {
 
     private static ObservableList<Action> actions = FXCollections.observableArrayList(
-            new ActionAvancer(),
-            new ActionTournerGauche(),
-            new ActionTournerDroite(),
+            new ActionMoveForward(),
+            new ActionTurnLeft(),
+            new ActionTurnRight(),
             new ActionStylo(false),
             new ActionStylo(true)
     );
