@@ -55,4 +55,6 @@ public abstract class Action {
     public abstract String getUnity();
 
     public abstract String getDetailsName();
+
+    public abstract String getFormatName();
 }

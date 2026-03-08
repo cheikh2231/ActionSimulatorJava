@@ -2,7 +2,6 @@ package scratch.model;
 
 public class ActionTournerDroite extends ActionTourner{
 
-
     public ActionTournerDroite( int mesure) {
         super("droite de ", mesure);
     }
@@ -22,6 +21,11 @@ public class ActionTournerDroite extends ActionTourner{
     @Override
     public String getDetailsName() {
         return super.getDetailsName() + "droite de ";
+    }
+
+    @Override
+    public String getFormatName() {
+        return super.getFormatName()+"RIGHT";
     }
 
 }

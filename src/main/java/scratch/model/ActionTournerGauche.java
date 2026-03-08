@@ -23,4 +23,10 @@ public class ActionTournerGauche extends ActionTourner{
     public String getDetailsName() {
         return super.getDetailsName() + "gauche de ";
     }
+
+    @Override
+    public String getFormatName() {
+        return super.getFormatName()+"LEFT";
+    }
+
 }

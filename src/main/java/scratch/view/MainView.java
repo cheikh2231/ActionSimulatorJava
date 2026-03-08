@@ -20,7 +20,7 @@ public class MainView extends BorderPane {
 
         container.getChildren().addAll(paletteView,programmeView,sceneView);
         container.setSpacing(25);
-        container.setAlignment(Pos.CENTER);
+//        container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(12));
         this.setTop(fileView);
         this.setCenter(container);

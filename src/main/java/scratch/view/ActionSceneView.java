@@ -64,7 +64,7 @@ public class ActionSceneView extends VBox {
         reinitialiser.setOnAction(actionEvent -> {
             resetCanvas();
             // On réinitialiser notre liste
-            actionVm.reinitialiser();
+            actionVm.reinitialiserListeScene();
         });
         btnsControls.getChildren().addAll(charger, reinitialiser, executer, suivant);
 
@@ -140,6 +140,8 @@ public class ActionSceneView extends VBox {
     }
 
     private void resetCanvas(){
+        // Si actionVm.resetCanvasListenerProperty() est modifié alors la ligne suivante ce lance
+        actionVm.getResetCanvasProperty().addListener((obs, oldVal, newVal) -> resetCanvas());
         // On supprime le canvas et la tortue
         canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawingPane.getChildren().removeAll(turtle, headTurtle);

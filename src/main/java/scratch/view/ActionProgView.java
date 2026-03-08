@@ -1,6 +1,5 @@
 package scratch.view;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -31,7 +30,7 @@ public class ActionProgView extends VBox {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnMonter, btnDescendre, btnDupliquer, btnSupprimer, btnViderTout);
         btnSupprimer.setOnAction(actionEvent -> actionVm.removeAction());
-        btnViderTout.setOnAction(actionEvent -> actionVm.clearAllActions());
+        btnViderTout.setOnAction(actionEvent -> actionVm.clearAllActionsProg());
         btnDupliquer.setOnAction(actionEvent -> actionVm.duplicateAction());
         btnMonter.setOnAction(actionEvent -> actionVm.moveUp());
         btnDescendre.setOnAction(actionEvent -> actionVm.moveDown());

@@ -3,6 +3,8 @@ package scratch.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import javax.swing.text.View;
+
 
 public class SceneActions {
 

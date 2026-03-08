@@ -5,7 +5,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
-
 import java.util.List;
 
 
@@ -22,6 +21,16 @@ public class ActionViewModel {
     private ObjectProperty<Action> actionSelected= new SimpleObjectProperty<>();
     private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
     private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
+    private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
+
+    public BooleanProperty getResetCanvasProperty() {
+        return resetCanvasProperty;
+    }
+
+    public void setResetCanvasProperty() {
+        resetCanvasProperty.set(!resetCanvasProperty.get());
+    }
+
     public ObjectProperty<Action> actionSelectedProperty() {
         return actionSelected;
     }
@@ -39,6 +48,7 @@ public class ActionViewModel {
         this.programme = programme;
         this.sceneActions = sceneActions;
         listeners();
+
     }
 
     public IntegerProperty paletteIndexProperty() {
@@ -127,7 +137,7 @@ public class ActionViewModel {
         programme.removeAction(progIndex.get());
     }
 
-    public void clearAllActions() {
+    public void clearAllActionsProg() {
         programme.clear();
     }
 
@@ -189,7 +199,7 @@ public class ActionViewModel {
     }
 
     public void charger(){
-        reinitialiser();
+        reinitialiserListeScene();
         sceneActions.setActuActionStylo(true);
         setHasChargerScene(true);
     }
@@ -199,7 +209,7 @@ public class ActionViewModel {
             progIndex.set(0);
     }
 
-    public void reinitialiser(){
+    public void reinitialiserListeScene(){
         progIndex.set(-1);
         sceneIndex.set(0);
         sceneActions.resetLines();
@@ -269,6 +279,19 @@ public class ActionViewModel {
     public Cursor getCursor(){
         return sceneActions.getCursor();
     }
+
+    public void generateActionAndAddToProg(String actionType,int actionMesure){
+       Action action = switch (actionType){
+            case "MOVE_FORWARD" -> new ActionAvancer(actionMesure);
+            case "TURN_RIGHT" -> new ActionTournerDroite(actionMesure);
+            case "TURN_LEFT" -> new ActionTournerGauche(actionMesure);
+            case "PEN_UP" -> new ActionStylo(false);
+            case "PEN_DOWN" -> new ActionStylo(true);
+            default -> null;
+        };
+       getActionsProg().add(action);
+    }
+
 
 
 }

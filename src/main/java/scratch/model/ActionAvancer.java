@@ -40,4 +40,9 @@ public class ActionAvancer extends Action {
     public String getUnity() {
         return "  pixels ";
     }
+
+    @Override
+    public String getFormatName() {
+        return "MOVE_FORWARD";
+    }
 }

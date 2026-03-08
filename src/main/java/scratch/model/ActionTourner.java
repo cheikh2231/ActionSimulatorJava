@@ -41,4 +41,11 @@ public class ActionTourner extends Action{
     public String getDetailsName() {
         return " Angle vers la ";
     }
+
+    @Override
+    public String getFormatName() {
+        return "TURN_";
+    }
+
+
 }

@@ -52,4 +52,9 @@ public class ActionStylo extends Action{
     public String getDetailsName() {
         return getName();
     }
+
+    @Override
+    public String getFormatName() {
+        return "PEN_"+(getEtatStyloAbaisser() ? "DOWN":"UP");
+    }
 }
