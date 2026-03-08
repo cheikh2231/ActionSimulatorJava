@@ -34,11 +34,11 @@ public class ActionTourner extends Action{
 
     @Override
     public String getUnity() {
-        return "degrés";
+        return " degrés";
     }
 
     @Override
     public String getDetailsName() {
-        return "Angle vers la ";
+        return " Angle vers la ";
     }
 }

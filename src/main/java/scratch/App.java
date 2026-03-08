@@ -33,7 +33,7 @@ public class App extends Application {
     }
 
     private void createScene(Stage stage, MainView view){
-        Scene scene = new Scene(view, 1040, 800);
+        Scene scene = new Scene(view, 1150, 800);
         scene.getStylesheets().add(
                 getClass().getResource("/style.css").toExternalForm()
         );

@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.geometry.Insets;
 import javafx.scene.layout.VBox;
 
 
@@ -21,7 +22,7 @@ public class ActionPaletteView extends VBox {
         this.getChildren().addAll(title,listAction,btnAdd);
         affichageListViewPalette();
         bindings();
-
+        design();
         manage();
     }
 
@@ -43,5 +44,10 @@ public class ActionPaletteView extends VBox {
     public void bindings(){
         actionVm.paletteIndexProperty().bind(listAction.getSelectionModel().selectedIndexProperty());
         btnAdd.disableProperty().bind(actionVm.paletteIndexProperty().lessThan(0));
+    }
+
+    private void design() {
+        this.setSpacing(10);
+        this.setPadding(new Insets(5));
     }
 }

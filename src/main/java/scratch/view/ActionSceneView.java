@@ -1,5 +1,7 @@
 package scratch.view;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -13,6 +15,7 @@ import javafx.scene.shape.Polygon;
 import scratch.model.Cursor;
 import scratch.model.Line;
 import scratch.viewmodel.ActionViewModel;
+
 
 public class ActionSceneView extends VBox {
     private ActionViewModel actionVm;
@@ -32,6 +35,7 @@ public class ActionSceneView extends VBox {
         this.actionVm = actionVm;
         drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         canvasDesign();
+        viewDesign();
         drawingPane.getChildren().addAll(canvas, headTurtle, turtle);
         this.getChildren().addAll(title, drawingPane, btnsManage());
         bindings();
@@ -39,7 +43,7 @@ public class ActionSceneView extends VBox {
 
 
     public HBox btnsManage() {
-        HBox btnsControls = new HBox();
+        HBox btnsControls = new HBox(10);
         suivant.setOnAction(actionEvent -> {
 
             actionVm.executeAction();
@@ -63,6 +67,9 @@ public class ActionSceneView extends VBox {
             actionVm.reinitialiser();
         });
         btnsControls.getChildren().addAll(charger, reinitialiser, executer, suivant);
+
+        // design des boutons taille et position
+        btnsControls.setAlignment(Pos.CENTER);
         return btnsControls;
     }
 
@@ -140,6 +147,11 @@ public class ActionSceneView extends VBox {
         // on ajout une nouvelle tortue a la bonne position
         drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         drawingPane.getChildren().addAll(turtle, headTurtle);
+    }
+
+    private void viewDesign() {
+        this.setSpacing(10);
+        this.setPadding(new Insets(5));
     }
 
 }
