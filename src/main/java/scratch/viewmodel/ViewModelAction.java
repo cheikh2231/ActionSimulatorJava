@@ -190,6 +190,7 @@ public class ViewModelAction {
 
     public void charger(){
         reinitialiser();
+        sceneActions.setActuActionStylo(true);
         setHasChargerScene(true);
     }
 
@@ -242,7 +243,9 @@ public class ViewModelAction {
                 case ActionAvancer actionAvancer -> sceneActions.avancer(actionAvancer.getMesure());
                 case ActionTournerGauche actionTournerGauche -> sceneActions.tourner((getCursor().getAngle() + actionTournerGauche.getMesure())%360);
                 case ActionTournerDroite actionTournerDroite -> sceneActions.tourner((getCursor().getAngle() - actionTournerDroite.getMesure() + 360)%360);
+                case ActionStylo actionStylo -> sceneActions.changeEtatStylo();
                 default -> {
+                    return ;
                 }
             }
         }
@@ -266,5 +269,6 @@ public class ViewModelAction {
     public Cursor getCursor(){
         return sceneActions.getCursor();
     }
+
 
 }

@@ -125,7 +125,7 @@ public class ViewActionScene extends VBox {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setStroke(Color.BLUE);
         gc.setLineWidth(2);
-        if(!vma.getLines().isEmpty()) {
+        if (!vma.getLines().isEmpty()) {
             Line lastLine = vma.getLines().getLast();
             gc.strokeLine(lastLine.getPointDepart().getX(), lastLine.getPointDepart().getY(), lastLine.getPointArrive().getX(), lastLine.getPointArrive().getY());
         }
