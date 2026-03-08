@@ -1,0 +1,113 @@
+@startuml
+class Action {
+    +copy()
+    +isValidMeasure()
+    +isDetailable()
+    +getUnity()
+    +getDetailsName()
+    +getFormatName()
+}
+
+Action <|-- ActionMoveForward
+Action <|-- ActionTurnLeft
+Action <|-- ActionTurnRight
+Action <|-- ActionPen
+
+class Program {
+    -actionsProg : List<Action>
+    +addAction(idx)
+    +removeAction(idx)
+    +dupplicate(idx)
+    +up(idx)
+    +down(idx)
+    +clear()
+    +size()
+    +existIndex(idx)
+}
+
+class Cursor {
+    -position : Point
+    -angle : int
+    +moveForward(distance)
+    +turn(angle)
+    +setPosition(Point)
+}
+
+class Point {
+    -x : double
+    -y : double
+}
+
+class Line {
+    -start : Point
+    -stop : Point
+}
+
+class SceneActions {
+    -lines : List<Line>
+    -cursor : Cursor
+    -currentActionPen : ActionPen
+    +moveForward(distance)
+    +turn(angle)
+    +switchPenStatus()
+    +resetLines()
+    +getLines()
+    +getCursor()
+}
+
+Program --> Action
+SceneActions --> Cursor
+SceneActions --> Line
+
+class ActionViewModel {
+    -program : Program
+    -sceneActions : SceneActions
+    +addPaletteToProg()
+    +executeAction()
+    +loadFile(file)
+    +reinitialiserListeScene()
+    +generateActionAndAddToProg(type, mesure)
+    +removeAction()
+    +clearAllActionsProg()
+    +duplicateAction()
+    +moveUp()
+    +moveDown()
+}
+
+class MainViewModel {
+    -actionVm : ActionViewModel
+    +getActionVm()
+}
+
+ActionViewModel --> Program
+ActionViewModel --> SceneActions
+MainViewModel --> ActionViewModel
+
+
+class ActionPaletteView {
+    -listAction
+    -btnAdd
+}
+class ActionProgView {
+    -progListView
+    -detailsAction
+}
+class ActionSceneView {
+    -canvas
+    -drawingPane
+}
+class FileView {
+    -actionVm : ActionViewModel
+}
+class MainView {
+}
+class ActionPen{
+    -penDowStatus: BooleanProperty
+}
+ActionPaletteView --> ActionViewModel
+ActionProgView --> ActionViewModel
+ActionSceneView --> ActionViewModel
+FileView --> ActionViewModel
+MainView --> MainViewModel
+
+@enduml

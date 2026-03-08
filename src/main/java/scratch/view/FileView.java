@@ -17,6 +17,7 @@ import java.util.Scanner;
 
 public class FileView extends HBox{
     private ActionViewModel actionVm;
+
     public FileView(ActionViewModel actionVm,Stage stage) {
         this.actionVm = actionVm;
         // Création de la barre de menu, ajout d'un Menu principal "File"
