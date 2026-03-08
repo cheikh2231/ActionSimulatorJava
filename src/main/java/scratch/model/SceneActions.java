@@ -1,0 +1,72 @@
+package scratch.model;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+
+public class SceneActions {
+
+    private ObservableList<Line> lines= FXCollections.observableArrayList();
+    private Cursor cursor;
+    private ActionPen currentActionPen;
+
+    public boolean currentPenDownStatus() {
+        return currentActionPen.getPenDowStatus();
+    }
+
+    public void setCurrentActionPenDown(boolean currentPenDownStatus) {
+        currentActionPen.setPenDownStatus(currentPenDownStatus);
+    }
+
+    public SceneActions(Cursor cursor, ActionPen actionPen) {
+        this.cursor = cursor;
+        this.currentActionPen = actionPen;
+    }
+
+    public void addLine(Line line){
+        this.lines.add(line);
+    }
+
+    public void switchPenStatus(){
+        setCurrentActionPenDown(!currentPenDownStatus());
+    }
+
+    public void resetLines(){
+        this.lines.clear();
+    }
+
+    public void moveForward(double distance){
+
+        Point oldPoints = new Point(cursor.getPosition().getX(), cursor.getPosition().getY());
+        cursor.moveForward(distance);
+
+        double newX = cursor.getPosition().getX();
+        double newY = cursor.getPosition().getY();
+
+        // limites du canvas
+        newX = Math.max(0, Math.min(newX, 500));
+        newY = Math.max(0, Math.min(newY, 500));
+
+        Point newPoints = new Point(newX, newY);
+
+        cursor.setPosition(newPoints);
+
+        // dessine sssi stylo abaisse
+        if(currentPenDownStatus()) {
+            Line line = new Line(oldPoints, newPoints);
+            addLine(line);
+        }
+    }
+
+    public void turn(int angle){
+        cursor.turn(angle);
+    }
+
+    public ObservableList<Line> getLines() {
+        return FXCollections.unmodifiableObservableList(lines);
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+}

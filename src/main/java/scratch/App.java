@@ -2,24 +2,42 @@ package scratch;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
+
 import javafx.stage.Stage;
+import scratch.model.*;
+import scratch.view.MainView;
+import scratch.viewmodel.MainViewModel;
 
 public class App extends Application {
 
     @Override
-    public void start(Stage primaryStage) {
-        Label label = new Label("Hello ANC4 2526");
-        label.setFont(new Font(25));
-        Pane pane = new StackPane();
-        pane.getChildren().add(label);
-        Scene scene = new Scene(pane, 640, 480);
-        primaryStage.setTitle("Scratch");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    public void start(Stage stage) {
+        Program program = new Program();
+        Cursor cursor = new Cursor(0,new Point(200,200));
+        ActionPen actionPen = new ActionPen(true);
+        SceneActions sceneActions = new SceneActions(cursor, actionPen);
+
+        MainViewModel vm = new MainViewModel(program,sceneActions);
+
+        var mainView = new MainView(vm,stage);
+        createScene(stage,mainView);
+
+        stage.show();
+
+    }
+
+    private void createScene(Stage stage, MainView view){
+        Scene scene = new Scene(view, 1300, 800);
+        scene.getStylesheets().add(
+                getClass().getResource("/style.css").toExternalForm()
+        );
+        stage.setTitle("Scratch");
+
+
+        stage.setScene(scene);
+
+
+
     }
 
     public static void main(String[] args) {
