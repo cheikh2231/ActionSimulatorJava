@@ -29,6 +29,7 @@ public class FileView extends HBox{
         BorderPane root = new BorderPane();
         root.setTop(barreDeMenu);
         barreDeMenu.getMenus().add(menuFile);
+        barreDeMenu.prefWidthProperty().bind(stage.widthProperty());
         menuFile.getItems().addAll(buttonNew,buttonOpen,buttonSaveAs,buttonExit);
         this.getChildren().add(root);
     }
