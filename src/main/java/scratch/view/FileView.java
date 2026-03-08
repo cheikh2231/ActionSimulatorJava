@@ -46,25 +46,15 @@ public class FileView extends HBox{
     }
 
     public void openFile(Stage stage){
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open SCR file");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Scratch files", "*.scr")    );
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
-            try {
-                Scanner fileScanner = new Scanner(selectedFile);
-                while(fileScanner.hasNextLine()){
-                    String line = fileScanner.nextLine();
-                    int separatorIndex = line.indexOf(";");
-                    int actionMeasure = Integer.parseInt(line.substring(separatorIndex+1));
-                    String actionType = line.substring(0,separatorIndex);
-
-                    actionVm.generateActionAndAddToProg(actionType,actionMeasure);
-                }
-            }catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            resetAll();
+           actionVm.loadFile(selectedFile);
         }
     }
 

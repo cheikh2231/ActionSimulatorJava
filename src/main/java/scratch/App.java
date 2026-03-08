@@ -14,8 +14,8 @@ public class App extends Application {
     public void start(Stage stage) {
         Program program = new Program();
         Cursor cursor = new Cursor(0,new Point(200,200));
-        ActionStylo actionStylo = new ActionStylo(true);
-        SceneActions sceneActions = new SceneActions(cursor,actionStylo);
+        ActionPen actionPen = new ActionPen(true);
+        SceneActions sceneActions = new SceneActions(cursor, actionPen);
 
         MainViewModel vm = new MainViewModel(program,sceneActions);
 

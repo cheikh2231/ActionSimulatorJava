@@ -3,20 +3,20 @@ package scratch.model;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
-public class ActionStylo extends Action{
-    private BooleanProperty etatStyloAbaisser = new SimpleBooleanProperty(true);
+public class ActionPen extends Action{
+    private final BooleanProperty penDowStatus = new SimpleBooleanProperty(true);
 
-    public ActionStylo(boolean etatStyloAbaisser) {
-        super(etatStyloAbaisser ? "Abaisser stylo":"Lever stylo",0);
-        setEtatStyloAbaisser(etatStyloAbaisser);
+    public ActionPen(boolean penDowStatus) {
+        super(penDowStatus ? "Abaisser stylo":"Lever stylo",0);
+        setPenDownStatus(penDowStatus);
     }
 
-    public boolean getEtatStyloAbaisser() {
-        return etatStyloAbaisser.get();
+    public boolean getPenDowStatus() {
+        return penDowStatus.get();
     }
 
-    public void setEtatStyloAbaisser(boolean etatStylo) {
-        this.etatStyloAbaisser.set(etatStylo);
+    public void setPenDownStatus(boolean etatStylo) {
+        this.penDowStatus.set(etatStylo);
     }
 
     public String getName(){
@@ -25,7 +25,7 @@ public class ActionStylo extends Action{
 
     @Override
     public Action copy() {
-        return new ActionStylo(getEtatStyloAbaisser());
+        return new ActionPen(getPenDowStatus());
     }
 
     @Override
@@ -50,6 +50,6 @@ public class ActionStylo extends Action{
 
     @Override
     public String getFormatName() {
-        return "PEN_"+(getEtatStyloAbaisser() ? "DOWN":"UP");
+        return "PEN_"+(getPenDowStatus() ? "DOWN":"UP");
     }
 }

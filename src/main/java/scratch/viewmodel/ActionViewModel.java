@@ -5,7 +5,11 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
+import scratch.view.FileView;
+
+import java.io.File;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class ActionViewModel {
@@ -201,7 +205,7 @@ public class ActionViewModel {
 
     public void charger(){
         reinitialiserListeScene();
-        sceneActions.setCurrentActionStylo(true);
+        sceneActions.setCurrentActionPenDown(true);
         setHasChargerScene(true);
     }
 
@@ -214,16 +218,17 @@ public class ActionViewModel {
         progIndex.set(-1);
         sceneIndex.set(0);
         sceneActions.resetLines();
+        sceneActions.setCurrentActionPenDown(true);
     }
 
     private boolean hasDuplicate(){
         boolean abaisser = true;
         for (Action action: getActionsProg() ) {
-               if (action instanceof ActionStylo actionStylo){
-                   if (actionStylo.getEtatStyloAbaisser() == abaisser)
+               if (action instanceof ActionPen actionPen){
+                   if (actionPen.getPenDowStatus() == abaisser)
                        return true;
                    else
-                       abaisser = actionStylo.getEtatStyloAbaisser();
+                       abaisser = actionPen.getPenDowStatus();
                }
         }
         return false;
@@ -254,7 +259,7 @@ public class ActionViewModel {
                 case ActionMoveForward actionMoveForward -> sceneActions.moveForward(actionMoveForward.getMeasure());
                 case ActionTurnLeft actionTurnLeft -> sceneActions.turn((getCursor().getAngle() + actionTurnLeft.getMeasure())%360);
                 case ActionTurnRight actionTournerDroite -> sceneActions.turn((getCursor().getAngle() - actionTournerDroite.getMeasure() + 360)%360);
-                case ActionStylo actionStylo -> sceneActions.changeEtatStylo();
+                case ActionPen actionPen -> sceneActions.switchPenStatus();
                 default -> {
                     return ;
                 }
@@ -286,8 +291,8 @@ public class ActionViewModel {
             case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
             case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
             case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
-            case "PEN_UP" -> new ActionStylo(false);
-            case "PEN_DOWN" -> new ActionStylo(true);
+            case "PEN_UP" -> new ActionPen(false);
+            case "PEN_DOWN" -> new ActionPen(true);
             default -> null;
         };
        getActionsProg().add(action);
@@ -297,6 +302,30 @@ public class ActionViewModel {
         return paletteIndex.greaterThanOrEqualTo(0);
     }
 
+    public void resetCursorToCenter(double canvasWidth, double canvasHeight) {
+        sceneActions.getCursor().getPosition().setX(canvasWidth / 2);
+        sceneActions.getCursor().getPosition().setY(canvasHeight / 2);
+        sceneActions.getCursor().setAngle(0);
+    }
 
+    public void loadFile(File file) {
+        try (Scanner fileScanner = new Scanner(file)) {
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+
+                int separatorIndex = line.indexOf(";");
+                int actionMeasure = Integer.parseInt(
+                        line.substring(separatorIndex + 1)
+                );
+
+                String actionType = line.substring(0, separatorIndex);
+
+                generateActionAndAddToProg(actionType, actionMeasure);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

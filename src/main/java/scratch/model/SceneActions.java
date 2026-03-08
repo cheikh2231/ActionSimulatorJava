@@ -8,27 +8,27 @@ public class SceneActions {
 
     private ObservableList<Line> lines= FXCollections.observableArrayList();
     private Cursor cursor;
-    private ActionStylo currentActionStylo;
+    private ActionPen currentActionPen;
 
-    public boolean getCurrentActionStylo() {
-        return currentActionStylo.getEtatStyloAbaisser();
+    public boolean currentPenDownStatus() {
+        return currentActionPen.getPenDowStatus();
     }
 
-    public void setCurrentActionStylo(boolean currentActionStyloEtat) {
-        currentActionStylo.setEtatStyloAbaisser(currentActionStyloEtat);
+    public void setCurrentActionPenDown(boolean currentPenDownStatus) {
+        currentActionPen.setPenDownStatus(currentPenDownStatus);
     }
 
-    public SceneActions(Cursor cursor,ActionStylo actionStylo) {
+    public SceneActions(Cursor cursor, ActionPen actionPen) {
         this.cursor = cursor;
-        this.currentActionStylo = actionStylo;
+        this.currentActionPen = actionPen;
     }
 
     public void addLine(Line line){
         this.lines.add(line);
     }
 
-    public void changeEtatStylo(){
-        setCurrentActionStylo(!getCurrentActionStylo());
+    public void switchPenStatus(){
+        setCurrentActionPenDown(!currentPenDownStatus());
     }
 
     public void resetLines(){
@@ -48,11 +48,11 @@ public class SceneActions {
         newY = Math.max(0, Math.min(newY, 500));
 
         Point newPoints = new Point(newX, newY);
-        System.out.println(oldPoints.getX() + " " + oldPoints.getX() +"  \n  " + newPoints.getX() + " " + newPoints.getY());
+
         cursor.setPosition(newPoints);
-        System.out.println(getLines());
+
         // dessine sssi stylo abaisse
-        if(getCurrentActionStylo()) {
+        if(currentPenDownStatus()) {
             Line line = new Line(oldPoints, newPoints);
             addLine(line);
         }

@@ -102,14 +102,14 @@ public class ActionSceneView extends VBox {
         gcInside.setLineWidth(1);
 
         int heightCanvas = (int) canvas.getHeight();
-        int cellSize = heightCanvas/10;
+        int cellSize = heightCanvas / 10;
         int widthCanvas = (int) canvas.getWidth();
 
         for (int i = cellSize; i < heightCanvas; i += cellSize) {
             gcInside.strokeLine(0, i, heightCanvas, i);// (x1, y1, x2, y2)
         }
         for (int i = cellSize; i < widthCanvas; i += cellSize) {
-            gcInside.strokeLine(i, 0, i,widthCanvas);// (x1, y1, x2, y2)
+            gcInside.strokeLine(i, 0, i, widthCanvas);// (x1, y1, x2, y2)
         }
     }
 
@@ -139,7 +139,7 @@ public class ActionSceneView extends VBox {
         }
     }
 
-    private void resetCanvasView(){
+    private void resetCanvasView() {
         // Si actionVm.resetCanvasListenerProperty() est modifié alors la ligne suivante ce lance
         actionVm.getResetCanvasProperty().addListener((obs, oldVal, newVal) -> resetCanvasView());
         // On supprime le canvas et la tortue
@@ -148,9 +148,7 @@ public class ActionSceneView extends VBox {
         // on redessine un canvas
         setupCanvas();
         //reset position
-        actionVm.getCursor().getPosition().setX(canvas.getWidth() / 2);
-        actionVm.getCursor().getPosition().setY(canvas.getHeight() / 2);
-        actionVm.getCursor().setAngle(0);
+        actionVm.resetCursorToCenter(canvas.getWidth(), canvas.getHeight());
         // on ajout une nouvelle tortue a la bonne position
         drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         drawingPane.getChildren().addAll(turtle, turtleHead);

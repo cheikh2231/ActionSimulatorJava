@@ -10,8 +10,8 @@ public class Actions {
             new ActionMoveForward(),
             new ActionTurnLeft(),
             new ActionTurnRight(),
-            new ActionStylo(false),
-            new ActionStylo(true)
+            new ActionPen(false),
+            new ActionPen(true)
     );
 
     public static ObservableList<Action> getActions() {

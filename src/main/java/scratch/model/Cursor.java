@@ -25,7 +25,8 @@ public class Cursor {
     }
 
     public void setPosition(Point position) {
-        this.position = position;
+        this.position.setX(position.getX());
+        this.position.setY(position.getY());
     }
 
     public int getAngle() {
