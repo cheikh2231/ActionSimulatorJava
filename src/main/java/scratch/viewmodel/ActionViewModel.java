@@ -295,7 +295,8 @@ public class ActionViewModel {
             case "PEN_DOWN" -> new ActionPen(true);
             default -> null;
         };
-       getActionsProg().add(action);
+       if(action !=null)
+           getActionsProg().add(action);
     }
 
     public BooleanBinding canAddToProgram() {
@@ -311,7 +312,7 @@ public class ActionViewModel {
     public void loadFile(File file) {
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
+                String line = fileScanner.nextLine().trim();
 
                 int separatorIndex = line.indexOf(";");
                 int actionMeasure = Integer.parseInt(
