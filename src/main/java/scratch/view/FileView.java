@@ -19,6 +19,7 @@ public class FileView extends HBox{
         root.setTop(barreDeMenu);
         barreDeMenu.getMenus().add(menuFile);
         menuFile.getItems().add(buttonOpen);
+        barreDeMenu.prefWidthProperty().bind(stage.widthProperty());
         this.getChildren().add(root);
     }
 }

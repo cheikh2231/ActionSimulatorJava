@@ -20,7 +20,7 @@ import scratch.viewmodel.ActionViewModel;
 public class ActionSceneView extends VBox {
     private ActionViewModel actionVm;
     private Label title = new Label("Scene");
-    private Canvas canvas = new Canvas(400, 400);
+    private Canvas canvas = new Canvas(500, 500);
     private Button reinitialiser = new Button("Ré-initialiser");
     private Button charger = new Button("Charger");
     private Button executer = new Button("Executer");
@@ -98,11 +98,16 @@ public class ActionSceneView extends VBox {
         GraphicsContext gcInside = canvas.getGraphicsContext2D();
         gcInside.setStroke(Color.LIGHTGRAY);
         gcInside.setLineWidth(1);
-        for (int i = 40; i < 400; i += 40) {
-            gcInside.strokeLine(0, i, 400, i);// (x1, y1, x2, y2)
+
+        int heightCanvas = (int) canvas.getHeight();
+        int celulleCanvas = heightCanvas/10;
+        int widthCanvas = (int) canvas.getWidth();
+
+        for (int i = celulleCanvas; i < heightCanvas; i += celulleCanvas) {
+            gcInside.strokeLine(0, i, heightCanvas, i);// (x1, y1, x2, y2)
         }
-        for (int i = 40; i < 400; i += 40) {
-            gcInside.strokeLine(i, 0, i, 400);// (x1, y1, x2, y2)
+        for (int i = celulleCanvas; i < widthCanvas; i += celulleCanvas) {
+            gcInside.strokeLine(i, 0, i,widthCanvas);// (x1, y1, x2, y2)
         }
     }
 
