@@ -44,8 +44,8 @@ public class SceneActions {
         double newY = cursor.getPosition().getY();
 
         // limites du canvas
-        newX = Math.max(0, Math.min(newX, 500));
-        newY = Math.max(0, Math.min(newY, 500));
+        newX = Math.max(Cursor.TURTLE_SIZE, Math.min(newX, 500 - Cursor.TURTLE_SIZE));
+        newY = Math.max(Cursor.TURTLE_SIZE, Math.min(newY, 500 - Cursor.TURTLE_SIZE));
 
         Point newPoints = new Point(newX, newY);
 
