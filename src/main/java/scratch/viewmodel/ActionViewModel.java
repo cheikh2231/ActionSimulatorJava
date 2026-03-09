@@ -89,8 +89,14 @@ public class ActionViewModel {
 
     public void addPaletteToProg() {
         int idx = paletteIndexProperty().get();
-        if (canAddToProgram().get())
-            program.addAction(idx);
+        int idxProg = progIndex.get();
+        if (canAddToProgram().get()) {
+            if (idxProg == -1) {
+                program.addAction(idx, program.size());
+                return;
+            }
+            program.addAction(idx, idxProg + 1);
+        }
     }
 
     public void setIsDetailableProperty(boolean isDetailableProperty) {
