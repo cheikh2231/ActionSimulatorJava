@@ -131,8 +131,8 @@ public class ActionSceneView extends VBox {
 
     private void drawLine() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setStroke(Color.BLUE);
-        gc.setLineWidth(2);
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1);
         if (!actionVm.getLines().isEmpty()) {
             Line lastLine = actionVm.getLines().getLast();
             gc.strokeLine(lastLine.getStart().getX(), lastLine.getStart().getY(), lastLine.getStop().getX(), lastLine.getStop().getY());

@@ -1,15 +1,19 @@
 package scratch.model;
 
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class Program {
-    private ObservableList<Action> actionsProg = FXCollections.observableArrayList();
+    private ObservableList<Action> actionsProg =
+            FXCollections.observableArrayList(
+                    action -> new Observable[] { action.measureProperty() }
+            );;
 
-    public void addAction(int idx) {
+    public void addAction(int idx,int pos) {
         Action action = Actions.getAction(idx);
         if (action != null)
-            actionsProg.add(action.copy());
+            actionsProg.add(pos,action.copy());
     }
 
     public void removeAction(int idx) {

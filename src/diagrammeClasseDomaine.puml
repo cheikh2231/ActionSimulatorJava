@@ -1,0 +1,60 @@
+@startuml
+class Action {
+    - name
+    - measure
+    + copy()
+}
+
+class ActionMoveForward
+class ActionTurnLeft
+class ActionTurnRight
+class ActionPen
+
+Action <|-- ActionMoveForward
+Action <|-- ActionTurnLeft
+Action <|-- ActionTurnRight
+Action <|-- ActionPen
+
+class Program {
+    - actions
+    + addAction()
+    + removeAction()
+}
+
+class SceneActions {
+    - lines
+    - cursor
+    + moveForward()
+    + turn()
+}
+
+class Cursor {
+    - position
+    - angle
+    + moveForward()
+    + turn()
+}
+
+class Line {
+    - start
+    - end
+}
+
+class ActionViewModel
+class MainViewModel
+class ActionProgView
+class ActionSceneView
+class ActionPaletteView
+class MainView
+
+Program --> Action   : contient
+SceneActions --> Cursor
+SceneActions --> Line : dessine
+ActionViewModel --> Program
+ActionViewModel --> SceneActions
+ActionProgView --> ActionViewModel
+ActionSceneView --> ActionViewModel
+ActionPaletteView --> ActionViewModel
+MainView --> MainViewModel
+MainViewModel --> ActionViewModel
+@enduml

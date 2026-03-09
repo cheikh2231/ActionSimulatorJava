@@ -89,8 +89,14 @@ public class ActionViewModel {
 
     public void addPaletteToProg() {
         int idx = paletteIndexProperty().get();
-        if (canAddToProgram().get())
-            program.addAction(idx);
+        int idxProg = progIndex.get();
+        if (canAddToProgram().get()) {
+            if (idxProg == -1) {
+                program.addAction(idx, program.size());
+                return;
+            }
+            program.addAction(idx, idxProg + 1);
+        }
     }
 
     public void setIsDetailableProperty(boolean isDetailableProperty) {
@@ -295,7 +301,9 @@ public class ActionViewModel {
             case "PEN_DOWN" -> new ActionPen(true);
             default -> null;
         };
-       getActionsProg().add(action);
+       if(action !=null) {
+           getActionsProg().add(action);
+       }
     }
 
     public BooleanBinding canAddToProgram() {
@@ -311,7 +319,7 @@ public class ActionViewModel {
     public void loadFile(File file) {
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
+                String line = fileScanner.nextLine().trim();
 
                 int separatorIndex = line.indexOf(";");
                 int actionMeasure = Integer.parseInt(
