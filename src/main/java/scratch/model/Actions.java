@@ -11,7 +11,8 @@ public class Actions {
             new ActionTurnLeft(),
             new ActionTurnRight(),
             new ActionPen(false),
-            new ActionPen(true)
+            new ActionPen(true),
+            new VariableDeclaration("")
     );
 
     public static ObservableList<Action> getActions() {

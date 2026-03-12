@@ -31,7 +31,7 @@ public abstract class Action {
         return measure;
     }
 
-    public void setMeasure(int measure) {
+    public void setMeasure(Integer measure) {
         if (isValidMeasure(measure))
             this.measure.setValue(measure);
     }
