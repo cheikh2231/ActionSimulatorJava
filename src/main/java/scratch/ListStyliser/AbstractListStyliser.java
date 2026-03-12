@@ -40,9 +40,12 @@ public abstract class AbstractListStyliser extends ListCell<Action> {
         } else if (name.contains("tourner")) {
             circle.getStyleClass().add("text-red");
             label.getStyleClass().add("text-red");
-        } else {
+        } else if(name.contains("stylo")) {
             circle.getStyleClass().add("text-green");
             label.getStyleClass().add("text-green");
+        }else{
+            circle.getStyleClass().add("text-turquoise");
+            label.getStyleClass().add("text-turquoise");
         }
     }
 }

@@ -1,10 +1,27 @@
 package scratch.model;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variable extends Action{
     public final Map<Variable,Integer> variableMap = new HashMap<>();
+    private final StringProperty nameVariableProperty= new SimpleStringProperty("");
+
+    public String getNameVariable() {
+        return nameVariableProperty.get();
+    }
+
+    public StringProperty nameVariableProperty() {
+        return nameVariableProperty;
+    }
+
+    public void setNameVariable(String nameVariable) {
+        nameVariableProperty.set(nameVariable);
+    }
+
     public Variable(String name, Integer measure) {
         super(name, measure);
     }

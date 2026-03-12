@@ -15,6 +15,7 @@ public class ActionProgView extends VBox {
     private final Label actionProgLabel = new Label("Programme");
     private final Label measureUnitLabel = new Label();
     private final TextField measureTextField = new TextField();
+    private final TextField variableNameTextField = new TextField();
     private final Label actionNameLabel = new Label();
     private final Label measureErrorLabel = new Label(" invalid value");
     private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
@@ -42,9 +43,8 @@ public class ActionProgView extends VBox {
         bindings();
         setupLayout();
         this.progListView.setItems(actionVm.getActionsProg());
-        setupMeasureTextfield();
+        setupMeasureVariableNameTextfield();
         configListViewProg();
-
         this.getChildren().addAll(actionProgLabel, progListView, btnsManage(), detailsAction);
     }
 
@@ -52,7 +52,7 @@ public class ActionProgView extends VBox {
         final VBox principalBox = new VBox();
         final HBox detailsHBox = new HBox();
 
-        detailsHBox.getChildren().addAll(actionNameLabel, measureTextField, measureUnitLabel);
+        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, measureTextField, measureUnitLabel);
         principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
 
         return principalBox;
@@ -66,7 +66,8 @@ public class ActionProgView extends VBox {
         return errorBox;
     }
 
-    private void setupMeasureTextfield() {
+    private void setupMeasureVariableNameTextfield() {
+        variableNameTextField.setPrefWidth(36);
         measureTextField.setPrefWidth(36);
         measureTextField.setAlignment(Pos.CENTER);
     }
@@ -77,7 +78,11 @@ public class ActionProgView extends VBox {
         measureUnitLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
         actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
         measureTextField.textProperty().bindBidirectional(actionVm.getMesureProperty());
+        measureTextField.visibleProperty().bind(actionVm.isVariableDeclaration().not());
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
+        variableNameTextField.visibleProperty().bind(actionVm.isVariableDeclaration());
+        variableNameTextField.managedProperty().bind(actionVm.isVariableDeclaration());
+        variableNameTextField.textProperty().bindBidirectional(actionVm.getVariableNameProperty());
         btnUp.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
         btnDown.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());

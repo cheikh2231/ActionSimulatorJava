@@ -20,12 +20,14 @@ public class ActionViewModel {
     private IntegerProperty paletteIndex = new SimpleIntegerProperty(-1);
     private IntegerProperty progIndex = new SimpleIntegerProperty(-1);
     private StringProperty mesureProperty = new SimpleStringProperty();
+    private StringProperty variableNameProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
     private ObjectProperty<Action> actionSelected= new SimpleObjectProperty<>();
     private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
     private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
+
 
     public BooleanProperty getResetCanvasProperty() {
         return resetCanvasProperty;
@@ -46,7 +48,6 @@ public class ActionViewModel {
     public ObservableList<Action> getActionPalette() {
         return FXCollections.unmodifiableObservableList(actionsPalette);
     }
-
 
     public ActionViewModel(Program program, SceneActions sceneActions) {
         this.program = program;
@@ -141,6 +142,13 @@ public class ActionViewModel {
                 isvalidMesureProperty.set(false);
             }
 
+        });
+
+        variableNameProperty.addListener((observableValue, s, t1) ->
+        {
+            VariableDeclaration va = (VariableDeclaration) actionSelected.get();
+
+            va.setNameVariable(t1);
         });
 
     }
@@ -335,5 +343,21 @@ public class ActionViewModel {
             throw new RuntimeException(e);
         }
     }
+
+
+    public BooleanBinding isVariableDeclaration(){
+        return Bindings.createBooleanBinding(() -> {
+                    return actionSelected.get() instanceof VariableDeclaration || actionSelected.get() instanceof VariableAssignation;
+                },progIndex
+        );
+    }
+    public StringProperty getVariableNameProperty() {
+        return variableNameProperty;
+    }
+
+//    public void setVariableNameProperty(String variableName){
+//        variableNameProperty.set(variableName);
+//    }
+
 
 }
