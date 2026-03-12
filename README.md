@@ -4,9 +4,8 @@
 
 ### Liste des bugs connus
 
-* bug 1
-* bug 2
-* ...
+* Bug 1 : lorsqu'une action de la palette est sélectionnée, un double-clic sur une zone vide de la palette ajoute quand même l'action, même si le curseur n'est pas sur une action.
+
 
 ### Liste des fonctionnalités supplémentaires
 
