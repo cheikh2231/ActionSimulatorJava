@@ -169,10 +169,7 @@ public class ActionViewModel {
 
             if (existingVariable != null) {
                 // cas1 : la variable est déjà dans la map
-
-                boolean nameUnchanged = !vD.getNameVariable().equals(oldName);
-
-                if (nameUnchanged) return;// On ne modifie que si l'ancien nom correspond bien à ce qu'on remplace
+                if (vD.getNameVariable().equals(newName)) return; // inutile de traiter si le nom n'a pas changé
 
                 vD.setNameVariable(newName);
                 removeVariableFromVariableMap();
