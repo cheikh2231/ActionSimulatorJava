@@ -1,22 +1,21 @@
 package scratch.model;
 
 public class VariableDeclaration extends Variable {
-    public static int id = 0;
-
-    public VariableDeclaration(String nameVariable) {
+    private static Integer id=0;
+    public VariableDeclaration() {
         super("Déclaration variable ", 0);
-        ++id;
+        id++;
     }
 
-    public void declare(){
-        variableMap.put(this,0);
+    public void addToVariableMap(){
+        variableMap.put(this,getNameVariable());
         System.out.println(variableMap);
     }
 
 
     @Override
     public Action copy() {
-        return new VariableDeclaration(super.getNameVariable());
+        return new VariableDeclaration();
     }
 
 

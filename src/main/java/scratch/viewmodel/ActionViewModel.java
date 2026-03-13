@@ -9,6 +9,7 @@ import scratch.view.FileView;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -149,16 +150,52 @@ public class ActionViewModel {
 
         variableNameProperty.addListener((observableValue, o, n) ->
         {
-            VariableDeclaration va = (VariableDeclaration) actionSelected.get();
-            va.setNameVariable(n);
-            va.declare();
-        });
+            Map.Entry<Variable,String> variable = Variable.variableMap.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getKey().equals(actionSelected.get()))
+                    .findFirst().orElse(null);
+            Map.Entry<Variable,String> valueDajaPris = Variable.variableMap.entrySet()
+                    .stream()
+                    .filter(entry -> entry.getValue().equals(n))
+                    .findFirst().orElse(null);
 
+            if(variable != null){
+                System.out.println("existe déjà");
+                VariableDeclaration vD = (VariableDeclaration) variable.getKey();
+                if(!n.isEmpty() && vD.getNameVariable().equals(o) ) {
+                    vD.setNameVariable(n);
+                        removeVariableFromVariableMap();
+                    if(valueDajaPris == null){
+                        vD.addToVariableMap();
+                    }else{
+                        Variable.variableMap.remove(vD);
+                        System.out.println(Variable.variableMap);
+                    }
+                }
+//                if(n.isEmpty()){
+//                    Variable.variableMap.remove(variable.getKey());
+//                }
+            }else{
+                System.out.println("existe pas");
+                VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
+                if(!n.isEmpty()) {
+                    vD.setNameVariable(n);
+                    vD.addToVariableMap();
+                }
+            }
+        });
     }
+
     public void removeAction() {
         program.removeAction(progIndex.get());
+        removeVariableFromVariableMap();
     }
+    public void removeVariableFromVariableMap(){
+        if(actionSelected.get() instanceof VariableDeclaration vD) {
+            Variable.variableMap.remove(vD.getNameVariable());
+        }
 
+    }
     public void clearAllActionsProg() {
         program.clear();
     }

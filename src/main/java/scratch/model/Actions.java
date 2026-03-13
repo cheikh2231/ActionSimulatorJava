@@ -12,7 +12,7 @@ public class Actions {
             new ActionTurnRight(),
             new ActionPen(false),
             new ActionPen(true),
-            new VariableDeclaration(""),
+            new VariableDeclaration(),
             new VariableAssignation()
     );
 
