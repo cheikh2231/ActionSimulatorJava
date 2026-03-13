@@ -148,40 +148,50 @@ public class ActionViewModel {
 
         });
 
-        variableNameProperty.addListener((observableValue, o, n) ->
-        {
-            Map.Entry<Variable,String> variable = Variable.variableMap.entrySet()
+        variableNameProperty.addListener((observableValue, oldName, newName) -> {
+
+            // Cherche lentrée dans variableMap correspondant à l'action sélectionnée
+            Map.Entry<Variable,String> existingVariable = Variable.variableMap.entrySet()
                     .stream()
                     .filter(entry -> entry.getKey().equals(actionSelected.get()))
                     .findFirst().orElse(null);
-            Map.Entry<Variable,String> valueDajaPris = Variable.variableMap.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getValue().equals(n))
-                    .findFirst().orElse(null);
 
-            if(variable != null){
-                System.out.println("existe déjà");
-                VariableDeclaration vD = (VariableDeclaration) variable.getKey();
-                if(!n.isEmpty() && vD.getNameVariable().equals(o) ) {
-                    vD.setNameVariable(n);
-                        removeVariableFromVariableMap();
-                    if(valueDajaPris == null){
-                        vD.addToVariableMap();
-                    }else{
-                        Variable.variableMap.remove(vD);
-                        System.out.println(Variable.variableMap);
-                    }
+            // Vérifie si le nouveau nom est déjà utilisé par une autre variable
+            boolean newNameAlreadyTaken = Variable.variableMap.values()
+                    .stream()
+                    .anyMatch(value -> value.equals(newName));
+
+
+            // ignore les changements si le nouveau nom est vide
+            if (newName.isEmpty()) return;
+
+            VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
+
+            if (existingVariable != null) {
+                // cas1 : la variable est déjà dans la map
+
+                boolean nameUnchanged = !vD.getNameVariable().equals(oldName);
+
+                if (nameUnchanged) return;// On ne modifie que si l'ancien nom correspond bien à ce qu'on remplace
+
+                vD.setNameVariable(newName);
+                removeVariableFromVariableMap();
+
+                if (!newNameAlreadyTaken) {
+                    // Le nouveau nom est libre : on peut l'ajouter
+                    vD.addToVariableMap();
+                } else {
+                    // Le nouveau nom est déjà pris : on retire simplement la variable
+                    Variable.variableMap.remove(vD);
                 }
-//                if(n.isEmpty()){
-//                    Variable.variableMap.remove(variable.getKey());
-//                }
-            }else{
-                System.out.println("existe pas");
-                VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
-                if(!n.isEmpty()) {
-                    vD.setNameVariable(n);
+            } else {
+                // cas2: la variable n'est pas encore dans la map
+
+                if (!newNameAlreadyTaken) {
+                    vD.setNameVariable(newName);
                     vD.addToVariableMap();
                 }
+                // Si le nom est déjà pris, on ne fait rien
             }
         });
     }

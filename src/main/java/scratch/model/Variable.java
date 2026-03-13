@@ -9,7 +9,6 @@ import java.util.Map;
 public class Variable extends Action{
 
     public static final Map<Variable,String> variableMap = new HashMap<>();
-
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
 
     public Variable(String name, Integer measure) {
