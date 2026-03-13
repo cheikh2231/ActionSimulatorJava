@@ -163,17 +163,20 @@ public class ActionViewModel {
 
 
             // ignore les changements si le nouveau nom est vide
-            if (newName.isEmpty()) return;
+            if (newName.isEmpty() && existingVariable == null) return;
 
             VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
 
             if (existingVariable != null) {
+
                 // cas1 : la variable est déjà dans la map
                 if (vD.getNameVariable().equals(newName)) return; // inutile de traiter si le nom n'a pas changé
 
                 vD.setNameVariable(newName);
-                removeVariableFromVariableMap();
-
+                if(newName.isEmpty()) {
+                    removeVariableFromVariableMap();
+                    return;
+                }
                 if (!newNameAlreadyTaken) {
                     // Le nouveau nom est libre : on peut l'ajouter
                     vD.addToVariableMap();
@@ -199,7 +202,7 @@ public class ActionViewModel {
     }
     public void removeVariableFromVariableMap(){
         if(actionSelected.get() instanceof VariableDeclaration vD) {
-            Variable.variableMap.remove(vD.getNameVariable());
+            Variable.variableMap.remove(vD);
         }
 
     }
