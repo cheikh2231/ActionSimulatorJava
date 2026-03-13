@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Variable extends Action{
 
-    public final Map<Variable,Integer> variableMap = new HashMap<>();
+    public static final Map<Variable,Integer> variableMap = new HashMap<>();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
 
     public Variable(String name, Integer measure) {

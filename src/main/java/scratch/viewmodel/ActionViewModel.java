@@ -117,6 +117,9 @@ public class ActionViewModel {
        actionSelectedProperty().addListener((obs, o, n) -> {
             if (n != null){
                 mesureProperty.set(String.valueOf(n.getMeasure()));
+                if (n instanceof VariableDeclaration vD){
+                    variableNameProperty.set(vD.getNameVariable());
+                }
                 this.setIsDetailableProperty(n.isDetailable());
             }
             else {
