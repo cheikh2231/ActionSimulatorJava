@@ -7,8 +7,10 @@ public class VariableDeclaration extends Variable {
         super("Déclaration variable ", 0);
         ++id;
     }
+
     public void declare(){
         variableMap.put(this,0);
+        System.out.println(variableMap);
     }
 
 

@@ -7,8 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Variable extends Action{
+
     public final Map<Variable,Integer> variableMap = new HashMap<>();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
+
+    public Variable(String name, Integer measure) {
+        super(name, measure);
+    }
 
     public String getNameVariable() {
         return nameVariableProperty.get();
@@ -20,10 +25,6 @@ public class Variable extends Action{
 
     public void setNameVariable(String nameVariable) {
         nameVariableProperty.set(nameVariable);
-    }
-
-    public Variable(String name, Integer measure) {
-        super(name, measure);
     }
 
     @Override
@@ -45,5 +46,13 @@ public class Variable extends Action{
     public String getFormatName() {
         return "";
     }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                "variableMap=" + variableMap.size()+
+                '}';
+    }
+
 
 }

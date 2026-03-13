@@ -144,11 +144,11 @@ public class ActionViewModel {
 
         });
 
-        variableNameProperty.addListener((observableValue, s, t1) ->
+        variableNameProperty.addListener((observableValue, o, n) ->
         {
             VariableDeclaration va = (VariableDeclaration) actionSelected.get();
-
-            va.setNameVariable(t1);
+            va.setNameVariable(n);
+            va.declare();
         });
 
     }
@@ -300,7 +300,7 @@ public class ActionViewModel {
         return sceneActions.getCursor();
     }
 
-    public void generateActionAndAddToProg(String actionType,int actionMesure){
+    public void generateActionFromFileAndAddToProg(String actionType,int actionMesure){
        Action action = switch (actionType){
             case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
             case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
@@ -336,7 +336,7 @@ public class ActionViewModel {
 
                 String actionType = line.substring(0, separatorIndex);
 
-                generateActionAndAddToProg(actionType, actionMeasure);
+                generateActionFromFileAndAddToProg(actionType, actionMeasure);
             }
 
         } catch (Exception e) {
@@ -355,9 +355,6 @@ public class ActionViewModel {
         return variableNameProperty;
     }
 
-//    public void setVariableNameProperty(String variableName){
-//        variableNameProperty.set(variableName);
-//    }
 
 
 }
