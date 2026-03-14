@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Scanner;
 
 public class FileView extends HBox{
     private ActionViewModel actionVm;
@@ -41,7 +40,7 @@ public class FileView extends HBox{
     }
 
     public void resetAll(){
-        actionVm.clearAllActionsProg();
+        actionVm.clearAllActionsProgAndVariables();
         actionVm.reinitialiserListeScene();
         actionVm.setResetCanvasProperty();
     }

@@ -1,14 +1,13 @@
 package scratch.model;
 
 public class VariableDeclaration extends Variable {
-    private static Integer id=0;
+
     public VariableDeclaration() {
         super("Déclaration variable ", 0);
-        id++;
     }
 
     public void addToVariableMap(){
-        variableMap.put(this,getNameVariable());
+        variableMap.put(getNameVariable(),this);
         System.out.println(variableMap);
     }
 

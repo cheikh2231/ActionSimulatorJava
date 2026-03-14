@@ -30,7 +30,7 @@ public class ActionProgView extends VBox {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
         btnDelete.setOnAction(actionEvent -> actionVm.removeAction());
-        btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProg());
+        btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProgAndVariables());
         btnDuplicate.setOnAction(actionEvent -> actionVm.duplicateAction());
         btnUp.setOnAction(actionEvent -> actionVm.moveUp());
         btnDown.setOnAction(actionEvent -> actionVm.moveDown());

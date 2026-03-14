@@ -5,7 +5,6 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import scratch.model.*;
-import scratch.view.FileView;
 
 import java.io.File;
 import java.util.List;
@@ -28,7 +27,7 @@ public class ActionViewModel {
     private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
     private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
-
+    private boolean isSelected = false;
 
     public BooleanProperty getResetCanvasProperty() {
         return resetCanvasProperty;
@@ -113,14 +112,17 @@ public class ActionViewModel {
     public StringProperty getMesureProperty() {
         return mesureProperty;
     }
-
+// val   autre var
     public void listeners() {
        actionSelectedProperty().addListener((obs, o, n) -> {
+           // flag pour la selection
+           isSelected = true;
             if (n != null){
                 mesureProperty.set(String.valueOf(n.getMeasure()));
                 if (n instanceof VariableDeclaration vD){
                     variableNameProperty.set(vD.getNameVariable());
-                }
+                }else
+                    variableNameProperty.set("");
                 this.setIsDetailableProperty(n.isDetailable());
             }
             else {
@@ -128,6 +130,8 @@ public class ActionViewModel {
                 this.setIsDetailableProperty(false);
             }
             isvalidMesureProperty.set(true);
+            //remet la selection a faux
+            isSelected = false;
         });
 
         mesureProperty.addListener((obs, o, n) -> {
@@ -142,72 +146,57 @@ public class ActionViewModel {
                     action.setMeasure(val);
                     isvalidMesureProperty.set(action.isValidMeasure(val));
                 }
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e){
                 isvalidMesureProperty.set(false);
             }
 
         });
 
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
-
-            // Cherche lentrée dans variableMap correspondant à l'action sélectionnée
-            Map.Entry<Variable,String> existingVariable = Variable.variableMap.entrySet()
-                    .stream()
-                    .filter(entry -> entry.getKey().equals(actionSelected.get()))
-                    .findFirst().orElse(null);
-
-            // Vérifie si le nouveau nom est déjà utilisé par une autre variable
-            boolean newNameAlreadyTaken = Variable.variableMap.values()
-                    .stream()
-                    .anyMatch(value -> value.equals(newName));
-
-
-            // ignore les changements si le nouveau nom est vide
-            if (newName.isEmpty() && existingVariable == null) return;
+            // si on est entrain de selectionner on fait rien
+            if (isSelected) return;
+            // si rien ne change on fait rien
+            if (newName == null || newName.equals(oldName)) return;
 
             VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
-
-            if (existingVariable != null) {
-
-                // cas1 : la variable est déjà dans la map
-                if (vD.getNameVariable().equals(newName)) return; // inutile de traiter si le nom n'a pas changé
-
+            Map<String,Variable> map = Variable.variableMap;
+            boolean alreadyExist = map.containsKey(newName);
+            // le nouveau nom est vide on supp l'ancien
+            if (newName.isEmpty()){
+                if (oldName != null && !oldName.isEmpty()){
+                     map.remove(oldName);
+                }
                 vD.setNameVariable(newName);
-                if(newName.isEmpty()) {
-                    removeVariableFromVariableMap();
-                    return;
-                }
-                if (!newNameAlreadyTaken) {
-                    // Le nouveau nom est libre : on peut l'ajouter
-                    vD.addToVariableMap();
-                } else {
-                    // Le nouveau nom est déjà pris : on retire simplement la variable
-                    Variable.variableMap.remove(vD);
-                }
-            } else {
-                // cas2: la variable n'est pas encore dans la map
-
-                if (!newNameAlreadyTaken) {
-                    vD.setNameVariable(newName);
-                    vD.addToVariableMap();
-                }
-                // Si le nom est déjà pris, on ne fait rien
+                return;
             }
+
+            // mettre a jour le map
+            if (oldName != null && !oldName.isEmpty() && map.get(oldName).equals(vD)){
+                map.remove(oldName);
+            }
+            // si ca existe et que ca m'appartient pas
+            if (alreadyExist && map.get(newName) != vD){
+                vD.setNameVariable(newName);
+                return;
+            }
+
+            vD.setNameVariable(newName);
+            vD.addToVariableMap();
         });
     }
 
     public void removeAction() {
-        program.removeAction(progIndex.get());
-        removeVariableFromVariableMap();
-    }
-    public void removeVariableFromVariableMap(){
-        if(actionSelected.get() instanceof VariableDeclaration vD) {
-            Variable.variableMap.remove(vD);
+        Action selected = program.getActionProg(progIndex.get());
+        if(selected instanceof VariableDeclaration vD) {
+            Variable.variableMap.remove(vD.getNameVariable());
         }
+        program.removeAction(progIndex.get());
 
     }
-    public void clearAllActionsProg() {
+
+    public void clearAllActionsProgAndVariables() {
         program.clear();
+        Variable.variableMap.clear();
     }
 
     public BooleanBinding isEmptyActionProg() {
