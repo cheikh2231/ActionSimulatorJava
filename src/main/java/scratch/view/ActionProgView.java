@@ -17,7 +17,7 @@ public class ActionProgView extends VBox {
     private final TextField measureTextField = new TextField();
     private final TextField variableNameTextField = new TextField();
     private final Label actionNameLabel = new Label();
-    private final Label measureErrorLabel = new Label(" invalid value");
+    private final Label textfieldsErrorLabel = new Label(" invalid value");
     private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
     private final Button btnUp = new Button("Monter");
     private final Button btnDown = new Button("Descendre");
@@ -61,8 +61,8 @@ public class ActionProgView extends VBox {
 
     private HBox createErrorLabelBox() {
         final HBox errorBox = new HBox();
-        measureErrorLabel.setTextFill(Color.RED);
-        errorBox.getChildren().add(measureErrorLabel);
+        textfieldsErrorLabel.setTextFill(Color.RED);
+        errorBox.getChildren().add(textfieldsErrorLabel);
         return errorBox;
     }
 
@@ -88,12 +88,14 @@ public class ActionProgView extends VBox {
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
-        measureErrorLabel.managedProperty().bind(actionVm.isValidMesureProperty().not());
-        measureErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not());
+        textfieldsErrorLabel.managedProperty().bind(((actionVm.isVariableDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not().or(actionVm.isValidVariableNameProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
         actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
+
+
     }
 
     private void configListViewProg() {
