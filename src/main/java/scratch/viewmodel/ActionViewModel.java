@@ -127,7 +127,8 @@ public class ActionViewModel {
             isSelected = true;
             if (n != null) {
                 mesureProperty.set(String.valueOf(n.getMeasure()));
-                if (n instanceof VariableDeclaration vD) {
+                if (n.getActionType() ==  ActionType.VARIABLEDECLARATION) {
+                    VariableDeclaration vD = (VariableDeclaration) n;
                     variableNameProperty.set(vD.getNameVariable());
                 } else
                     variableNameProperty.set("");
@@ -200,11 +201,11 @@ public class ActionViewModel {
 
     public void removeAction() {
         Action selected = program.getActionProg(progIndex.get());
-        if (selected instanceof VariableDeclaration vD) {
+        if (selected.getActionType() ==  ActionType.VARIABLEDECLARATION) {
+            VariableDeclaration vD = (VariableDeclaration) selected;
             Variable.variableMap.remove(vD.getNameVariable());
         }
         program.removeAction(progIndex.get());
-
     }
 
     public void clearAllActionsProgAndVariables() {
@@ -252,10 +253,12 @@ public class ActionViewModel {
         return isvalidMesureProperty;
     }
 
-
+    // program has anomalies
+    // consequences => btn charger desactiver
+    // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-            return hasDuplicate() || isEmptyActionProg().get();
+            return program.hasAnomalies() || isEmptyActionProg().get();
         }, getActionsProg());
     }
 
@@ -287,18 +290,7 @@ public class ActionViewModel {
         sceneActions.setCurrentActionPenDown(true);
     }
 
-//    private boolean hasDuplicate() {
-//        boolean abaisser = true;
-//        for (Action action : getActionsProg()) {
-//            if (action == ActionType.ACTIONPEN) {
-//                if (actionPen.getPenDowStatus() == abaisser)
-//                    return true;
-//                else
-//                    abaisser = actionPen.getPenDowStatus();
-//            }
-//        }
-//        return false;
-//    }
+
 
     public void setHasChargerScene(boolean hasChargerScene) {
         this.hasChargerScene.set(hasChargerScene);
@@ -390,9 +382,10 @@ public class ActionViewModel {
     }
 
 
-    public BooleanBinding isVariableDeclaration() {
+    public BooleanBinding isVariableAssignationOrDecla() {
         return Bindings.createBooleanBinding(() -> {
-                    return actionSelected.get() instanceof VariableDeclaration || actionSelected.get() instanceof VariableAssignation;
+                    return actionSelected.get().getActionType() == ActionType.VARIABLEDECLARATION ||
+                            actionSelected.get().getActionType() == ActionType.VARIABLEASSIGNATION;
                 }, progIndex
         );
     }

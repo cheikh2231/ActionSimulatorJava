@@ -77,4 +77,38 @@ public class Program {
         return actionsProg.isEmpty();
     }
 
+
+    private boolean hasDuplicatePenStatus() {
+        boolean abaisser = true;
+        for (Action action : getActionsProgList()) {
+            if (action.getActionType() == ActionType.ACTIONPEN) {
+                ActionPen actionPen = (ActionPen) action;
+                if (actionPen.getPenDownStatus() == abaisser)
+                    return true;
+                else
+                    abaisser = actionPen.getPenDownStatus();
+            }
+        }
+        return false;
+    }
+
+    public boolean hasAnomalies(){
+        return hasDuplicatePenStatus() || hasActionBeforeDecla();
+    }
+
+    private boolean hasActionBeforeDecla(){
+        boolean hasActionNotDecla = false;
+        if (getActionsProgList().stream().noneMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)){
+            return false;
+        }
+        for (Action a  : getActionsProgList()){
+            if (a.getActionType() != ActionType.VARIABLEDECLARATION){
+                hasActionNotDecla = true;
+            }else if (hasActionNotDecla){
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -11,7 +11,7 @@ public class SceneActions {
     private ActionPen currentActionPen;
 
     public boolean currentPenDownStatus() {
-        return currentActionPen.getPenDowStatus();
+        return currentActionPen.getPenDownStatus();
     }
 
     public void setCurrentActionPenDown(boolean currentPenDownStatus) {

@@ -78,17 +78,17 @@ public class ActionProgView extends VBox {
         measureUnitLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
         actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
         measureTextField.textProperty().bindBidirectional(actionVm.getMesureProperty());
-        measureTextField.visibleProperty().bind(actionVm.isVariableDeclaration().not());
+        measureTextField.visibleProperty().bind(actionVm.isVariableAssignationOrDecla().not());
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
-        variableNameTextField.visibleProperty().bind(actionVm.isVariableDeclaration());
-        variableNameTextField.managedProperty().bind(actionVm.isVariableDeclaration());
+        variableNameTextField.visibleProperty().bind(actionVm.isVariableAssignationOrDecla());
+        variableNameTextField.managedProperty().bind(actionVm.isVariableAssignationOrDecla());
         variableNameTextField.textProperty().bindBidirectional(actionVm.getVariableNameProperty());
         btnUp.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
         btnDown.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
-        textfieldsErrorLabel.managedProperty().bind(((actionVm.isVariableDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.managedProperty().bind(((actionVm.isVariableAssignationOrDecla()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
         textfieldsErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not().or(actionVm.isValidVariableNameProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
