@@ -287,18 +287,18 @@ public class ActionViewModel {
         sceneActions.setCurrentActionPenDown(true);
     }
 
-    private boolean hasDuplicate() {
-        boolean abaisser = true;
-        for (Action action : getActionsProg()) {
-            if (action instanceof ActionPen actionPen) {
-                if (actionPen.getPenDowStatus() == abaisser)
-                    return true;
-                else
-                    abaisser = actionPen.getPenDowStatus();
-            }
-        }
-        return false;
-    }
+//    private boolean hasDuplicate() {
+//        boolean abaisser = true;
+//        for (Action action : getActionsProg()) {
+//            if (action == ActionType.ACTIONPEN) {
+//                if (actionPen.getPenDowStatus() == abaisser)
+//                    return true;
+//                else
+//                    abaisser = actionPen.getPenDowStatus();
+//            }
+//        }
+//        return false;
+//    }
 
     public void setHasChargerScene(boolean hasChargerScene) {
         this.hasChargerScene.set(hasChargerScene);

@@ -53,6 +53,11 @@ public class Variable extends Action{
     }
 
     @Override
+    public ActionType getActionType() {
+        return null;
+    }
+
+    @Override
     public String toString() {
         return "Variable{" +
                 "variableMap=" + variableMap.size()+

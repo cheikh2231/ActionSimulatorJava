@@ -15,4 +15,9 @@ public class VariableAssignation extends Variable {
     public String getDetailsName() {
         return getName();
     }
+
+    @Override
+    public ActionType getActionType() {
+        return ActionType.VARIABLEASSIGNATION;
+    }
 }

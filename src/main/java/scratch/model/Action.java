@@ -52,4 +52,6 @@ public abstract class Action {
     public abstract String getDetailsName();
 
     public abstract String getFormatName();
+    public abstract ActionType getActionType();
+
 }

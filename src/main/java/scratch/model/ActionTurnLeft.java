@@ -35,4 +35,8 @@ public class ActionTurnLeft extends ActionTurn {
         return super.getFormatName()+"LEFT";
     }
 
+    @Override
+    public ActionType getActionType() {
+        return ActionType.ACTIONTURNLEFT;
+    }
 }

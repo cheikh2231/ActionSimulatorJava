@@ -46,4 +46,9 @@ public class ActionMoveForward extends Action {
     public String getFormatName() {
         return "MOVE_FORWARD";
     }
+
+    @Override
+    public ActionType getActionType() {
+        return ActionType.ACTIONMOVEFORWARD;
+    }
 }
