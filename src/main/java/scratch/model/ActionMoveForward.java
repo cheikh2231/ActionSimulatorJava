@@ -18,6 +18,11 @@ public class ActionMoveForward extends Action {
     }
 
     @Override
+    public void executeAction(SceneActions sceneActions) {
+        sceneActions.moveForward(this.getMeasure());
+    }
+
+    @Override
     public String toString() {
         return  getName() + getMeasure();
     }

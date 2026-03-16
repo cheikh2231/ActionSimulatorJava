@@ -14,6 +14,12 @@ public class ActionTurnLeft extends ActionTurn {
     public Action copy() {
         return new ActionTurnLeft(getMeasure());
     }
+
+    @Override
+    public void executeAction(SceneActions sceneActions) {
+        sceneActions.turn((this.getMeasure()));
+    }
+
     @Override
     public String toString() {
         return  super.getName()  + getMeasure();

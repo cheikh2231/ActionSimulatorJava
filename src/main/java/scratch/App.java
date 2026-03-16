@@ -16,7 +16,6 @@ public class App extends Application {
         Cursor cursor = new Cursor(0,new Point(200,200));
         ActionPen actionPen = new ActionPen(true);
         SceneActions sceneActions = new SceneActions(cursor, actionPen);
-
         MainViewModel vm = new MainViewModel(program,sceneActions);
 
         var mainView = new MainView(vm,stage);

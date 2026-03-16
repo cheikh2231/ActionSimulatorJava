@@ -33,6 +33,11 @@ public class Variable extends Action{
     }
 
     @Override
+    public void executeAction(SceneActions sceneActions) {
+        return;
+    }
+
+    @Override
     public String getUnity() {
         return "";
     }

@@ -320,18 +320,8 @@ public class ActionViewModel {
 
     public void executeAction() {
         Action action = program.getActionProg(sceneIndex.get());
-        if (action != null) {
-            switch (action) {
-                case ActionMoveForward actionMoveForward -> sceneActions.moveForward(actionMoveForward.getMeasure());
-                case ActionTurnLeft actionTurnLeft ->
-                        sceneActions.turn((getCursor().getAngle() + actionTurnLeft.getMeasure()) % 360);
-                case ActionTurnRight actionTournerDroite ->
-                        sceneActions.turn((getCursor().getAngle() - actionTournerDroite.getMeasure() + 360) % 360);
-                case ActionPen actionPen -> sceneActions.switchPenStatus();
-                default -> {
-                    return;
-                }
-            }
+        if (action != null) {//
+            action.executeAction(sceneActions);
         }
         getNext();
     }

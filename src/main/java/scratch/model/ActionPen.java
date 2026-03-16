@@ -29,6 +29,11 @@ public class ActionPen extends Action{
     }
 
     @Override
+    public void executeAction(SceneActions sceneActions) {
+        sceneActions.switchPenStatus();
+    }
+
+    @Override
     public String toString() {
         return getName();
     }

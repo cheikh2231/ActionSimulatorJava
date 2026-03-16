@@ -36,6 +36,7 @@ public class Cursor {
     public Point getPosition(){
         return position;
     }
+
     public void setAngle(int angle) {
         this.angle = angle;
     }

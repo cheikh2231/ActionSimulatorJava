@@ -58,8 +58,8 @@ public class SceneActions {
         }
     }
 
-    public void turn(int angle){
-        cursor.turn(angle);
+    public void turn(int measure){
+        cursor.turn((getCursorAngle()+measure) % 360);
     }
 
     public ObservableList<Line> getLines() {
@@ -68,5 +68,9 @@ public class SceneActions {
 
     public Cursor getCursor() {
         return cursor;
+    }
+
+    public int getCursorAngle() {
+        return cursor.getAngle();
     }
 }

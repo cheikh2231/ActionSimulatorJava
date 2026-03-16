@@ -11,7 +11,6 @@ public class VariableDeclaration extends Variable {
         System.out.println(variableMap);
     }
 
-
     @Override
     public Action copy() {
         return new VariableDeclaration();

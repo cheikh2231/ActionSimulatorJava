@@ -5,7 +5,6 @@ import javafx.beans.property.*;
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty measure = new SimpleIntegerProperty();
-
     public Action(String name, Integer measure) {
         setName(name);
         setMeasure(measure);
@@ -37,6 +36,8 @@ public abstract class Action {
     }
 
     public abstract Action copy();
+
+    public abstract void executeAction(SceneActions sceneActions);
 
     public boolean isValidMeasure(int mesure) {
         return false;
