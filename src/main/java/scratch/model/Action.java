@@ -5,6 +5,7 @@ import javafx.beans.property.*;
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty measure = new SimpleIntegerProperty();
+
     public Action(String name, Integer measure) {
         setName(name);
         setMeasure(measure);
@@ -35,6 +36,8 @@ public abstract class Action {
             this.measure.setValue(measure);
     }
 
+
+
     public abstract Action copy();
 
     public abstract void executeAction(SceneActions sceneActions);
@@ -54,4 +57,10 @@ public abstract class Action {
     public abstract String getFormatName();
     public abstract ActionType getActionType();
 
+    public String getNameVariable(){
+        return "";
+    }
+    public boolean isValidVariableName(String variableName){
+        return true;
+    }
 }

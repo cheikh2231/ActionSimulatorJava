@@ -128,8 +128,7 @@ public class ActionViewModel {
             if (n != null) {
                 mesureProperty.set(String.valueOf(n.getMeasure()));
                 if (n.getActionType() ==  ActionType.VARIABLEDECLARATION) {
-                    VariableDeclaration vD = (VariableDeclaration) n;
-                    variableNameProperty.set(vD.getNameVariable());
+                    variableNameProperty.set(n.getNameVariable());
                 } else
                     variableNameProperty.set("");
                 this.setIsDetailableProperty(n.isDetailable());
@@ -164,53 +163,17 @@ public class ActionViewModel {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
 
-            // si rien ne change on fait rien
-            if (newName == null || newName.equals(oldName)) return;
 
-            VariableDeclaration vD = (VariableDeclaration) actionSelected.get();
-
-            isValidVariableNameProperty.set(vD.isValidVariableName(newName));
-            Map<String, Variable> map = Variable.variableMap;
-            boolean alreadyExist = map.containsKey(newName);
-            // le nouveau nom est vide on supp l'ancien
-            if (newName.isEmpty()) {
-                if (oldName != null && !oldName.isEmpty()) {
-                    map.remove(oldName);
-                }
-                vD.setNameVariable(newName);
-                return;
-            }
-
-            // mettre a jour le map
-            if (oldName != null && !oldName.isEmpty() && map.get(oldName) == (vD)) {
-                map.remove(oldName);
-            }
-            // si ca existe et que ca m'appartient pas
-            if (alreadyExist && map.get(newName) != vD) {
-                vD.setNameVariable(newName);
-                return;
-            }
-
-
-            if (vD.isValidVariableName(newName)) {
-                vD.setNameVariable(newName);
-                vD.addToVariableMap();
-            }
+            isValidVariableNameProperty.set(program.updateVariableToMap(newName,progIndex.get()));
         });
     }
 
     public void removeAction() {
-        Action selected = program.getActionProg(progIndex.get());
-        if (selected.getActionType() ==  ActionType.VARIABLEDECLARATION) {
-            VariableDeclaration vD = (VariableDeclaration) selected;
-            Variable.variableMap.remove(vD.getNameVariable());
-        }
         program.removeAction(progIndex.get());
     }
 
     public void clearAllActionsProgAndVariables() {
         program.clear();
-        Variable.variableMap.clear();
     }
 
     public BooleanBinding isEmptyActionProg() {

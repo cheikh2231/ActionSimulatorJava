@@ -4,6 +4,8 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Map;
+
 public class Program {
     private ObservableList<Action> actionsProg =
             FXCollections.observableArrayList(
@@ -17,8 +19,15 @@ public class Program {
     }
 
     public void removeAction(int idx) {
-        if(existIndex(idx))
+        if(existIndex(idx)) {
+            Action selected = getActionProg(idx);
+            if (selected.getActionType() == ActionType.VARIABLEDECLARATION) {
+                // on vérifie que celle selectionné est celle qui est dans la liste
+                if(Variable.variableMap.get(selected.getNameVariable()) == selected)
+                    Variable.variableMap.remove(selected.getNameVariable());
+            }
             actionsProg.remove(idx);
+        }
     }
 
     public void up(int idx){
@@ -70,6 +79,7 @@ public class Program {
 
 
     public void clear(){
+        Variable.variableMap.clear();
         actionsProg.clear();
     }
 
@@ -111,4 +121,44 @@ public class Program {
         return false;
     }
 
+    public boolean updateVariableToMap(String newName, int idxProg){
+        Map<String, Variable> map = Variable.variableMap;
+
+        VariableDeclaration vD = (VariableDeclaration) getActionProg(idxProg);
+
+        String oldName = vD.getNameVariable();
+
+        // si rien ne change on ne fait rien
+        if (newName == null || newName.equals(oldName)) return true;
+
+        boolean alreadyExist = map.containsKey(newName);
+
+        // le nouveau nom est vide on supp l'ancien
+        if (newName.isEmpty()) {
+            if (oldName != null && !oldName.isEmpty()) {
+                map.remove(oldName);
+            }
+            vD.setNameVariable(newName);
+            return true;
+        }
+
+        // mettre a jour le map
+        if (oldName != null && !oldName.isEmpty() && map.get(oldName) == (vD)) {
+            map.remove(oldName);
+        }
+        // si la variableName existe déjà dans la map et qu'on essaie de déclare une autre variable avec le meme nom
+        if (alreadyExist && map.get(newName) != vD) {
+            vD.setNameVariable(newName);
+            return true;
+        }
+
+
+        if (vD.isValidVariableName(newName)) {
+            vD.setNameVariable(newName);
+            vD.addToVariableMap();
+            return true;
+        }
+
+        return false;
+    }
 }

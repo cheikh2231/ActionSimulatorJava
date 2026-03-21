@@ -15,8 +15,14 @@ public class Variable extends Action{
         super(name, measure);
     }
 
+    @Override
     public String getNameVariable() {
         return nameVariableProperty.get();
+    }
+
+    @Override
+    public boolean isValidVariableName(String variableName) {
+        return super.isValidVariableName(variableName);
     }
 
     public StringProperty nameVariableProperty() {
