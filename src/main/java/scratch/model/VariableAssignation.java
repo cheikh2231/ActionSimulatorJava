@@ -1,6 +1,8 @@
 package scratch.model;
 
 
+import javafx.beans.property.StringProperty;
+
 public class VariableAssignation extends Variable {
     public VariableAssignation() {
         super("Assignation ", 0);
@@ -20,4 +22,6 @@ public class VariableAssignation extends Variable {
     public ActionType getActionType() {
         return ActionType.VARIABLEASSIGNATION;
     }
+
+
 }

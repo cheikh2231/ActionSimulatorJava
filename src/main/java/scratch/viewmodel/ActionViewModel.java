@@ -162,7 +162,7 @@ public class ActionViewModel {
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
-            boolean succes = program.updateVariableToMap(newName,progIndex.get());
+            boolean succes = program.updateVariableToMap(newName,progIndex.get(),"0");
             isValidVariableNameProperty.set(succes);
         });
     }
@@ -347,9 +347,9 @@ public class ActionViewModel {
     }
 
 
-    public BooleanBinding isDeclarationOrAssignation() {
+    public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
-                    return program.isDeclarationOrAssignation(progIndex.get());
+                    return program.isDeclaration(progIndex.get());
                 }, progIndex
         );
     }

@@ -130,50 +130,59 @@ public class Program {
         return false;
     }
 
-    public boolean updateVariableToMap(String newName, int idxProg){
+    public boolean updateVariableToMap(String newName, int idxProg, String value){
         Map<String, Variable> map = Variable.variableMap;
+        if(getActionProg(idxProg).getActionType()== ActionType.VARIABLEDECLARATION){
+            VariableDeclaration vD = (VariableDeclaration) getActionProg(idxProg);
 
-        VariableDeclaration vD = (VariableDeclaration) getActionProg(idxProg);
+            String oldName = vD.getNameVariable();
 
-        String oldName = vD.getNameVariable();
+            // si rien ne change on ne fait rien
+            if (newName == null || newName.equals(oldName)) return true;
 
-        // si rien ne change on ne fait rien
-        if (newName == null || newName.equals(oldName)) return true;
+            boolean alreadyExist = map.containsKey(newName);
 
-        boolean alreadyExist = map.containsKey(newName);
+            // le nouveau nom est vide on supp l'ancien
+            if (newName.isEmpty()) {
+                if (oldName != null && !oldName.isEmpty()) {
+                    map.remove(oldName);
+                }
+                vD.setNameVariable(newName);
+                return true;
+            }
 
-        // le nouveau nom est vide on supp l'ancien
-        if (newName.isEmpty()) {
-            if (oldName != null && !oldName.isEmpty()) {
+            // mettre a jour le map
+            if (oldName != null && !oldName.isEmpty() && map.get(oldName) == (vD)) {
                 map.remove(oldName);
             }
-            vD.setNameVariable(newName);
+            // si la variableName existe déjà dans la map et qu'on essaie de déclare une autre variable avec le meme nom
+            if (alreadyExist && map.get(newName) != vD) {
+                vD.setNameVariable(newName);
+                return true;
+            }
+
+
+            if (vD.isValidVariableName(newName)) {
+                vD.setNameVariable(newName);
+                vD.addToVariableMap();
+                return true;
+            }
+        }else if(getActionProg(idxProg).getActionType() == ActionType.VARIABLEASSIGNATION){
+            VariableAssignation vA = (VariableAssignation) getActionProg(idxProg);
+
+            String oldName = vA.getNameVariable();
+            vA.setNameVariable(newName);
+
+            if(Variable.variableMap.containsKey(newName)){
+
+            }
             return true;
         }
-
-        // mettre a jour le map
-        if (oldName != null && !oldName.isEmpty() && map.get(oldName) == (vD)) {
-            map.remove(oldName);
-        }
-        // si la variableName existe déjà dans la map et qu'on essaie de déclare une autre variable avec le meme nom
-        if (alreadyExist && map.get(newName) != vD) {
-            vD.setNameVariable(newName);
-            return true;
-        }
-
-
-        if (vD.isValidVariableName(newName)) {
-            vD.setNameVariable(newName);
-            vD.addToVariableMap();
-            return true;
-        }
-
         return false;
     }
 
-    public boolean isDeclarationOrAssignation(int idx){
-        return getActionProg(idx) != null && (getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION
-                || getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION);
+    public boolean isDeclaration(int idx){
+        return getActionProg(idx) != null && (getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION);
     }
 
     public boolean haveDifferenceBetweenMapAndList(){

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.StringProperty;
+
 public class VariableDeclaration extends Variable {
 
     public VariableDeclaration() {
@@ -43,4 +45,5 @@ public class VariableDeclaration extends Variable {
     public String getNameVariable() {
         return super.getNameVariable();
     }
+
 }
