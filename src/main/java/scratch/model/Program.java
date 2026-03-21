@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class Program {
     private ObservableList<Action> actionsProg =
@@ -23,8 +24,16 @@ public class Program {
             Action selected = getActionProg(idx);
             if (selected.getActionType() == ActionType.VARIABLEDECLARATION) {
                 // on vérifie que celle selectionné est celle qui est dans la liste
-                if(Variable.variableMap.get(selected.getNameVariable()) == selected)
+                if(Variable.variableMap.get(selected.getNameVariable()) == selected){
                     Variable.variableMap.remove(selected.getNameVariable());
+
+                    if (actionsProg.stream().filter(n-> Objects.equals(n.getNameVariable(), selected.getNameVariable())).count()>1){
+                        String name = selected.getNameVariable();
+                        actionsProg.remove(idx);
+                        Variable.variableMap.put(name,(Variable) actionsProg.stream().filter(m-> Objects.equals(m.getNameVariable(), name)).findFirst().get());
+                        return;
+                    }
+                }
             }
             actionsProg.remove(idx);
         }
@@ -103,7 +112,7 @@ public class Program {
     }
 
     public boolean hasAnomalies(){
-        return hasDuplicatePenStatus() || hasActionBeforeDecla();
+        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList();
     }
 
     private boolean hasActionBeforeDecla(){
@@ -165,5 +174,9 @@ public class Program {
     public boolean isDeclarationOrAssignation(int idx){
         return getActionProg(idx) != null && (getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION
                 || getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION);
+    }
+
+    public boolean haveDifferenceBetweenMapAndList(){
+        return actionsProg.stream().filter(a -> a.getActionType() == ActionType.VARIABLEDECLARATION).count() != Variable.variableMap.size();
     }
 }

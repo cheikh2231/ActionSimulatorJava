@@ -127,6 +127,7 @@ public class ActionViewModel {
             if (newVal != null && newVal.intValue() != -1) {
                 Action n = getAction(newVal.intValue());
                 if (n != null) {
+                    System.out.println((n.getMeasure()));
                     mesureProperty.set(String.valueOf(n.getMeasure()));
                     variableNameProperty.set(n.getNameVariable());
                     this.setIsDetailableProperty(n.isDetailable());
@@ -168,6 +169,12 @@ public class ActionViewModel {
 
     public void removeAction() {
         program.removeAction(progIndex.get());
+
+        if (progIndex.get() == 0){
+            progIndex.set(-1);
+            progIndex.set(0);
+        }
+
     }
 
     public void clearAllActionsProgAndVariables() {
@@ -220,7 +227,7 @@ public class ActionViewModel {
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
             return program.hasAnomalies() || program.isEmpty();
-        }, getActionsProg());
+        }, getActionsProg(),Variable.variableMap);
     }
 
     public BooleanBinding hasActionsProgChange() {

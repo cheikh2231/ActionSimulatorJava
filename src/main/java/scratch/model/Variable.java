@@ -2,13 +2,15 @@ package scratch.model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Variable extends Action{
 
-    public static final Map<String,Variable> variableMap = new HashMap<>();
+    public static final ObservableMap<String,Variable> variableMap = FXCollections.observableHashMap();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
 
     public Variable(String name, Integer measure) {
