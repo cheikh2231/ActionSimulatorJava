@@ -8,7 +8,6 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 
@@ -122,16 +121,16 @@ public class ActionViewModel {
 
     // val   autre var
     public void listeners() {
-        actionSelectedProperty().addListener((obs, o, n) -> {
+        progIndex.addListener((obs, o, newVal) -> {
             // flag pour la selection
             isSelected = true;
-            if (n != null) {
-                mesureProperty.set(String.valueOf(n.getMeasure()));
-                if (n.getActionType() ==  ActionType.VARIABLEDECLARATION) {
+            if (newVal != null && newVal.intValue() != -1) {
+                Action n = getAction(newVal.intValue());
+                if (n != null) {
+                    mesureProperty.set(String.valueOf(n.getMeasure()));
                     variableNameProperty.set(n.getNameVariable());
-                } else
-                    variableNameProperty.set("");
-                this.setIsDetailableProperty(n.isDetailable());
+                    this.setIsDetailableProperty(n.isDetailable());
+                }
             } else {
                 mesureProperty.setValue("");
                 this.setIsDetailableProperty(false);
@@ -147,7 +146,7 @@ public class ActionViewModel {
                 return;
             }
             try {
-                Action action = actionSelected.get();
+                Action action = getAction(progIndex.get());
                 if (action != null) {
                     int val = Integer.parseInt(n);
                     action.setMeasure(val);
@@ -162,9 +161,8 @@ public class ActionViewModel {
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
-
-
-            isValidVariableNameProperty.set(program.updateVariableToMap(newName,progIndex.get()));
+            boolean succes = program.updateVariableToMap(newName,progIndex.get());
+            isValidVariableNameProperty.set(succes);
         });
     }
 
@@ -221,7 +219,7 @@ public class ActionViewModel {
     // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-            return program.hasAnomalies() || isEmptyActionProg().get();
+            return program.hasAnomalies() || program.isEmpty();
         }, getActionsProg());
     }
 
@@ -249,8 +247,7 @@ public class ActionViewModel {
     public void reinitialiserListeScene() {
         progIndex.set(-1);
         sceneIndex.set(0);
-        sceneActions.resetLines();
-        sceneActions.setCurrentActionPenDown(true);
+        sceneActions.reset();
     }
 
 
@@ -275,7 +272,7 @@ public class ActionViewModel {
 
     public void executeAction() {
         Action action = program.getActionProg(sceneIndex.get());
-        if (action != null) {//
+        if (action != null) {
             action.executeAction(sceneActions);
         }
         getNext();
@@ -319,9 +316,7 @@ public class ActionViewModel {
     }
 
     public void resetCursorToCenter(double canvasWidth, double canvasHeight) {
-        sceneActions.getCursor().getPosition().setX(canvasWidth / 2);
-        sceneActions.getCursor().getPosition().setY(canvasHeight / 2);
-        sceneActions.getCursor().setAngle(0);
+      sceneActions.resetCursorToCenter(canvasWidth,canvasHeight);
     }
 
     public void loadFile(File file) {
@@ -345,10 +340,9 @@ public class ActionViewModel {
     }
 
 
-    public BooleanBinding isVariableAssignationOrDecla() {
+    public BooleanBinding isDeclarationOrAssignation() {
         return Bindings.createBooleanBinding(() -> {
-                    return actionSelected.get().getActionType() == ActionType.VARIABLEDECLARATION ||
-                            actionSelected.get().getActionType() == ActionType.VARIABLEASSIGNATION;
+                    return program.isDeclarationOrAssignation(progIndex.get());
                 }, progIndex
         );
     }
@@ -357,7 +351,8 @@ public class ActionViewModel {
         return variableNameProperty;
     }
 
-
-
+    public Action getAction(int idx){
+        return program.getActionProg(idx);
+    }
 
 }

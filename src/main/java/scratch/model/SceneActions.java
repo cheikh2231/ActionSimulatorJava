@@ -73,4 +73,15 @@ public class SceneActions {
     public int getCursorAngle() {
         return cursor.getAngle();
     }
+
+    public void reset(){
+        resetLines();
+        setCurrentActionPenDown(true);
+    }
+
+    public void resetCursorToCenter(double canvasWidth , double canvasHeight){
+        getCursor().getPosition().setX(canvasWidth / 2);
+        getCursor().getPosition().setY(canvasHeight / 2);
+        getCursor().setAngle(0);
+    }
 }

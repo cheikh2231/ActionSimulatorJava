@@ -161,4 +161,9 @@ public class Program {
 
         return false;
     }
+
+    public boolean isDeclarationOrAssignation(int idx){
+        return getActionProg(idx) != null && (getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION
+                || getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION);
+    }
 }
