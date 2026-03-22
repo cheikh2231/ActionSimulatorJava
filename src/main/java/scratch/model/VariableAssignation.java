@@ -15,7 +15,7 @@ public class VariableAssignation extends Variable {
 
     @Override
     public String getDetailsName() {
-        return getName();
+        return getName() + "de la variable ";
     }
 
     @Override

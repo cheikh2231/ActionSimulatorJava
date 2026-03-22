@@ -353,6 +353,12 @@ public class ActionViewModel {
                 }, progIndex
         );
     }
+    public BooleanBinding isAssignation() {
+        return Bindings.createBooleanBinding(() -> {
+                    return program.isAssignation(progIndex.get());
+                }, progIndex
+        );
+    }
 
     public StringProperty getVariableNameProperty() {
         return variableNameProperty;

@@ -182,7 +182,10 @@ public class Program {
     }
 
     public boolean isDeclaration(int idx){
-        return getActionProg(idx) != null && (getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION);
+        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION;
+    }
+    public boolean isAssignation(int idx){
+        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION;
     }
 
     public boolean haveDifferenceBetweenMapAndList(){
