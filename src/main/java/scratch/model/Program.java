@@ -12,7 +12,7 @@ public class Program {
             FXCollections.observableArrayList(
                     action -> new Observable[] { action.measureProperty() }
             );;
-
+    private boolean hasError = false;
     public void addAction(int idx,int pos) {
         Action action = Actions.getAction(idx);
         if (action != null)
@@ -169,14 +169,26 @@ public class Program {
             }
         }else if(getActionProg(idxProg).getActionType() == ActionType.VARIABLEASSIGNATION){
             VariableAssignation vA = (VariableAssignation) getActionProg(idxProg);
-
-            String oldName = vA.getNameVariable();
+            if (!vA.isValidVariableName(newName)) return false;
             vA.setNameVariable(newName);
-
+            vA.setMeasure(value);
             if(Variable.variableMap.containsKey(newName)){
-
+                if (value != null) {
+                    Variable.variableMap.get(newName).setMeasure(value);
+                    Variable.variableMap.put(newName,Variable.variableMap.get(newName));
+                    return true;
+                }
+                return false;
             }
             return true;
+
+        }else {
+            if (value != null && getActionProg(idxProg).isValidMeasure(value)){
+                getActionProg(idxProg).setMeasure(value);
+                return true;
+            }
+            return false;
+
         }
         return false;
     }

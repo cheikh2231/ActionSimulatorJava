@@ -5,7 +5,7 @@ import javafx.beans.property.StringProperty;
 
 public class VariableAssignation extends Variable {
     public VariableAssignation() {
-        super("Assignation ", 0);
+        super("Assignation ", "0");
     }
 
     @Override

@@ -4,9 +4,9 @@ import javafx.beans.property.*;
 
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
-    private IntegerProperty measure = new SimpleIntegerProperty();
+    private StringProperty measure = new SimpleStringProperty();
 
-    public Action(String name, Integer measure) {
+    public Action(String name, String measure) {
         setName(name);
         setMeasure(measure);
     }
@@ -23,15 +23,15 @@ public abstract class Action {
         this.name.set(name);
     }
 
-    public int getMeasure() {
+    public String getMeasure() {
         return measure.get();
     }
 
-    public IntegerProperty measureProperty() {
+    public StringProperty measureProperty() {
         return measure;
     }
 
-    public void setMeasure(Integer measure) {
+    public void setMeasure(String measure) {
         if (isValidMeasure(measure))
             this.measure.setValue(measure);
     }
@@ -42,7 +42,7 @@ public abstract class Action {
 
     public abstract void executeAction(SceneActions sceneActions);
 
-    public boolean isValidMeasure(int mesure) {
+    public boolean isValidMeasure(String mesure) {
         return false;
     }
 
@@ -63,4 +63,22 @@ public abstract class Action {
     public boolean isValidVariableName(String variableName){
         return true;
     }
+
+
+    public Integer getValue(String value){ //nb
+        try {
+            return Integer.parseInt(value);
+        }catch (Exception e){
+            if (Variable.variableMap.containsKey(value)){ // oui il contient
+                String nb = Variable.variableMap.get(value).getMeasure();
+                while (Variable.variableMap.get(nb) != null){
+                    nb = Variable.variableMap.get(nb).getMeasure();
+                }
+                return Integer.parseInt(nb);
+            }
+        }
+        return null;
+    }
+
+
 }

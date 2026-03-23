@@ -5,7 +5,7 @@ import javafx.beans.property.StringProperty;
 public class VariableDeclaration extends Variable {
 
     public VariableDeclaration() {
-        super("Déclaration variable ", 0);
+        super("Déclaration variable ", "0");
     }
 
     public void addToVariableMap() {

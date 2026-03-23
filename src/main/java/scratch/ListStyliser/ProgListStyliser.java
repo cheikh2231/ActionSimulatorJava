@@ -17,9 +17,9 @@ public class ProgListStyliser extends AbstractListStyliser {
             Variable vA = (VariableAssignation) action;
             StringProperty doblePunts= new SimpleStringProperty(": ");
             StringProperty equal = new SimpleStringProperty(" = ");
-            label.textProperty().bind(action.nameProperty().concat(vA.nameVariableProperty() != null ?  doblePunts.concat(vA.nameVariableProperty().concat(equal)):""));
+            label.textProperty().bind(action.nameProperty().concat(vA.nameVariableProperty() != null ?  doblePunts.concat(vA.nameVariableProperty().concat(equal).concat(!action.measureProperty().get().equals( "0") ? action.measureProperty() : "")):""));
         }
         else
-            label.textProperty().bind(action.nameProperty().concat(action.measureProperty().get() != 0 ? action.measureProperty() : ""));
+            label.textProperty().bind(action.nameProperty().concat(!action.measureProperty().get().equals( "0") ? action.measureProperty() : ""));
     }
 }

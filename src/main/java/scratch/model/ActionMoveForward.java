@@ -3,12 +3,12 @@ package scratch.model;
 
 public class ActionMoveForward extends Action {
 
-    public ActionMoveForward(int mesure) {
+    public ActionMoveForward(String mesure) {
        super("Avancer de ",mesure);
     }
 
     public ActionMoveForward() {
-        super("Avancer de ",30);
+        super("Avancer de ","30");
     }
 
 
@@ -19,7 +19,7 @@ public class ActionMoveForward extends Action {
 
     @Override
     public void executeAction(SceneActions sceneActions) {
-        sceneActions.moveForward(this.getMeasure());
+        sceneActions.moveForward(getValue(getMeasure()));
     }
 
     @Override
@@ -28,8 +28,11 @@ public class ActionMoveForward extends Action {
     }
 
     @Override
-    public boolean isValidMeasure(int mesure) {
-        return mesure>0 && mesure<=100;
+    public boolean isValidMeasure(String mesure) {
+        Integer val = getValue(mesure);
+        if (val != null)
+            return val > 0 && val <= 100;
+        return true;
     }
 
     @Override

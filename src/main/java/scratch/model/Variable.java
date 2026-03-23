@@ -13,7 +13,7 @@ public class Variable extends Action{
     public static final ObservableMap<String,Variable> variableMap = FXCollections.observableHashMap();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
 
-    public Variable(String name, Integer measure) {
+    public Variable(String name, String measure) {
         super(name, measure);
     }
 
@@ -65,6 +65,11 @@ public class Variable extends Action{
         return null;
     }
 
+
+    @Override
+    public boolean isValidMeasure(String mesure) {
+        return true;
+    }
 
     @Override
     public String toString() {

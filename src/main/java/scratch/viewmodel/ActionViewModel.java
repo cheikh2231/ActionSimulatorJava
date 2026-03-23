@@ -127,8 +127,7 @@ public class ActionViewModel {
             if (newVal != null && newVal.intValue() != -1) {
                 Action n = getAction(newVal.intValue());
                 if (n != null) {
-                    System.out.println((n.getMeasure()));
-                    mesureProperty.set(String.valueOf(n.getMeasure()));
+                    mesureProperty.set((String.valueOf(n.getMeasure()).equals("0")) ? "" : String.valueOf(n.getMeasure()));
                     variableNameProperty.set(n.getNameVariable());
                     this.setIsDetailableProperty(n.isDetailable());
                 }
@@ -146,16 +145,9 @@ public class ActionViewModel {
                 isvalidMesureProperty.set(false);
                 return;
             }
-            try {
-                Action action = getAction(progIndex.get());
-                if (action != null) {
-                    int val = Integer.parseInt(n);
-                    action.setMeasure(val);
-                    isvalidMesureProperty.set(action.isValidMeasure(val));
-                }
-            } catch (NumberFormatException e) {
-                isvalidMesureProperty.set(false);
-            }
+            Action currentAction = getAction(progIndex.get());
+            boolean success = program.updateVariableToMap(currentAction.getNameVariable(),progIndex.get(),n);
+            isvalidMesureProperty.set(success);
 
         });
 
@@ -305,17 +297,17 @@ public class ActionViewModel {
     }
 
     public void generateActionFromFileAndAddToProg(String actionType, int actionMesure) {
-        Action action = switch (actionType) {
-            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
-            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
-            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
-            case "PEN_UP" -> new ActionPen(false);
-            case "PEN_DOWN" -> new ActionPen(true);
-            default -> null;
-        };
-        if (action != null) {
-            getActionsProg().add(action);
-        }
+//        Action action = switch (actionType) {
+//            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
+//            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
+//            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
+//            case "PEN_UP" -> new ActionPen(false);
+//            case "PEN_DOWN" -> new ActionPen(true);
+//            default -> null;
+//        };
+//        if (action != null) {
+//            getActionsProg().add(action);
+//        }
     }
 
     public BooleanBinding canAddToProgram() {
