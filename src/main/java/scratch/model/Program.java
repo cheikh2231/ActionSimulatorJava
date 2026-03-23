@@ -186,8 +186,8 @@ public class Program {
             if (value != null && getActionProg(idxProg).isValidMeasure(value)){
                 getActionProg(idxProg).setMeasure(value);
                 return true;
-            }
-            return false;
+            }else
+                return false;
 
         }
         return false;

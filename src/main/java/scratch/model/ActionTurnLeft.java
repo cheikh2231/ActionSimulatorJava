@@ -17,6 +17,7 @@ public class ActionTurnLeft extends ActionTurn {
 
     @Override
     public void executeAction(SceneActions sceneActions) {
+        super.executeAction(sceneActions);
         if (getValue(getMeasure()) != null)
             sceneActions.turn(getValue(this.getMeasure()));
     }

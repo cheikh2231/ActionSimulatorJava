@@ -19,6 +19,7 @@ public class ActionMoveForward extends Action {
 
     @Override
     public void executeAction(SceneActions sceneActions) {
+        super.executeAction(sceneActions);
         sceneActions.moveForward(getValue(getMeasure()));
     }
 
@@ -29,6 +30,8 @@ public class ActionMoveForward extends Action {
 
     @Override
     public boolean isValidMeasure(String mesure) {
+        if (Variable.variableMap.containsKey(mesure))
+            return true;
         Integer val = getValue(mesure);
         if (val != null)
             return val > 0 && val <= 100;

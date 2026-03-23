@@ -17,10 +17,10 @@ public class ActionTurnRight extends ActionTurn {
 
     @Override
     public void executeAction(SceneActions sceneActions) {
+        super.executeAction(sceneActions);
         Integer val = getValue(getMeasure());
         if (val != null)
             sceneActions.turn(-(getValue(getMeasure()) + 360));
-
     }
 
     @Override

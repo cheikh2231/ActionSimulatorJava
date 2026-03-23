@@ -19,14 +19,13 @@ public class ActionProgView extends VBox {
     private final Label actionNameLabel = new Label();
     private final Label textfieldsErrorLabel = new Label(" invalid value");
     private final Label valeurLabel = new Label(" valeur : ");
-    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
     private final Button btnUp = new Button("Monter");
     private final Button btnDown = new Button("Descendre");
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider Tout");
-
-
+    private final Label runtimeError = new Label("Runtime Error");
+    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
@@ -63,7 +62,8 @@ public class ActionProgView extends VBox {
     private HBox createErrorLabelBox() {
         final HBox errorBox = new HBox();
         textfieldsErrorLabel.setTextFill(Color.RED);
-        errorBox.getChildren().add(textfieldsErrorLabel);
+        runtimeError.setTextFill(Color.RED);
+        errorBox.getChildren().addAll(textfieldsErrorLabel,runtimeError);
         return errorBox;
     }
 
@@ -98,7 +98,8 @@ public class ActionProgView extends VBox {
         });
         actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
 
-
+        runtimeError.visibleProperty().bind(actionVm.hasRuntimeErrorProperty());
+        runtimeError.managedProperty().bind(actionVm.hasRuntimeErrorProperty());
     }
 
     private void configListViewProg() {

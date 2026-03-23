@@ -28,7 +28,7 @@ public class ActionViewModel {
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
     private boolean isSelected = false;
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
-
+    private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
 
     public BooleanProperty isValidVariableNameProperty() {
         return isValidVariableNameProperty;
@@ -247,6 +247,7 @@ public class ActionViewModel {
         progIndex.set(-1);
         sceneIndex.set(0);
         sceneActions.reset();
+        hasRuntimeError.setValue(false);
     }
 
 
@@ -272,7 +273,16 @@ public class ActionViewModel {
     public void executeAction() {
         Action action = program.getActionProg(sceneIndex.get());
         if (action != null) {
-            action.executeAction(sceneActions);
+            try {
+                action.executeAction(sceneActions);
+                hasRuntimeError.setValue(false);
+            }
+            catch (Exception e){
+                hasRuntimeError.setValue(true);
+                setHasChargerScene(false);
+                return;
+            }
+
         }
         getNext();
     }
@@ -338,6 +348,9 @@ public class ActionViewModel {
         }
     }
 
+    public BooleanProperty hasRuntimeErrorProperty() {
+        return hasRuntimeError;
+    }
 
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {

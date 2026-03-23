@@ -40,7 +40,11 @@ public abstract class Action {
 
     public abstract Action copy();
 
-    public abstract void executeAction(SceneActions sceneActions);
+    public void executeAction(SceneActions sceneActions){
+        if (!isValidMeasure(String.valueOf(getValue(getMeasure())))){
+            throw new RuntimeException();
+        }
+    }
 
     public boolean isValidMeasure(String mesure) {
         return false;
