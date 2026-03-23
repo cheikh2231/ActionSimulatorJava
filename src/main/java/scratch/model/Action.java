@@ -67,10 +67,15 @@ public abstract class Action {
 
     public Integer getValue(String value){ //nb
         try {
+            // Dans le cas ou je recois un integer et non une variable je retourne l'integer
             return Integer.parseInt(value);
         }catch (Exception e){
-            if (Variable.variableMap.containsKey(value)){ // oui il contient
+            // Si j'ai reçu une variable, je vérifie qu'elle est dans la map.
+            if (Variable.variableMap.containsKey(value)){
+                // si elle est dans la map on récupère la value
                 String nb = Variable.variableMap.get(value).getMeasure();
+                // si la variable.getMeasure contient elle meme une variable alors on entre dans la boucle jusqu'a ce
+                // qu'on obtient quelque chose qu'on peut parseInt()
                 while (Variable.variableMap.get(nb) != null){
                     nb = Variable.variableMap.get(nb).getMeasure();
                 }
