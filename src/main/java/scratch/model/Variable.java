@@ -11,28 +11,15 @@ import java.util.Map;
 public class Variable extends Action{
 
     public static final ObservableMap<String,Variable> variableMap = FXCollections.observableHashMap();
-    private final StringProperty nameVariableProperty= new SimpleStringProperty("");
-
     public Variable(String name, String measure) {
         super(name, measure);
     }
 
-    @Override
-    public String getNameVariable() {
-        return nameVariableProperty.get();
-    }
 
     @Override
     public boolean isValidVariableName(String variableName) {
-        return super.isValidVariableName(variableName);
-    }
-
-    public StringProperty nameVariableProperty() {
-        return nameVariableProperty;
-    }
-
-    public void setNameVariable(String nameVariable) {
-        nameVariableProperty.set(nameVariable);
+        String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
+        return variableName.matches(regex) || variableName.isEmpty();
     }
 
     @Override

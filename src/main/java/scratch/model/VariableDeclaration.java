@@ -30,18 +30,6 @@ public class VariableDeclaration extends Variable {
     }
 
     @Override
-    public boolean isValidVariableName(String variableName) {
-        String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
-        return variableName.matches(regex) || variableName.isEmpty();
-    }
-
-    @Override
-    public void setNameVariable(String nameVariable) {
-        if (isValidVariableName(nameVariable))
-            super.setNameVariable(nameVariable);
-    }
-
-    @Override
     public String getNameVariable() {
         return super.getNameVariable();
     }

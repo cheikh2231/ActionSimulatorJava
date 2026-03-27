@@ -154,7 +154,7 @@ public class ActionViewModel {
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
-            boolean succes = program.updateVariableToMap(newName,progIndex.get(),"0");
+            boolean succes = program.updateVariableToMap(newName,progIndex.get(),!program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure():"0");
             isValidVariableNameProperty.set(succes);
         });
     }

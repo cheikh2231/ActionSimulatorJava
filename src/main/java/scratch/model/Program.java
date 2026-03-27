@@ -10,9 +10,10 @@ import java.util.Objects;
 public class Program {
     private ObservableList<Action> actionsProg =
             FXCollections.observableArrayList(
-                    action -> new Observable[] { action.measureProperty() }
+                    action -> new Observable[] { action.measureProperty(), action.nameVariableProperty() }
             );;
     private boolean hasError = false;
+
     public void addAction(int idx,int pos) {
         Action action = Actions.getAction(idx);
         if (action != null)
@@ -97,6 +98,15 @@ public class Program {
     }
 
 
+    public boolean allAssignationsAreValid() {
+        return getActionsProgList().stream()
+                .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION)
+                .allMatch(a -> Variable.variableMap.containsKey(a.getNameVariable()));
+    }
+
+    public boolean hasUndefinedValues(){
+        return getActionsProgList().stream().anyMatch(action -> action.getValue(action.getMeasure()) == null);
+    }
     private boolean hasDuplicatePenStatus() {
         boolean abaisser = true;
         for (Action action : getActionsProgList()) {
@@ -112,7 +122,7 @@ public class Program {
     }
 
     public boolean hasAnomalies(){
-        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList();
+        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
     }
 
     private boolean hasActionBeforeDecla(){
