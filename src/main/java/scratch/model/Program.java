@@ -11,8 +11,7 @@ public class Program {
     private ObservableList<Action> actionsProg =
             FXCollections.observableArrayList(
                     action -> new Observable[] { action.measureProperty(), action.nameVariableProperty() }
-            );;
-    private boolean hasError = false;
+            );
 
     public void addAction(int idx,int pos) {
         Action action = Actions.getAction(idx);

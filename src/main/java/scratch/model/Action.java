@@ -6,6 +6,15 @@ public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private StringProperty measure = new SimpleStringProperty();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
+    private BooleanProperty hasError= new SimpleBooleanProperty(false);
+
+    public BooleanProperty hasErrorProperty() {
+        return hasError;
+    }
+
+    public void setHasError(boolean hasError) {
+        this.hasError.set(hasError);
+    }
 
     public StringProperty nameVariableProperty() {
         return nameVariableProperty;
@@ -18,8 +27,6 @@ public abstract class Action {
     public String getNameVariable() {
         return nameVariableProperty.get();
     }
-
-
 
 
     public Action(String name, String measure) {
@@ -58,6 +65,7 @@ public abstract class Action {
 
     public void executeAction(SceneActions sceneActions){
         if (!isValidMeasure(String.valueOf(getValue(getMeasure())))){
+            setHasError(true);
             throw new RuntimeException();
         }
     }

@@ -25,7 +25,7 @@ public class ActionProgView extends VBox {
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider Tout");
     private final Label runtimeError = new Label("Runtime Error");
-    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
+    private final TitledPane detailsAction = new TitledPane("Détails de l'action", createActionDetailsBox());
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
@@ -98,8 +98,8 @@ public class ActionProgView extends VBox {
         });
         actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
 
-        runtimeError.visibleProperty().bind(actionVm.hasRuntimeErrorProperty());
-        runtimeError.managedProperty().bind(actionVm.hasRuntimeErrorProperty());
+        runtimeError.visibleProperty().bind(actionVm.isTheActionWithError());
+        runtimeError.managedProperty().bind(actionVm.isTheActionWithError());
     }
 
     private void configListViewProg() {
