@@ -84,4 +84,19 @@ public class SceneActions {
         getCursor().getPosition().setY(canvasHeight / 2);
         getCursor().setAngle(0);
     }
+
+
+    public boolean executeAction(Action action){
+        if (action != null) {
+            try {
+                action.executeAction(this);
+                return true;
+            } catch (Exception e) {
+
+                return false;
+            }
+        }
+        return false;
+    }
+
 }

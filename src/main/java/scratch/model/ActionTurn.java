@@ -21,10 +21,11 @@ public abstract class ActionTurn extends Action{
 
     @Override
     public boolean isValidMeasure(String mesure) {
+        String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
         Integer val = getValue(mesure);
         if (val != null)
             return val > 0 && val <= 180;
-        return false;
+        return mesure.matches(regex);
     }
 
     @Override

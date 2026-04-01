@@ -19,9 +19,6 @@ public abstract class Action {
         return nameVariableProperty.get();
     }
 
-
-
-
     public Action(String name, String measure) {
         setName(name);
         setMeasure(measure);
@@ -52,8 +49,6 @@ public abstract class Action {
             this.measure.setValue(measure);
     }
 
-
-
     public abstract Action copy();
 
     public void executeAction(SceneActions sceneActions){
@@ -63,7 +58,7 @@ public abstract class Action {
     }
 
     public boolean isValidMeasure(String mesure) {
-        return false;
+        return true;
     }
 
     public boolean isDetailable() {

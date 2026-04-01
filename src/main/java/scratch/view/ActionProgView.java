@@ -92,14 +92,14 @@ public class ActionProgView extends VBox {
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
         textfieldsErrorLabel.managedProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
-        textfieldsErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not().or(actionVm.isValidVariableNameProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
         actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
 
-        runtimeError.visibleProperty().bind(actionVm.hasRuntimeErrorProperty());
-        runtimeError.managedProperty().bind(actionVm.hasRuntimeErrorProperty());
+        runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+        runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
     }
 
     private void configListViewProg() {

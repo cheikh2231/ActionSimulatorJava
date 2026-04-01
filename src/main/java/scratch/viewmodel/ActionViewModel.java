@@ -8,6 +8,7 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -119,6 +120,7 @@ public class ActionViewModel {
         return mesureProperty;
     }
 
+
     // val   autre var
     public void listeners() {
         progIndex.addListener((obs, o, newVal) -> {
@@ -146,15 +148,14 @@ public class ActionViewModel {
                 return;
             }
             Action currentAction = getAction(progIndex.get());
-            boolean success = program.updateVariableToMap(currentAction.getNameVariable(),progIndex.get(),n);
+            boolean success = program.updateVariableToMap(currentAction.getNameVariable().trim(), progIndex.get(), n.trim());
             isvalidMesureProperty.set(success);
-
         });
 
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
-            boolean succes = program.updateVariableToMap(newName,progIndex.get(),!program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure():"0");
+            boolean succes = program.updateVariableToMap(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
             isValidVariableNameProperty.set(succes);
         });
     }
@@ -162,7 +163,7 @@ public class ActionViewModel {
     public void removeAction() {
         program.removeAction(progIndex.get());
 
-        if (progIndex.get() == 0){
+        if (progIndex.get() == 0) {
             progIndex.set(-1);
             progIndex.set(0);
         }
@@ -219,11 +220,12 @@ public class ActionViewModel {
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
             return program.hasAnomalies() || program.isEmpty();
-        }, getActionsProg(),Variable.variableMap);
+        }, getActionsProg(), Variable.variableMap);
     }
 
     public BooleanBinding hasActionsProgChange() {
         return Bindings.createBooleanBinding(() -> {
+            hasRuntimeError.set(false);
             if (hasChargerScene.get()) {
                 hasChargerScene.set(false);
                 return true;
@@ -251,7 +253,6 @@ public class ActionViewModel {
     }
 
 
-
     public void setHasChargerScene(boolean hasChargerScene) {
         this.hasChargerScene.set(hasChargerScene);
     }
@@ -272,19 +273,10 @@ public class ActionViewModel {
 
     public void executeAction() {
         Action action = program.getActionProg(sceneIndex.get());
-        if (action != null) {
-            try {
-                action.executeAction(sceneActions);
-                hasRuntimeError.setValue(false);
-            }
-            catch (Exception e){
-                hasRuntimeError.setValue(true);
-                setHasChargerScene(false);
-                return;
-            }
-
-        }
-        getNext();
+        boolean success = sceneActions.executeAction(action);
+        hasRuntimeError.set(!success);
+        if (success)
+            getNext();
     }
 
     public BooleanBinding existIndex() {
@@ -325,7 +317,7 @@ public class ActionViewModel {
     }
 
     public void resetCursorToCenter(double canvasWidth, double canvasHeight) {
-      sceneActions.resetCursorToCenter(canvasWidth,canvasHeight);
+        sceneActions.resetCursorToCenter(canvasWidth, canvasHeight);
     }
 
     public void loadFile(File file) {
@@ -348,16 +340,13 @@ public class ActionViewModel {
         }
     }
 
-    public BooleanProperty hasRuntimeErrorProperty() {
-        return hasRuntimeError;
-    }
-
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isDeclaration(progIndex.get());
                 }, progIndex
         );
     }
+
     public BooleanBinding isAssignation() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isAssignation(progIndex.get());
@@ -369,8 +358,17 @@ public class ActionViewModel {
         return variableNameProperty;
     }
 
-    public Action getAction(int idx){
+    public Action getAction(int idx) {
         return program.getActionProg(idx);
+    }
+
+    public BooleanBinding hasActionSelectedRuntime() {
+        return Bindings.createBooleanBinding(() -> {
+
+            return hasRuntimeError.get() &&
+                    progIndex.get() == sceneIndex.get() ;
+                },hasRuntimeError,progIndex
+        );
     }
 
 }

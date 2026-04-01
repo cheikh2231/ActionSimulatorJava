@@ -2,6 +2,8 @@ package scratch.model;
 
 import javafx.beans.property.StringProperty;
 
+import java.util.Locale;
+
 public class VariableDeclaration extends Variable {
 
     public VariableDeclaration() {
@@ -9,8 +11,12 @@ public class VariableDeclaration extends Variable {
     }
 
     public void addToVariableMap() {
-        variableMap.put(getNameVariable(), this);
-        System.out.println(variableMap);
+        if (getNameVariable() != null && !getNameVariable().isBlank()){
+            variableMap.put(getNameVariable(), this);
+            System.out.println(variableMap);
+        }
+
+
     }
 
     @Override
