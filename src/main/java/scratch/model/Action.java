@@ -8,8 +8,6 @@ public abstract class Action {
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
     private BooleanProperty hasError = new SimpleBooleanProperty(false);
 
-
-
     public BooleanProperty hasErrorProperty() {
         return hasError;
     }
@@ -59,8 +57,6 @@ public abstract class Action {
         if (isValidMeasure(measure))
             this.measure.setValue(measure);
     }
-
-
 
     public abstract Action copy();
 
@@ -117,22 +113,20 @@ public abstract class Action {
         return null;
     }
 
-    public boolean canIncrDecr(){
+    public boolean canIncrDecr(String measureProperty){
         try{
-            Integer.parseInt(getMeasure());
+            Integer.parseInt(measureProperty);
             return true;
-        } catch (NumberFormatException nb) {
+        } catch (Exception e) {
             return false;
         }
     }
 
     public void increment(){
-        if(canIncrDecr())
             setMeasure(String.valueOf(getValue(getMeasure())+1));
     }
 
     public void decrement(){
-        if(canIncrDecr())
             setMeasure(String.valueOf(getValue(getMeasure())-1));
     }
 

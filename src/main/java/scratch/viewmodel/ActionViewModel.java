@@ -8,7 +8,6 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -19,7 +18,7 @@ public class ActionViewModel {
     private ObservableList<Action> actionsPalette = Actions.getActions();
     private IntegerProperty paletteIndex = new SimpleIntegerProperty(-1);
     private IntegerProperty progIndex = new SimpleIntegerProperty(-1);
-    private StringProperty mesureProperty = new SimpleStringProperty();
+    private StringProperty measureProperty = new SimpleStringProperty();
     private StringProperty variableNameProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
@@ -116,8 +115,8 @@ public class ActionViewModel {
     }
 
 
-    public StringProperty getMesureProperty() {
-        return mesureProperty;
+    public StringProperty getMeasureProperty() {
+        return measureProperty;
     }
 
     // val   autre var
@@ -128,12 +127,12 @@ public class ActionViewModel {
             if (newVal != null && newVal.intValue() != -1) {
                 Action n = getAction(newVal.intValue());
                 if (n != null) {
-                    mesureProperty.set((String.valueOf(n.getMeasure()).equals("0")) ? "" : String.valueOf(n.getMeasure()));
+                    measureProperty.set((String.valueOf(n.getMeasure()).equals("0")) ? "" : String.valueOf(n.getMeasure()));
                     variableNameProperty.set(n.getNameVariable());
                     this.setIsDetailableProperty(n.isDetailable());
                 }
             } else {
-                mesureProperty.setValue("");
+                measureProperty.setValue("");
                 this.setIsDetailableProperty(false);
             }
             isvalidMesureProperty.set(true);
@@ -141,7 +140,8 @@ public class ActionViewModel {
             isSelected = false;
         });
 
-        mesureProperty.addListener((obs, o, n) -> {
+        measureProperty.addListener((obs, o, n) -> {
+
             if (n.isEmpty()) {
                 isvalidMesureProperty.set(false);
                 return;
@@ -217,14 +217,14 @@ public class ActionViewModel {
     public void increment(){
         if(canIncrDecr().get()){
             program.increment(progIndex.get());
-            mesureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
+            measureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
         }
     }
 
     public void decrement(){
         if(canIncrDecr().get()){
             program.decrement(progIndex.get());
-            mesureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
+            measureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
         }
     }
 
@@ -361,11 +361,6 @@ public class ActionViewModel {
         return hasRuntimeError;
     }
 
-//    public BooleanBinding hasError(){
-//        return Bindings.createBooleanBinding(() -> {
-//            return actionSelected.get().hasErrorProperty().get();
-//        },hasRuntimeError);
-//    }
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isDeclaration(progIndex.get());
@@ -381,9 +376,10 @@ public class ActionViewModel {
     }
     public BooleanBinding canIncrDecr(){
         return Bindings.createBooleanBinding(() -> {
-            return program.canIncrDecr(progIndex.get());
-        },progIndex,getActionsProg());
+            return program.canIncrDecr(measureProperty.get(),progIndex.get());
+        },progIndex, getActionsProg(), measureProperty);
     }
+
     public StringProperty getVariableNameProperty() {
         return variableNameProperty;
     }
@@ -394,7 +390,6 @@ public class ActionViewModel {
 
     public BooleanBinding hasActionSelectedRuntime() {
         return Bindings.createBooleanBinding(() -> {
-
             return hasRuntimeError.get() &&
                     progIndex.get() == sceneIndex.get() ;
                 },hasRuntimeError,progIndex

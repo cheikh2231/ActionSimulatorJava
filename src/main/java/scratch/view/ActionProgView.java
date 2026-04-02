@@ -94,7 +94,7 @@ public class ActionProgView extends VBox {
         actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
         valeurLabel.visibleProperty().bind(actionVm.isAssignation());
         valeurLabel.managedProperty().bind(actionVm.isAssignation());
-        measureTextField.textProperty().bindBidirectional(actionVm.getMesureProperty());
+        measureTextField.textProperty().bindBidirectional(actionVm.getMeasureProperty());
         measureTextField.visibleProperty().bind(actionVm.isDeclaration().not());
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
         variableNameTextField.visibleProperty().bind(actionVm.isDeclaration().or(actionVm.isAssignation()));

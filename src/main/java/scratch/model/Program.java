@@ -19,6 +19,7 @@ public class Program {
             actionsProg.add(pos,action.copy());
     }
 
+
     public void removeAction(int idx) {
         if(existIndex(idx)) {
             Action selected = getActionProg(idx);
@@ -38,8 +39,8 @@ public class Program {
             actionsProg.remove(idx);
         }
     }
-    public boolean canIncrDecr(int idx){
-        return existIndex(idx) && getActionProg(idx).canIncrDecr();
+    public boolean canIncrDecr(String measureProperty,int idx){
+        return existIndex(idx) && getActionProg(idx).canIncrDecr(measureProperty);
     }
     public void up(int idx){
         if (idx>0 && idx < actionsProg.size()){
