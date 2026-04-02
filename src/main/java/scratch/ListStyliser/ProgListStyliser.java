@@ -1,5 +1,6 @@
 package scratch.ListStyliser;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Label;
@@ -9,6 +10,12 @@ public class ProgListStyliser extends AbstractListStyliser {
 
     @Override
     protected void bindLabel(Label label, Action action) {
+
+        label.styleProperty().bind(Bindings.when(action.hasErrorProperty())
+                .then("-fx-border-color: red; -fx-border-width: 2px; -fx-border-radius: 1px; -fx-padding: 2px;")
+                .otherwise("-fx-border-color: transparent; -fx-padding: 2px;")
+        );
+
         if(action.getActionType() == ActionType.VARIABLEDECLARATION) {
             Variable vD = (VariableDeclaration) action;
             label.textProperty().bind(action.nameProperty().concat(vD.nameVariableProperty() != null ? vD.nameVariableProperty() : ""));

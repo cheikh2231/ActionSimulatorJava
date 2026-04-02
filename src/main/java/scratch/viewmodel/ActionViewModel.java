@@ -250,6 +250,7 @@ public class ActionViewModel {
         sceneIndex.set(0);
         sceneActions.reset();
         hasRuntimeError.setValue(false);
+        getActionsProg().stream().filter(action -> action.hasErrorProperty().get()).forEach(action -> action.setHasError(false));
     }
 
 
@@ -276,6 +277,7 @@ public class ActionViewModel {
         Action action = program.getActionProg(sceneIndex.get());
         boolean success = sceneActions.executeAction(action);
         hasRuntimeError.set(!success);
+        action.setHasError(!success);
         if (success)
             getNext();
     }
@@ -345,6 +347,11 @@ public class ActionViewModel {
         return hasRuntimeError;
     }
 
+//    public BooleanBinding hasError(){
+//        return Bindings.createBooleanBinding(() -> {
+//            return actionSelected.get().hasErrorProperty().get();
+//        },hasRuntimeError);
+//    }
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isDeclaration(progIndex.get());

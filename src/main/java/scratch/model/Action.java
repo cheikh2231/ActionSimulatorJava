@@ -6,6 +6,17 @@ public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private StringProperty measure = new SimpleStringProperty();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
+    private BooleanProperty hasError = new SimpleBooleanProperty(false);
+
+
+
+    public BooleanProperty hasErrorProperty() {
+        return hasError;
+    }
+
+    public void setHasError(boolean hasError) {
+        this.hasError.set(hasError);
+    }
 
     public StringProperty nameVariableProperty() {
         return nameVariableProperty;
