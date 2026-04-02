@@ -141,6 +141,7 @@ public class Program {
 
     public boolean updateVariableToMap(String newName, int idxProg, String value){
         Map<String, Variable> map = Variable.variableMap;
+
         if(getActionProg(idxProg).getActionType()== ActionType.VARIABLEDECLARATION){
             VariableDeclaration vD = (VariableDeclaration) getActionProg(idxProg);
 

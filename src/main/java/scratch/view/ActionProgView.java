@@ -25,7 +25,7 @@ public class ActionProgView extends VBox {
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider Tout");
     private final Label runtimeError = new Label("Runtime Error");
-    private final TitledPane detailsAction = new TitledPane("Détails de l'action", createActionDetailsBox());
+    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
@@ -92,14 +92,14 @@ public class ActionProgView extends VBox {
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
         textfieldsErrorLabel.managedProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
-        textfieldsErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not().or(actionVm.isValidVariableNameProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
         actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
 
-        runtimeError.visibleProperty().bind(actionVm.isTheActionWithError());
-        runtimeError.managedProperty().bind(actionVm.isTheActionWithError());
+        runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+        runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
     }
 
     private void configListViewProg() {

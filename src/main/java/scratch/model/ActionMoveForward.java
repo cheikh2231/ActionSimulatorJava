@@ -30,12 +30,13 @@ public class ActionMoveForward extends Action {
 
     @Override
     public boolean isValidMeasure(String mesure) {
+        String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
         if (Variable.variableMap.containsKey(mesure))
             return true;
         Integer val = getValue(mesure);
         if (val != null)
             return val > 0 && val <= 100;
-        return true;
+        return mesure.matches(regex);
     }
 
     @Override

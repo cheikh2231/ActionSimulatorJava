@@ -19,7 +19,7 @@ public class Variable extends Action{
     @Override
     public boolean isValidVariableName(String variableName) {
         String regex = "^[a-zA-Z_][a-zA-Z0-9_]*$";
-        return variableName.matches(regex) || variableName.isEmpty();
+        return variableName.matches(regex) || variableName.isBlank();
     }
 
     @Override

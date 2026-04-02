@@ -8,6 +8,7 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 
@@ -146,7 +147,7 @@ public class ActionViewModel {
                 return;
             }
             Action currentAction = getAction(progIndex.get());
-            boolean success = program.updateVariableToMap(currentAction.getNameVariable(),progIndex.get(),n);
+            boolean success = program.updateVariableToMap(currentAction.getNameVariable().trim(), progIndex.get(), n.trim());
             isvalidMesureProperty.set(success);
 
         });
@@ -154,7 +155,7 @@ public class ActionViewModel {
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
-            boolean succes = program.updateVariableToMap(newName,progIndex.get(),!program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure():"0");
+            boolean succes = program.updateVariableToMap(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
             isValidVariableNameProperty.set(succes);
         });
     }
@@ -219,11 +220,12 @@ public class ActionViewModel {
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
             return program.hasAnomalies() || program.isEmpty();
-        }, getActionsProg(),Variable.variableMap);
+        }, getActionsProg(), Variable.variableMap);
     }
 
     public BooleanBinding hasActionsProgChange() {
         return Bindings.createBooleanBinding(() -> {
+            hasRuntimeError.set(false);
             if (hasChargerScene.get()) {
                 hasChargerScene.set(false);
                 return true;
@@ -248,7 +250,6 @@ public class ActionViewModel {
         sceneIndex.set(0);
         sceneActions.reset();
         hasRuntimeError.setValue(false);
-        program.getActionsProgList().stream().filter(action -> action.hasErrorProperty().get()).forEach(action -> action.setHasError(false));
     }
 
 
@@ -273,19 +274,10 @@ public class ActionViewModel {
 
     public void executeAction() {
         Action action = program.getActionProg(sceneIndex.get());
-        if (action != null) {
-            try {
-                action.executeAction(sceneActions);
-                hasRuntimeError.setValue(false);
-            }
-            catch (Exception e){
-                hasRuntimeError.setValue(true);
-                setHasChargerScene(false);
-                return;
-            }
-
-        }
-        getNext();
+        boolean success = sceneActions.executeAction(action);
+        hasRuntimeError.set(!success);
+        if (success)
+            getNext();
     }
 
     public BooleanBinding existIndex() {
@@ -326,7 +318,7 @@ public class ActionViewModel {
     }
 
     public void resetCursorToCenter(double canvasWidth, double canvasHeight) {
-      sceneActions.resetCursorToCenter(canvasWidth,canvasHeight);
+        sceneActions.resetCursorToCenter(canvasWidth, canvasHeight);
     }
 
     public void loadFile(File file) {
@@ -353,14 +345,13 @@ public class ActionViewModel {
         return hasRuntimeError;
     }
 
-
-
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isDeclaration(progIndex.get());
                 }, progIndex
         );
     }
+
     public BooleanBinding isAssignation() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isAssignation(progIndex.get());
@@ -368,19 +359,21 @@ public class ActionViewModel {
         );
     }
 
-    public BooleanBinding isTheActionWithError() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.getActionProg(progIndex.get()) != null && program.getActionProg(progIndex.get()).hasErrorProperty().get();
-                }, progIndex,hasRuntimeError
-        );
-    }
-
     public StringProperty getVariableNameProperty() {
         return variableNameProperty;
     }
 
-    public Action getAction(int idx){
+    public Action getAction(int idx) {
         return program.getActionProg(idx);
+    }
+
+    public BooleanBinding hasActionSelectedRuntime() {
+        return Bindings.createBooleanBinding(() -> {
+
+            return hasRuntimeError.get() &&
+                    progIndex.get() == sceneIndex.get() ;
+                },hasRuntimeError,progIndex
+        );
     }
 
 }
