@@ -54,6 +54,10 @@ public abstract class Action {
     }
 
     public void setMeasure(String measure) {
+        this.measure.setValue(measure); // ← toujours stocker
+    }
+
+    public void setMeasureIfValid(String measure) {
         if (isValidMeasure(measure))
             this.measure.setValue(measure);
     }
@@ -123,11 +127,13 @@ public abstract class Action {
     }
 
     public void increment(){
-            setMeasure(String.valueOf(getValue(getMeasure())+1));
+        Integer val = getValue(getMeasure());
+        setMeasure(String.valueOf(val+1));
     }
 
     public void decrement(){
-            setMeasure(String.valueOf(getValue(getMeasure())-1));
+       Integer val = getValue(getMeasure());
+       setMeasure(String.valueOf(val-1));
     }
 
 }

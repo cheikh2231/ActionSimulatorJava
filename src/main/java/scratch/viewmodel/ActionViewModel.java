@@ -135,21 +135,20 @@ public class ActionViewModel {
                 measureProperty.setValue("");
                 this.setIsDetailableProperty(false);
             }
-            isvalidMesureProperty.set(true);
+            isvalidMesureProperty.set(true); // pour stylo
             //remet la selection a faux
             isSelected = false;
         });
 
         measureProperty.addListener((obs, o, n) -> {
-
             if (n.isEmpty()) {
                 isvalidMesureProperty.set(false);
                 return;
             }
             Action currentAction = getAction(progIndex.get());
+            if (currentAction == null) return;
             boolean success = program.updateVariableToMap(currentAction.getNameVariable().trim(), progIndex.get(), n.trim());
             isvalidMesureProperty.set(success);
-
         });
 
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
@@ -233,8 +232,10 @@ public class ActionViewModel {
     // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-            return program.hasAnomalies() || program.isEmpty();
-        }, getActionsProg(), Variable.variableMap);
+                    return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
+                },
+                getActionsProg(),isvalidMesureProperty,isValidVariableNameProperty,measureProperty
+        );
     }
 
     public BooleanBinding hasActionsProgChange() {

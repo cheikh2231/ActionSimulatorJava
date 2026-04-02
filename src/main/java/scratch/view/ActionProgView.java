@@ -66,7 +66,7 @@ public class ActionProgView extends VBox {
         final VBox principalBox = new VBox();
         final HBox detailsHBox = new HBox();
 
-        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, valeurLabel,measureTextField,btnIncrement,btnsIncrDecr(), measureUnitLabel);
+        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, valeurLabel,measureTextField,btnsIncrDecr(), measureUnitLabel);
         principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
 
         return principalBox;
