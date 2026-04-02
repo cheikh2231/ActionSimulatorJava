@@ -38,7 +38,9 @@ public class Program {
             actionsProg.remove(idx);
         }
     }
-
+    public boolean canIncrDecr(int idx){
+        return existIndex(idx) && getActionProg(idx).canIncrDecr();
+    }
     public void up(int idx){
         if (idx>0 && idx < actionsProg.size()){
             Action actionPrec = actionsProg.get(idx-1);
@@ -46,6 +48,14 @@ public class Program {
             actionsProg.set(idx-1,action);
             actionsProg.set(idx,actionPrec);
         }
+    }
+
+    public void increment(int idx){
+        getActionProg(idx).increment();
+    }
+
+    public void decrement(int idx){
+        getActionProg(idx).decrement();
     }
 
     public void down(int idx){

@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 public class ActionPen extends Action{
     private final BooleanProperty penDowStatus = new SimpleBooleanProperty(true);
     public ActionPen(boolean penDowStatus) {
-        super(penDowStatus ? "Abaisser stylo":"Lever stylo","0");
+        super(penDowStatus ? "Abaisser stylo":"Lever stylo","");
         setPenDownStatus(penDowStatus);
     }
 

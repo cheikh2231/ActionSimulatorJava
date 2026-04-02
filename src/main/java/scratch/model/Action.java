@@ -30,9 +30,6 @@ public abstract class Action {
         return nameVariableProperty.get();
     }
 
-
-
-
     public Action(String name, String measure) {
         setName(name);
         setMeasure(measure);
@@ -120,5 +117,23 @@ public abstract class Action {
         return null;
     }
 
+    public boolean canIncrDecr(){
+        try{
+            Integer.parseInt(getMeasure());
+            return true;
+        } catch (NumberFormatException nb) {
+            return false;
+        }
+    }
+
+    public void increment(){
+        if(canIncrDecr())
+            setMeasure(String.valueOf(getValue(getMeasure())+1));
+    }
+
+    public void decrement(){
+        if(canIncrDecr())
+            setMeasure(String.valueOf(getValue(getMeasure())-1));
+    }
 
 }

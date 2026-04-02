@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -24,8 +25,11 @@ public class ActionProgView extends VBox {
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider Tout");
+    private final Button btnIncrement = new Button("+");
+    private final Button btnDecrement = new Button("-");
     private final Label runtimeError = new Label("Runtime Error");
     private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
+
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
@@ -34,10 +38,20 @@ public class ActionProgView extends VBox {
         btnDuplicate.setOnAction(actionEvent -> actionVm.duplicateAction());
         btnUp.setOnAction(actionEvent -> actionVm.moveUp());
         btnDown.setOnAction(actionEvent -> actionVm.moveDown());
+        btnIncrement.setOnAction(actionEvent -> actionVm.increment());
+        btnDecrement.setOnAction(actionEvent -> actionVm.decrement());
         btnsManager.setSpacing(12);
         return btnsManager;
     }
 
+    public HBox btnsIncrDecr(){
+        HBox btnsIncrDecr = new HBox(2);
+        btnsIncrDecr.getChildren().addAll(btnIncrement,btnDecrement);
+        btnIncrement.setPrefWidth(36);
+        btnDecrement.setPrefWidth(36);
+        HBox.setMargin(btnIncrement, new Insets(0, 3, 0, 5)); // left margin = 55
+        return btnsIncrDecr;
+    }
     public ActionProgView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         bindings();
@@ -52,7 +66,7 @@ public class ActionProgView extends VBox {
         final VBox principalBox = new VBox();
         final HBox detailsHBox = new HBox();
 
-        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, valeurLabel,measureTextField, measureUnitLabel);
+        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, valeurLabel,measureTextField,btnIncrement,btnsIncrDecr(), measureUnitLabel);
         principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
 
         return principalBox;
@@ -100,6 +114,11 @@ public class ActionProgView extends VBox {
 
         runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
         runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+        btnIncrement.visibleProperty().bind(actionVm.canIncrDecr());
+        btnIncrement.managedProperty().bind(actionVm.canIncrDecr());
+        btnDecrement.visibleProperty().bind(actionVm.canIncrDecr());
+        btnDecrement.managedProperty().bind(actionVm.canIncrDecr());
+
     }
 
     private void configListViewProg() {

@@ -214,6 +214,20 @@ public class ActionViewModel {
         return isvalidMesureProperty;
     }
 
+    public void increment(){
+        if(canIncrDecr().get()){
+            program.increment(progIndex.get());
+            mesureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
+        }
+    }
+
+    public void decrement(){
+        if(canIncrDecr().get()){
+            program.decrement(progIndex.get());
+            mesureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
+        }
+    }
+
     // program has anomalies
     // consequences => btn charger desactiver
     // when => duplication pen || listProgEmpty || have something devant declaration !
@@ -365,7 +379,11 @@ public class ActionViewModel {
                 }, progIndex
         );
     }
-
+    public BooleanBinding canIncrDecr(){
+        return Bindings.createBooleanBinding(() -> {
+            return program.canIncrDecr(progIndex.get());
+        },progIndex,getActionsProg());
+    }
     public StringProperty getVariableNameProperty() {
         return variableNameProperty;
     }
