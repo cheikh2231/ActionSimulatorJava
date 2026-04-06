@@ -327,11 +327,16 @@ public class ActionViewModel {
                 VariableAssignation va = new VariableAssignation();
                 va.setMeasure(reste);
                 va.setNameVariable(actionMeasureOrNameVariable);
+                // met à jour la valeur dans la map si la variable existe
+                if (Variable.variableMap.containsKey(actionMeasureOrNameVariable)) {
+                    Variable.variableMap.get(actionMeasureOrNameVariable).setMeasure(reste);
+                }
                 yield va;
             }
             case "VARIABLE_DECLARATION" -> {
                 VariableDeclaration vd = new VariableDeclaration();
                 vd.setNameVariable(actionMeasureOrNameVariable);
+                vd.addToVariableMap();
                 yield vd;
             }
             default -> null;
@@ -374,6 +379,7 @@ public class ActionViewModel {
                 }
                 generateActionFromFileAndAddToProg(actionType,actionMeasure,reste);
             }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
