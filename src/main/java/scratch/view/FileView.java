@@ -46,7 +46,6 @@ public class FileView extends HBox{
     }
 
     public void openFile(Stage stage){
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open SCR file");
         fileChooser.getExtensionFilters().addAll(
@@ -54,7 +53,7 @@ public class FileView extends HBox{
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             resetAll();
-           actionVm.loadFile(selectedFile);
+            actionVm.loadFile(selectedFile);
         }
     }
 

@@ -316,15 +316,24 @@ public class ActionViewModel {
         return sceneActions.getCursor();
     }
 
-    public void generateActionFromFileAndAddToProg(String actionType, String actionMesure) {
+    public void generateActionFromFileAndAddToProg(String actionType, String actionMeasureOrNameVariable, String reste) {
         Action action = switch (actionType) {
-            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
-            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
-            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
+            case "MOVE_FORWARD" -> new ActionMoveForward(actionMeasureOrNameVariable);
+            case "TURN_RIGHT" -> new ActionTurnRight(actionMeasureOrNameVariable);
+            case "TURN_LEFT" -> new ActionTurnLeft(actionMeasureOrNameVariable);
             case "PEN_UP" -> new ActionPen(false);
             case "PEN_DOWN" -> new ActionPen(true);
-            case "VARIABLE_ASSIGNATION" -> new VariableAssignation();
-            case "VARIABLE_DECLARATION" -> new VariableDeclaration();
+            case "VARIABLE_ASSIGNATION" -> {
+                VariableAssignation va = new VariableAssignation();
+                va.setMeasure(reste);
+                va.setNameVariable(actionMeasureOrNameVariable);
+                yield va;
+            }
+            case "VARIABLE_DECLARATION" -> {
+                VariableDeclaration vd = new VariableDeclaration();
+                vd.setNameVariable(actionMeasureOrNameVariable);
+                yield vd;
+            }
             default -> null;
         };
         if (action != null) {
@@ -344,11 +353,26 @@ public class ActionViewModel {
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
-
-                int separatorIndex = line.indexOf(";");
-                String actionMeasure = line.substring(separatorIndex + 1);
-                String actionType = line.substring(0, separatorIndex);
-                generateActionFromFileAndAddToProg(actionType, actionMeasure);
+                String actionType = "";
+                String actionMeasure = "";
+                String actionNameVariable = "";
+                String reste = "";
+                // trouver le premier séparateur
+                int firstIndex = line.indexOf(";");
+                if (firstIndex != -1) {
+                    actionType = line.substring(0, firstIndex);
+                    // chercher le deuxième en commençant APRES le premier (firstIndex + 1)
+                    int secondIndex = line.indexOf(";", firstIndex + 1);
+                    if (secondIndex != -1) {
+                        // Si on trouve un deuxième ;
+                        actionMeasure = line.substring(firstIndex + 1, secondIndex);
+                        reste = line.substring(secondIndex + 1);
+                    } else {
+                        // S'il n'y a qu un seul ;
+                        actionMeasure = line.substring(firstIndex + 1);
+                    }
+                }
+                generateActionFromFileAndAddToProg(actionType,actionMeasure,reste);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -385,8 +409,8 @@ public class ActionViewModel {
 
     public BooleanBinding hasActionSelectedRuntime() {
         return Bindings.createBooleanBinding(() -> {
-            return hasRuntimeError.get() &&
-                    progIndex.get() == sceneIndex.get() ;
+                    return hasRuntimeError.get() &&
+                            progIndex.get() == sceneIndex.get() ;
                 },hasRuntimeError,progIndex
         );
     }
