@@ -23,6 +23,8 @@ public class VariableAssignation extends Variable {
         return ActionType.VARIABLEASSIGNATION;
     }
 
-
-
+    @Override
+    public String getFormatName() {
+        return super.getFormatName()+"ASSIGNATION";
+    }
 }

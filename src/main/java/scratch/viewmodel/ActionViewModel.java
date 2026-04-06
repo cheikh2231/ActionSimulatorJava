@@ -316,18 +316,20 @@ public class ActionViewModel {
         return sceneActions.getCursor();
     }
 
-    public void generateActionFromFileAndAddToProg(String actionType, int actionMesure) {
-//        Action action = switch (actionType) {
-//            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
-//            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
-//            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
-//            case "PEN_UP" -> new ActionPen(false);
-//            case "PEN_DOWN" -> new ActionPen(true);
-//            default -> null;
-//        };
-//        if (action != null) {
-//            getActionsProg().add(action);
-//        }
+    public void generateActionFromFileAndAddToProg(String actionType, String actionMesure) {
+        Action action = switch (actionType) {
+            case "MOVE_FORWARD" -> new ActionMoveForward(actionMesure);
+            case "TURN_RIGHT" -> new ActionTurnRight(actionMesure);
+            case "TURN_LEFT" -> new ActionTurnLeft(actionMesure);
+            case "PEN_UP" -> new ActionPen(false);
+            case "PEN_DOWN" -> new ActionPen(true);
+            case "VARIABLE_ASSIGNATION" -> new VariableAssignation();
+            case "VARIABLE_DECLARATION" -> new VariableDeclaration();
+            default -> null;
+        };
+        if (action != null) {
+            getActionsProg().add(action);
+        }
     }
 
     public BooleanBinding canAddToProgram() {
@@ -344,23 +346,15 @@ public class ActionViewModel {
                 String line = fileScanner.nextLine().trim();
 
                 int separatorIndex = line.indexOf(";");
-                int actionMeasure = Integer.parseInt(
-                        line.substring(separatorIndex + 1)
-                );
-
+                String actionMeasure = line.substring(separatorIndex + 1);
                 String actionType = line.substring(0, separatorIndex);
-
                 generateActionFromFileAndAddToProg(actionType, actionMeasure);
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public BooleanProperty hasRuntimeErrorProperty() {
-        return hasRuntimeError;
-    }
 
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {

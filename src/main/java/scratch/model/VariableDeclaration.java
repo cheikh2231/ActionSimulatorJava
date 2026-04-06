@@ -15,8 +15,6 @@ public class VariableDeclaration extends Variable {
             variableMap.put(getNameVariable(), this);
             System.out.println(variableMap);
         }
-
-
     }
 
     @Override
@@ -40,4 +38,8 @@ public class VariableDeclaration extends Variable {
         return super.getNameVariable();
     }
 
+    @Override
+    public String getFormatName() {
+        return super.getFormatName()+"DECLARATION";
+    }
 }
