@@ -44,7 +44,7 @@ public class Variable extends Action{
 
     @Override
     public String getFormatName() {
-        return "VARIABLE_";
+        return "VARIABLE";
     }
 
     @Override

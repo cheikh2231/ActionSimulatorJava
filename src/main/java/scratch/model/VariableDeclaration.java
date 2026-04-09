@@ -40,6 +40,6 @@ public class VariableDeclaration extends Variable {
 
     @Override
     public String getFormatName() {
-        return super.getFormatName()+"DECLARATION";
+        return super.getFormatName()+"_DECLARATION";
     }
 }
