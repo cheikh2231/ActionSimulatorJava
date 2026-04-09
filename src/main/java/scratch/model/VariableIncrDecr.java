@@ -13,7 +13,7 @@ public class VariableIncrDecr extends Variable {
 
     @Override
     public String getDetailsName() {
-        return getName() + "Incrémentation de la variable ";
+        return "Incrémentation de la variable ";
     }
 
     @Override

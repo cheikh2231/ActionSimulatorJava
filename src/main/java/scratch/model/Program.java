@@ -189,6 +189,7 @@ public class Program {
                 return true;
             }
         }else if(getActionProg(idxProg).getActionType() == ActionType.VARIABLEASSIGNATION){
+
             VariableAssignation vA = (VariableAssignation) getActionProg(idxProg);
             if (!vA.isValidVariableName(newName)) return false;
             vA.setNameVariable(newName);
@@ -219,6 +220,9 @@ public class Program {
     }
     public boolean isAssignation(int idx){
         return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION;
+    }
+    public boolean isIncrDecr(int idx){
+        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEINCRDECR;
     }
 
     public boolean haveDifferenceBetweenMapAndList(){

@@ -141,6 +141,7 @@ public class ActionViewModel {
         });
 
         measureProperty.addListener((obs, o, n) -> {
+            if (isSelected) return;
             if (n.isEmpty()) {
                 isvalidMesureProperty.set(false);
                 return;
@@ -154,6 +155,7 @@ public class ActionViewModel {
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
+            System.out.println(Variable.variableMap.size());
             boolean succes = program.updateVariableToMap(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
             isValidVariableNameProperty.set(succes);
         });
@@ -280,7 +282,6 @@ public class ActionViewModel {
 
     public void getNext() {
         int idx = sceneIndex.get();
-
         sceneIndex.set(idx + 1);
         if (fullyTraversedSceneList().get()) {
             progIndex.set(program.size() - 1);
@@ -385,6 +386,19 @@ public class ActionViewModel {
         }
     }
 
+    public StringBinding getSeparatorLabel(){
+        return Bindings.createStringBinding(() -> {
+            if(isAssignation().get())
+                return " valeur : ";
+            return " de ";
+        },progIndex);
+    }
+    public BooleanBinding textFieldValueVariableRules() {
+        return Bindings.createBooleanBinding(() -> {
+                    return program.isDeclaration(progIndex.get()) || program.isAssignation(progIndex.get()) || program.isIncrDecr(progIndex.get());
+                }, progIndex
+        );
+    }
 
     public BooleanBinding isDeclaration() {
         return Bindings.createBooleanBinding(() -> {
@@ -396,6 +410,12 @@ public class ActionViewModel {
     public BooleanBinding isAssignation() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isAssignation(progIndex.get());
+                }, progIndex
+        );
+    }
+    public BooleanBinding isIncrDecr() {
+        return Bindings.createBooleanBinding(() -> {
+                    return program.isIncrDecr(progIndex.get());
                 }, progIndex
         );
     }
