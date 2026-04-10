@@ -89,10 +89,21 @@ public class SceneActions {
     public boolean executeAction(Action action){
         if (action != null) {
             try {
+                if (action.getActionType() == ActionType.VARIABLEDECLARATION){
+                    VariableDeclaration vD =( VariableDeclaration) action;
+                    vD.addToVariableMap();
+                    return true;
+                }else if (action.getActionType() == ActionType.VARIABLEASSIGNATION){
+                    VariableAssignation vA =( VariableAssignation) action;
+                    if (Variable.variableMap.containsKey(vA.getNameVariable())){
+                        Variable.variableMap.get(vA.getNameVariable()).setMeasure(vA.getMeasure());
+                        return true;
+                    }else
+                        return false;
+                }
                 action.executeAction(this);
                 return true;
             } catch (Exception e) {
-
                 return false;
             }
         }

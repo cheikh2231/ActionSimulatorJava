@@ -1,8 +1,10 @@
 package scratch.viewmodel;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import scratch.model.*;
 
@@ -29,6 +31,7 @@ public class ActionViewModel {
     private boolean isSelected = false;
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
     private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
+    private boolean isExecuting = false;
 
     public BooleanProperty isValidVariableNameProperty() {
         return isValidVariableNameProperty;
@@ -135,8 +138,7 @@ public class ActionViewModel {
                 measureProperty.setValue("");
                 this.setIsDetailableProperty(false);
             }
-            isvalidMesureProperty.set(true); // pour stylo
-            //remet la selection a faux
+            isvalidMesureProperty.set(true); // pour stylo//remet la selection a faux
             isSelected = false;
         });
 
@@ -148,7 +150,7 @@ public class ActionViewModel {
             }
             Action currentAction = getAction(progIndex.get());
             if (currentAction == null) return;
-            boolean success = program.updateVariableToMap(currentAction.getNameVariable().trim(), progIndex.get(), n.trim());
+            boolean success = program.updateActionFromUI(currentAction.getNameVariable().trim(), progIndex.get(), n.trim());
             isvalidMesureProperty.set(success);
         });
 
@@ -156,15 +158,18 @@ public class ActionViewModel {
             // si on est entrain de selectionner on fait rien
             if (isSelected) return;
             System.out.println(Variable.variableMap.size());
-            boolean succes = program.updateVariableToMap(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
+            boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
             isValidVariableNameProperty.set(succes);
         });
+
+
+
     }
 
     public void removeAction() {
         program.removeAction(progIndex.get());
 
-        if (progIndex.get() == 0){
+        if (progIndex.get() == 0) {
             progIndex.set(-1);
             progIndex.set(0);
         }
@@ -215,15 +220,15 @@ public class ActionViewModel {
         return isvalidMesureProperty;
     }
 
-    public void increment(){
-        if(canIncrDecr().get()){
+    public void increment() {
+        if (canIncrDecr().get()) {
             program.increment(progIndex.get());
             measureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
         }
     }
 
-    public void decrement(){
-        if(canIncrDecr().get()){
+    public void decrement() {
+        if (canIncrDecr().get()) {
             program.decrement(progIndex.get());
             measureProperty.set(program.getActionProg(progIndex.get()).getMeasure());
         }
@@ -234,22 +239,24 @@ public class ActionViewModel {
     // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-                    return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
-                },
-                getActionsProg(),isvalidMesureProperty,isValidVariableNameProperty,measureProperty
-        );
+            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
+        }, measureProperty,getActionsProg(), isvalidMesureProperty, isValidVariableNameProperty);
     }
 
-    public BooleanBinding hasActionsProgChange() {
-        return Bindings.createBooleanBinding(() -> {
-            hasRuntimeError.set(false);
+    public BooleanBinding hasProgChange(){
+        return Bindings.createBooleanBinding(()->{
+
             if (hasChargerScene.get()) {
-                hasChargerScene.set(false);
-                return true;
+                if (!isExecuting) {
+                    hasChargerScene.set(false);
+                    hasRuntimeError.set(false);
+                    return true;
+                }
             }
             return false;
-        }, getActionsProg());
+        },getActionsProg());
     }
+
 
     public void charger() {
         reinitialiserListeScene();
@@ -271,7 +278,6 @@ public class ActionViewModel {
     }
 
 
-
     public void setHasChargerScene(boolean hasChargerScene) {
         this.hasChargerScene.set(hasChargerScene);
     }
@@ -287,15 +293,18 @@ public class ActionViewModel {
             progIndex.set(program.size() - 1);
         } else
             progIndex.set(sceneIndex.get());
+
     }
 
     public void executeAction() {
+        isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
         boolean success = sceneActions.executeAction(action);
         hasRuntimeError.set(!success);
         action.setHasError(!success);
         if (success)
             getNext();
+        isExecuting = false;
     }
 
     public BooleanBinding existIndex() {
@@ -378,7 +387,7 @@ public class ActionViewModel {
                         actionMeasure = line.substring(firstIndex + 1);
                     }
                 }
-                generateActionFromFileAndAddToProg(actionType,actionMeasure,reste);
+                generateActionFromFileAndAddToProg(actionType, actionMeasure, reste);
             }
 
         } catch (Exception e) {
@@ -386,13 +395,14 @@ public class ActionViewModel {
         }
     }
 
-    public StringBinding getSeparatorLabel(){
+    public StringBinding getSeparatorLabel() {
         return Bindings.createStringBinding(() -> {
-            if(isAssignation().get())
+            if (isAssignation().get())
                 return " valeur : ";
             return " de ";
-        },progIndex);
+        }, progIndex);
     }
+
     public BooleanBinding textFieldValueVariableRules() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isDeclaration(progIndex.get()) || program.isAssignation(progIndex.get()) || program.isIncrDecr(progIndex.get());
@@ -413,16 +423,18 @@ public class ActionViewModel {
                 }, progIndex
         );
     }
+
     public BooleanBinding isIncrDecr() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isIncrDecr(progIndex.get());
                 }, progIndex
         );
     }
-    public BooleanBinding canIncrDecr(){
+
+    public BooleanBinding canIncrDecr() {
         return Bindings.createBooleanBinding(() -> {
-            return program.canIncrDecr(measureProperty.get(),progIndex.get());
-        },progIndex, getActionsProg(), measureProperty);
+            return program.canIncrDecr(measureProperty.get(), progIndex.get());
+        }, progIndex, getActionsProg(), measureProperty);
     }
 
     public StringProperty getVariableNameProperty() {
@@ -436,8 +448,8 @@ public class ActionViewModel {
     public BooleanBinding hasActionSelectedRuntime() {
         return Bindings.createBooleanBinding(() -> {
                     return hasRuntimeError.get() &&
-                            progIndex.get() == sceneIndex.get() ;
-                },hasRuntimeError,progIndex
+                            progIndex.get() == sceneIndex.get();
+                }, hasRuntimeError, progIndex
         );
     }
 

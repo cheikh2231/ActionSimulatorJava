@@ -7,7 +7,7 @@ import java.util.Locale;
 public class VariableDeclaration extends Variable {
 
     public VariableDeclaration() {
-        super("Déclaration variable ", "");
+        super("Déclaration variable ", "0");
     }
 
     public void addToVariableMap() {

@@ -13,25 +13,25 @@ public class Program {
                     action -> new Observable[] { action.measureProperty(), action.nameVariableProperty() }
             );
 
-    public void addAction(int idx,int pos) {
+    public void addAction(int idx, int pos) {
         Action action = Actions.getAction(idx);
         if (action != null)
-            actionsProg.add(pos,action.copy());
+            actionsProg.add(pos, action.copy());
     }
 
 
     public void removeAction(int idx) {
-        if(existIndex(idx)) {
+        if (existIndex(idx)) {
             Action selected = getActionProg(idx);
             if (selected.getActionType() == ActionType.VARIABLEDECLARATION) {
                 // on vérifie que celle selectionné est celle qui est dans la liste
-                if(Variable.variableMap.get(selected.getNameVariable()) == selected){
+                if (Variable.variableMap.get(selected.getNameVariable()) == selected) {
                     Variable.variableMap.remove(selected.getNameVariable());
 
-                    if (actionsProg.stream().filter(n-> Objects.equals(n.getNameVariable(), selected.getNameVariable())).count()>1){
+                    if (actionsProg.stream().filter(n -> Objects.equals(n.getNameVariable(), selected.getNameVariable())).count() > 1) {
                         String name = selected.getNameVariable();
                         actionsProg.remove(idx);
-                        Variable.variableMap.put(name,(Variable) actionsProg.stream().filter(m-> Objects.equals(m.getNameVariable(), name)).findFirst().get());
+                        Variable.variableMap.put(name, (Variable) actionsProg.stream().filter(m -> Objects.equals(m.getNameVariable(), name)).findFirst().get());
                         return;
                     }
                 }
@@ -39,32 +39,34 @@ public class Program {
             actionsProg.remove(idx);
         }
     }
-    public boolean canIncrDecr(String measureProperty,int idx){
+
+    public boolean canIncrDecr(String measureProperty, int idx) {
         return existIndex(idx) && getActionProg(idx).canIncrDecr(measureProperty);
     }
-    public void up(int idx){
-        if (idx>0 && idx < actionsProg.size()){
-            Action actionPrec = actionsProg.get(idx-1);
+
+    public void up(int idx) {
+        if (idx > 0 && idx < actionsProg.size()) {
+            Action actionPrec = actionsProg.get(idx - 1);
             Action action = actionsProg.get(idx);
-            actionsProg.set(idx-1,action);
-            actionsProg.set(idx,actionPrec);
+            actionsProg.set(idx - 1, action);
+            actionsProg.set(idx, actionPrec);
         }
     }
 
-    public void increment(int idx){
+    public void increment(int idx) {
         getActionProg(idx).increment();
     }
 
-    public void decrement(int idx){
+    public void decrement(int idx) {
         getActionProg(idx).decrement();
     }
 
-    public void down(int idx){
-        if (canMoveDown(idx)){
+    public void down(int idx) {
+        if (canMoveDown(idx)) {
             Action action = actionsProg.get(idx);
-            Action actionSuivant = actionsProg.get(idx+1);
-            actionsProg.set(idx+1,action);
-            actionsProg.set(idx,actionSuivant);
+            Action actionSuivant = actionsProg.get(idx + 1);
+            actionsProg.set(idx + 1, action);
+            actionsProg.set(idx, actionSuivant);
         }
     }
 
@@ -72,38 +74,38 @@ public class Program {
         return actionsProg;
     }
 
-    public Action getActionProg(int idx){
-        if(existIndex(idx))
+    public Action getActionProg(int idx) {
+        if (existIndex(idx))
             return actionsProg.get(idx);
         return null;
     }
 
 
-    public void dupplicate(int idx){
-        if(existIndex(idx)) {
+    public void dupplicate(int idx) {
+        if (existIndex(idx)) {
             actionsProg.add(actionsProg.get(idx).copy());
         }
     }
 
-    public boolean canMoveDown(int idx){
-        return idx < size()-1 && idx >=0;
+    public boolean canMoveDown(int idx) {
+        return idx < size() - 1 && idx >= 0;
     }
 
-    public boolean existIndex(int idx){
-        return idx>=0 && idx<actionsProg.size();
+    public boolean existIndex(int idx) {
+        return idx >= 0 && idx < actionsProg.size();
     }
 
-    public int size(){
+    public int size() {
         return actionsProg.size();
     }
 
 
-    public void clear(){
+    public void clear() {
         Variable.variableMap.clear();
         actionsProg.clear();
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return actionsProg.isEmpty();
     }
 
@@ -111,12 +113,26 @@ public class Program {
     public boolean allAssignationsAreValid() {
         return getActionsProgList().stream()
                 .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION)
-                .allMatch(a -> Variable.variableMap.containsKey(a.getNameVariable()));
+                .allMatch(a -> isDeclared(a.getNameVariable()) && !a.getMeasure().isEmpty());
     }
 
-    public boolean hasUndefinedValues(){
-        return getActionsProgList().stream().anyMatch(action -> action.getValue(action.getMeasure()) == null);
+    private boolean isDeclared(String var){
+        return getActionsProgList().stream().anyMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION && a.getNameVariable().equals(var));
     }
+
+    public boolean hasUndefinedValues() {
+        return getActionsProgList().stream().anyMatch(action -> notInt(action.getMeasure()) && !isDeclared(action.getMeasure()));
+    }
+
+    private boolean notInt(String val){
+        try{
+            Integer.parseInt(val);
+            return false;
+        }catch (Exception e){
+            return true;
+        }
+    }
+
     private boolean hasDuplicatePenStatus() {
         boolean abaisser = true;
         for (Action action : getActionsProgList()) {
@@ -131,101 +147,73 @@ public class Program {
         return false;
     }
 
-    public boolean hasAnomalies(){
-        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
+    public boolean hasAnomalies() {
+//        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
+        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !allAssignationsAreValid() || hasUndefinedValues()  || hasUndefinedDeclaration() ;
     }
 
-    private boolean hasActionBeforeDecla(){
+    private boolean hasActionBeforeDecla() {
         boolean hasActionNotDecla = false;
-        if (getActionsProgList().stream().noneMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)){
+        if (getActionsProgList().stream().noneMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)) {
             return false;
         }
-        for (Action a  : getActionsProgList()){
-            if (a.getActionType() != ActionType.VARIABLEDECLARATION){
+        for (Action a : getActionsProgList()) {
+            if (a.getActionType() != ActionType.VARIABLEDECLARATION) {
                 hasActionNotDecla = true;
-            }else if (hasActionNotDecla){
+            } else if (hasActionNotDecla) {
                 return true;
             }
         }
         return false;
     }
 
-    public boolean updateVariableToMap(String newName, int idxProg, String value){
-        Map<String, Variable> map = Variable.variableMap;
+    public boolean updateActionFromUI(String newName, int idxProg, String value) {
+        Action action = getActionProg(idxProg);
+        if (action == null) return false;
 
-        if(getActionProg(idxProg).getActionType()== ActionType.VARIABLEDECLARATION){
-            VariableDeclaration vD = (VariableDeclaration) getActionProg(idxProg);
+        if (action.getActionType() == ActionType.VARIABLEDECLARATION) {
 
-            String oldName = vD.getNameVariable();
+            VariableDeclaration vD = (VariableDeclaration) action;
+            vD.setNameVariable(newName);
+            System.out.println(vD.getNameVariable());
+            if (newName == null || newName.equals(vD.getNameVariable())) return true;
+            if (!newName.isEmpty() && !vD.isValidVariableName(newName)) return false;
 
-            // si rien ne change on ne fait rien
-            if (newName == null || newName.equals(oldName)) return true;
+            return true;
 
-            boolean alreadyExist = map.containsKey(newName);
-
-            // le nouveau nom est vide on supp l'ancien
-            if (newName.isEmpty()) {
-                if (oldName != null && !oldName.isEmpty()) {
-                    map.remove(oldName);
-                }
-                vD.setNameVariable(newName);
-                return true;
-            }
-
-            // mettre a jour le map
-            if (oldName != null && !oldName.isEmpty() && map.get(oldName) == (vD)) {
-                map.remove(oldName);
-            }
-            // si la variableName existe déjà dans la map et qu'on essaie de déclare une autre variable avec le meme nom
-            if (alreadyExist && map.get(newName) != vD) {
-                vD.setNameVariable(newName);
-                return true;
-            }
-
-
-            if (vD.isValidVariableName(newName)) {
-                vD.setNameVariable(newName);
-                vD.addToVariableMap();
-                return true;
-            }
-        }else if(getActionProg(idxProg).getActionType() == ActionType.VARIABLEASSIGNATION){
-
-            VariableAssignation vA = (VariableAssignation) getActionProg(idxProg);
+        } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION) {
+            VariableAssignation vA = (VariableAssignation) action;
             if (!vA.isValidVariableName(newName)) return false;
             vA.setNameVariable(newName);
             vA.setMeasure(value);
-            if(Variable.variableMap.containsKey(newName)){
-                if (value != null) {
-                    Variable.variableMap.get(newName).setMeasure(value);
-                    Variable.variableMap.put(newName,Variable.variableMap.get(newName));
-                    return true;
-                }
-                return false;
-            }
             return true;
 
-        }else {
-            if (value != null && getActionProg(idxProg).isValidMeasure(value)){
-                getActionProg(idxProg).setMeasure(value);
+        } else {
+            if (value == null) return false;
+            if (!action.isValidMeasure(value)) return false;
+            if (!action.isValidVariableName(value)) return false;
+            if (action.isValidMeasure(value) || isDeclared(value) || action.isValidVariableName(value)) {
+                action.setMeasure(value);
                 return true;
-            }else
-                return false;
-
+            }
+            return false;
         }
-        return false;
     }
 
-    public boolean isDeclaration(int idx){
-        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEDECLARATION;
-    }
-    public boolean isAssignation(int idx){
-        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEASSIGNATION;
-    }
-    public boolean isIncrDecr(int idx){
-        return getActionProg(idx) != null && getActionProg(idx).getActionType()==ActionType.VARIABLEINCRDECR;
+
+    public boolean isDeclaration(int idx) {
+        return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEDECLARATION;
     }
 
-    public boolean haveDifferenceBetweenMapAndList(){
-        return actionsProg.stream().filter(a -> a.getActionType() == ActionType.VARIABLEDECLARATION).count() != Variable.variableMap.size();
+    public boolean isAssignation(int idx) {
+        return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEASSIGNATION;
+    }
+
+    public boolean isIncrDecr(int idx) {
+        return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEINCRDECR;
+    }
+
+    private boolean hasUndefinedDeclaration(){
+        return getActionsProgList().stream().anyMatch(action -> action.getActionType() == ActionType.VARIABLEDECLARATION && (action.getNameVariable().isEmpty()));
     }
 }

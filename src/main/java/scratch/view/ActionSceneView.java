@@ -77,10 +77,10 @@ public class ActionSceneView extends VBox {
 
     public void bindings() {
         loadButton.disableProperty().bind(actionVm.hasAnomalies());
-        loadButton.visibleProperty().bind(actionVm.hasActionsProgChange().or(actionVm.hasChargerSceneProperty().not()));
+        loadButton.visibleProperty().bind(actionVm.hasProgChange().or(actionVm.hasChargerSceneProperty().not()));
         loadButton.managedProperty().bind(actionVm.hasChargerSceneProperty().not());
-        resetButton.visibleProperty().bind(actionVm.hasActionsProgChange().not().and(actionVm.hasChargerSceneProperty()));
-        resetButton.managedProperty().bind(actionVm.hasActionsProgChange().not().and(actionVm.hasChargerSceneProperty()));
+        resetButton.visibleProperty().bind(actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty()));
+        resetButton.managedProperty().bind(actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty()));
 
         executeButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.fullyTraversedSceneList()));
         executeButton.visibleProperty().bind(nextButton.visibleProperty().not());
