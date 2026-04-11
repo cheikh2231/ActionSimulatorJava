@@ -24,8 +24,7 @@ public class ActionViewModel {
     private StringProperty variableNameProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
-    private ObjectProperty<Action> actionSelected = new SimpleObjectProperty<>();
-    private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
+     BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
     private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
     private boolean isSelected = false;
@@ -46,8 +45,9 @@ public class ActionViewModel {
         resetCanvasProperty.set(!resetCanvasProperty.get());
     }
 
-    public ObjectProperty<Action> actionSelectedProperty() {
-        return actionSelected;
+
+    public BooleanProperty hasRuntimeError() {
+        return hasRuntimeError;
     }
 
     public ObservableList<Action> getActionsProg() {
@@ -249,7 +249,6 @@ public class ActionViewModel {
             if (hasChargerScene.get()) {
                 if (!isExecuting) {
                     hasChargerScene.set(false);
-                    hasRuntimeError.set(false);
                     return true;
                 }
             }
@@ -300,8 +299,9 @@ public class ActionViewModel {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
         boolean success = sceneActions.executeAction(action);
-        hasRuntimeError.set(!success);
+
         action.setHasError(!success);
+        hasRuntimeError.set(!success);
         if (success)
             getNext();
         isExecuting = false;
@@ -448,7 +448,7 @@ public class ActionViewModel {
     public BooleanBinding hasActionSelectedRuntime() {
         return Bindings.createBooleanBinding(() -> {
                     return hasRuntimeError.get() &&
-                            progIndex.get() == sceneIndex.get();
+                           existIndex().get() && program.getActionProg(progIndex.get()).hasErrorProperty().get();
                 }, hasRuntimeError, progIndex
         );
     }

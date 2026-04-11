@@ -111,7 +111,6 @@ public class ActionProgView extends VBox {
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
-        actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
 
         runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
         runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));

@@ -93,10 +93,12 @@ public class SceneActions {
                     VariableDeclaration vD =( VariableDeclaration) action;
                     vD.addToVariableMap();
                     return true;
-                }else if (action.getActionType() == ActionType.VARIABLEASSIGNATION){
-                    VariableAssignation vA =( VariableAssignation) action;
-                    if (Variable.variableMap.containsKey(vA.getNameVariable())){
-                        Variable.variableMap.get(vA.getNameVariable()).setMeasure(vA.getMeasure());
+                }else if (action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType() == ActionType.VARIABLEINCRDECR){
+                     boolean isAssignation = action.getActionType() == ActionType.VARIABLEASSIGNATION;
+                     if (action.getValue(action.getMeasure())== 0)
+                         return false;
+                     if (Variable.variableMap.containsKey(action.getNameVariable())){
+                        Variable.variableMap.get(action.getNameVariable()).setMeasure(isAssignation ? action.getMeasure() : String.valueOf(action.getValue(action.getMeasure()) + action.getValue(Variable.variableMap.get(action.getNameVariable()).getMeasure())));
                         return true;
                     }else
                         return false;

@@ -10,7 +10,7 @@ import java.util.Objects;
 public class Program {
     private ObservableList<Action> actionsProg =
             FXCollections.observableArrayList(
-                    action -> new Observable[] { action.measureProperty(), action.nameVariableProperty() }
+                    action -> new Observable[]{action.measureProperty(), action.nameVariableProperty()}
             );
 
     public void addAction(int idx, int pos) {
@@ -110,13 +110,13 @@ public class Program {
     }
 
 
-    public boolean allAssignationsAreValid() {
+    public boolean declarationCanGetAMeasure() {
         return getActionsProgList().stream()
-                .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION)
+                .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION || a.getActionType() == ActionType.VARIABLEINCRDECR)
                 .allMatch(a -> isDeclared(a.getNameVariable()) && !a.getMeasure().isEmpty());
     }
 
-    private boolean isDeclared(String var){
+    private boolean isDeclared(String var) {
         return getActionsProgList().stream().anyMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION && a.getNameVariable().equals(var));
     }
 
@@ -124,11 +124,11 @@ public class Program {
         return getActionsProgList().stream().anyMatch(action -> notInt(action.getMeasure()) && !isDeclared(action.getMeasure()));
     }
 
-    private boolean notInt(String val){
-        try{
+    private boolean notInt(String val) {
+        try {
             Integer.parseInt(val);
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
             return true;
         }
     }
@@ -149,7 +149,7 @@ public class Program {
 
     public boolean hasAnomalies() {
 //        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
-        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !allAssignationsAreValid() || hasUndefinedValues()  || hasUndefinedDeclaration() ;
+        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !declarationCanGetAMeasure() || hasUndefinedValues() || hasUndefinedDeclaration();
     }
 
     private boolean hasActionBeforeDecla() {
@@ -181,13 +181,11 @@ public class Program {
 
             return true;
 
-        } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION) {
-            VariableAssignation vA = (VariableAssignation) action;
-            if (!vA.isValidVariableName(newName)) return false;
-            vA.setNameVariable(newName);
-            vA.setMeasure(value);
+        } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType() == ActionType.VARIABLEINCRDECR) {
+            if (!action.isValidVariableName(newName)) return false;
+            action.setNameVariable(newName);
+            action.setMeasure(value);
             return true;
-
         } else {
             if (value == null) return false;
             if (!action.isValidMeasure(value)) return false;
@@ -196,8 +194,9 @@ public class Program {
                 action.setMeasure(value);
                 return true;
             }
-            return false;
+
         }
+        return false;
     }
 
 
@@ -213,7 +212,9 @@ public class Program {
         return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEINCRDECR;
     }
 
-    private boolean hasUndefinedDeclaration(){
+    private boolean hasUndefinedDeclaration() {
         return getActionsProgList().stream().anyMatch(action -> action.getActionType() == ActionType.VARIABLEDECLARATION && (action.getNameVariable().isEmpty()));
     }
+
+
 }
