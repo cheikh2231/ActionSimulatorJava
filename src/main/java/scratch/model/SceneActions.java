@@ -95,6 +95,7 @@ public class SceneActions {
                     return true;
                 }else if (action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType() == ActionType.VARIABLEINCRDECR){
                      boolean isAssignation = action.getActionType() == ActionType.VARIABLEASSIGNATION;
+                     if (isAssignation && action.getNameVariable().equals(action.getMeasure())) return true;
                      if (action.getValue(action.getMeasure())== 0)
                          return false;
                      if (Variable.variableMap.containsKey(action.getNameVariable())){

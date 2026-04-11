@@ -2,6 +2,9 @@ package scratch.model;
 
 import javafx.beans.property.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public abstract class Action {
     private StringProperty name = new SimpleStringProperty();
     private StringProperty measure = new SimpleStringProperty();
@@ -90,30 +93,45 @@ public abstract class Action {
     }
 
 
-    public Integer getValue(String value){ //nb
-        try {
-            // Dans le cas ou je recois un integer et non une variable je retourne l'integer
-            return Integer.parseInt(value);
-        }catch (Exception e){
-            // Si j'ai reçu une variable, je vérifie qu'elle est dans la map.
-            if (Variable.variableMap.containsKey(value)){
-                // si elle est dans la map on récupère la value
-                String nb = Variable.variableMap.get(value).getMeasure();
-                // si la variable.getMeasure contient elle meme une variable alors on entre dans la boucle jusqu'a ce
-                // qu'on obtient quelque chose qu'on peut parseInt()
-                while (Variable.variableMap.get(nb) != null){
-                    nb = Variable.variableMap.get(nb).getMeasure();
-                }
+    public Integer getValue(String value) {
+        if (value == null) return null;
 
-                // quand on est remonté jusqu'a la valeure originelle, alors on try et catch pour savoir si on peut la parseInt,
-                // dans le cas contraire c'est que cest une mauvaise valeure
-                try{
-                    return Integer.parseInt(nb);
-                } catch (NumberFormatException ex) {
-                    return null;
-                }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            // Ce n'est pas un nombre, on traite comme une variable
+            return resolveVariableChain(value);
+        }
+    }
+
+    private Integer resolveVariableChain(String startVar) {
+        String current = startVar;
+        // On garde trace des variables déjà visitées pour éviter les boucles infinies
+        Set<String> visited = new HashSet<>();
+
+        while (Variable.variableMap.containsKey(current)) {
+            // retombe sur var deja vue  boucle infinie détectée
+            boolean addToSet = visited.add(current);
+            if (!addToSet) {
+                return null;
+            }
+
+            //recupe le suivant vererifier si c'est un int sinon le current devient le suivant
+            //exemple declarer v et h
+                    // assgner v 15
+                    // assigner h v
+
+            // on fait une boucle jusqu'a trouver la valeur de val (15)
+            String next = Variable.variableMap.get(current).getMeasure();
+
+
+            try {
+                return Integer.parseInt(next);
+            } catch (NumberFormatException e) {
+                current = next;
             }
         }
+
         return null;
     }
 

@@ -200,6 +200,7 @@ public class Program {
     }
 
 
+
     public boolean isDeclaration(int idx) {
         return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEDECLARATION;
     }
