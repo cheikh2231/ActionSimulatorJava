@@ -96,7 +96,7 @@ public class ActionProgView extends VBox {
         separatorLabel.visibleProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
         separatorLabel.managedProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
         measureTextField.textProperty().bindBidirectional(actionVm.getMeasureProperty());
-        measureTextField.visibleProperty().bind(actionVm.isDeclaration().not());
+        measureTextField.visibleProperty().bind(actionVm.isDeclaration().not().and(actionVm.isEndRepeat().not()));
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
         variableNameTextField.visibleProperty().bind(actionVm.textFieldValueVariableRules());
         variableNameTextField.managedProperty().bind(actionVm.textFieldValueVariableRules());
@@ -106,8 +106,8 @@ public class ActionProgView extends VBox {
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
-        textfieldsErrorLabel.managedProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
-        textfieldsErrorLabel.visibleProperty().bind(((actionVm.isDeclaration()).and(actionVm.isValidVariableNameProperty().not())).or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.managedProperty().bind(actionVm.isValidVariableNameProperty().not().or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind((actionVm.isValidVariableNameProperty().not()).or(actionVm.isValidMesureProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });

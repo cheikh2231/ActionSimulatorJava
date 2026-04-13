@@ -77,15 +77,15 @@ public class ActionSceneView extends VBox {
 
     public void bindings() {
         loadButton.disableProperty().bind(actionVm.hasAnomalies());
-        loadButton.visibleProperty().bind(actionVm.hasProgChange().or(actionVm.hasChargerSceneProperty().not()));
+        loadButton.visibleProperty().bind(((actionVm.hasProgChange().not().and(actionVm.hasRuntimeError().not())).or(actionVm.hasChargerSceneProperty().not())));
         loadButton.managedProperty().bind(actionVm.hasChargerSceneProperty().not());
-        resetButton.visibleProperty().bind(actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty()));
+        resetButton.visibleProperty().bind((actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty())));
         resetButton.managedProperty().bind(actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty()));
 
-        executeButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.fullyTraversedSceneList()));
+        executeButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.fullyTraversedSceneList()).or(actionVm.hasRuntimeError()));
         executeButton.visibleProperty().bind(nextButton.visibleProperty().not());
         executeButton.managedProperty().bind(nextButton.visibleProperty().not());
-        nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
+        nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())).and(actionVm.hasRuntimeError().not()));
         nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
 
     }

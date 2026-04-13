@@ -31,7 +31,10 @@ public class ProgListStyliser extends AbstractListStyliser {
             StringProperty equal = new SimpleStringProperty(" de ");
             label.textProperty().bind(action.nameProperty().concat(vID.nameVariableProperty() != null ?  doblePunts.concat(vID.nameVariableProperty().concat(equal).concat(action.measureProperty())):""));
         }
-        else
+        else if (action.getActionType() == ActionType.REPEAT){
+            StringProperty nbRepeat = new SimpleStringProperty(action.getUnity());
+            label.textProperty().bind(action.nameProperty().concat(!action.measureProperty().get().equals( "0") ? action.measureProperty() : "").concat(nbRepeat));
+        }else
             label.textProperty().bind(action.nameProperty().concat(!action.measureProperty().get().equals( "0") ? action.measureProperty() : ""));
     }
 }

@@ -54,16 +54,14 @@ public class Variable extends Action{
 
 
     @Override
-    public boolean isValidMeasure(String mesure) {
-        return true;
-    }
-
-    @Override
     public String toString() {
         return "Variable{" +
                 "variableMap=" + variableMap.size()+
                 '}';
     }
 
+    public static void clear(){
+        Variable.variableMap.clear();
+    }
 
 }

@@ -19,9 +19,16 @@ public class VariableDeclaration extends Variable {
 
     @Override
     public Action copy() {
-        return new VariableDeclaration();
+        VariableDeclaration vD = new VariableDeclaration();
+        vD.setNameVariable(getNameVariable());
+        vD.setMeasure(getMeasure());
+        return vD;
     }
 
+    @Override
+    public boolean canIncrDecr(String measureProperty) {
+        return false;
+    }
 
     @Override
     public String getDetailsName() {

@@ -8,9 +8,11 @@ public class VariableAssignation extends Variable {
         super("Assignation ", "");
     }
 
-    @Override
     public Action copy() {
-        return new VariableAssignation();
+        VariableAssignation vA = new VariableAssignation();
+        vA.setNameVariable(getNameVariable());
+        vA.setMeasure(getMeasure());
+        return vA;
     }
 
     @Override

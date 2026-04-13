@@ -8,7 +8,10 @@ public class VariableIncrDecr extends Variable {
 
     @Override
     public Action copy() {
-        return new VariableIncrDecr();
+        VariableIncrDecr v = new VariableIncrDecr();
+        v.setNameVariable(getNameVariable());
+        v.setMeasure(getMeasure());
+        return v;
     }
 
     @Override

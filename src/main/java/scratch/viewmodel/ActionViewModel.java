@@ -159,10 +159,9 @@ public class ActionViewModel {
             if (isSelected) return;
             System.out.println(Variable.variableMap.size());
             boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
+            System.out.println(succes);
             isValidVariableNameProperty.set(succes);
         });
-
-
 
     }
 
@@ -245,10 +244,11 @@ public class ActionViewModel {
 
     public BooleanBinding hasProgChange(){
         return Bindings.createBooleanBinding(()->{
-
+            program.indentAction();
             if (hasChargerScene.get()) {
                 if (!isExecuting) {
                     hasChargerScene.set(false);
+
                     return true;
                 }
             }
@@ -264,16 +264,23 @@ public class ActionViewModel {
     }
 
     public void executer() {
-        if (!program.isEmpty())
+        Variable.clear();
+        if (!program.isEmpty()){
+            progIndex.set(-1);
             progIndex.set(0);
+            sceneIndex.setValue(0);
+        }
     }
 
     public void reinitialiserListeScene() {
         progIndex.set(-1);
+        measureProperty.set("");
         sceneIndex.set(0);
         sceneActions.reset();
         hasRuntimeError.setValue(false);
-        getActionsProg().stream().filter(action -> action.hasErrorProperty().get()).forEach(action -> action.setHasError(false));
+        getActionsProg().stream()
+                .filter(action -> action.hasErrorProperty().get())
+                .forEach(action -> action.setHasError(false));
     }
 
 
@@ -292,7 +299,7 @@ public class ActionViewModel {
             progIndex.set(program.size() - 1);
         } else
             progIndex.set(sceneIndex.get());
-
+        System.out.println(progIndex.get());
     }
 
     public void executeAction() {
@@ -417,6 +424,13 @@ public class ActionViewModel {
         );
     }
 
+    public BooleanBinding isEndRepeat() {
+        return Bindings.createBooleanBinding(() -> {
+                    return program.isEndRepeat(progIndex.get());
+                }, progIndex
+        );
+    }
+
     public BooleanBinding isAssignation() {
         return Bindings.createBooleanBinding(() -> {
                     return program.isAssignation(progIndex.get());
@@ -433,6 +447,7 @@ public class ActionViewModel {
 
     public BooleanBinding canIncrDecr() {
         return Bindings.createBooleanBinding(() -> {
+            System.out.println(measureProperty.get());
             return program.canIncrDecr(measureProperty.get(), progIndex.get());
         }, progIndex, getActionsProg(), measureProperty);
     }

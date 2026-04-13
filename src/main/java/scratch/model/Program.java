@@ -15,8 +15,10 @@ public class Program {
 
     public void addAction(int idx, int pos) {
         Action action = Actions.getAction(idx);
-        if (action != null)
+        if (action != null) {
             actionsProg.add(pos, action.copy());
+            indentAction();
+        }
     }
 
 
@@ -37,6 +39,7 @@ public class Program {
                 }
             }
             actionsProg.remove(idx);
+            indentAction();
         }
     }
 
@@ -149,7 +152,8 @@ public class Program {
 
     public boolean hasAnomalies() {
 //        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
-        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !declarationCanGetAMeasure() || hasUndefinedValues() || hasUndefinedDeclaration();
+        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !declarationCanGetAMeasure() || hasUndefinedValues()
+                || hasUndefinedDeclaration() || hasErrorWithAllRepeat();
     }
 
     private boolean hasActionBeforeDecla() {
@@ -217,5 +221,42 @@ public class Program {
         return getActionsProgList().stream().anyMatch(action -> action.getActionType() == ActionType.VARIABLEDECLARATION && (action.getNameVariable().isEmpty()));
     }
 
+
+    public boolean hasErrorToRepeatAndEndSize(){
+        return getActionsProgList().stream().filter(a->a.getActionType()==ActionType.REPEAT).count() != getActionsProgList().stream().filter(a->a.getActionType()==ActionType.ENDREPEAT).count();
+    }
+
+    public boolean isEndRepeat(int idx){
+        return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.ENDREPEAT;
+    }
+
+    // r er
+    public boolean hasErrorWithAllRepeat(){
+        int res = 0;
+        if (hasErrorToRepeatAndEndSize()) return true;
+        for (int i = 0; i < getActionsProgList().size(); i++) {
+            if (getActionProg(i).getActionType()==ActionType.REPEAT){
+                res+=1;
+            }else if (getActionProg(i).getActionType()==ActionType.ENDREPEAT)
+                res -= 1;
+            if (res<0)
+                return true;
+        }
+        return res != 0;
+    }
+
+
+    public void indentAction() {
+        int level = 0;
+        for (Action action : getActionsProgList()) {
+            if (action.getActionType() == ActionType.ENDREPEAT) {
+                level--;
+            }
+            action.setIndentLevel(level);
+            if (action.getActionType() == ActionType.REPEAT) {
+                level++;
+            }
+        }
+    }
 
 }

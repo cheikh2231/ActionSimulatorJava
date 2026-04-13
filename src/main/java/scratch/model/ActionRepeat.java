@@ -1,8 +1,18 @@
 package scratch.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class ActionRepeat extends Action{
     public ActionRepeat() {
-        super("Répéter ","0");
+        super("Répéter ","4");
+    }
+    private ObservableList<Action> children = FXCollections.observableArrayList();
+
+    public ObservableList<Action> getChildren() { return children; }
+
+    public void addChild(Action a){
+        children.add(a);
     }
 
     @Override
@@ -17,7 +27,7 @@ public class ActionRepeat extends Action{
 
     @Override
     public String getDetailsName() {
-        return "répéter ";
+        return "Répéter ";
     }
 
     @Override
@@ -28,5 +38,10 @@ public class ActionRepeat extends Action{
     @Override
     public ActionType getActionType() {
         return ActionType.REPEAT;
+    }
+
+    @Override
+    public boolean canIncrDecr(String measureProperty) {
+        return false;
     }
 }

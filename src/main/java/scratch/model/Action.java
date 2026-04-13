@@ -10,7 +10,11 @@ public abstract class Action {
     private StringProperty measure = new SimpleStringProperty();
     private final StringProperty nameVariableProperty= new SimpleStringProperty("");
     private BooleanProperty hasError = new SimpleBooleanProperty(false);
+    private IntegerProperty indentLevel = new SimpleIntegerProperty(0);
 
+    public int getIndentLevel() { return indentLevel.get(); }
+    public void setIndentLevel(int level) { indentLevel.set(level); }
+    public IntegerProperty indentLevelProperty() { return indentLevel; }
     public BooleanProperty hasErrorProperty() {
         return hasError;
     }
@@ -72,6 +76,7 @@ public abstract class Action {
             throw new RuntimeException();
         }
     }
+
 
     public boolean isValidMeasure(String mesure) {
         return true;

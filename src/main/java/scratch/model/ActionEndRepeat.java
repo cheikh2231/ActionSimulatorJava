@@ -19,7 +19,7 @@ public class ActionEndRepeat extends Action{
 
     @Override
     public String getDetailsName() {
-        return null;
+        return "Fin repéter";
     }
 
     @Override
@@ -29,6 +29,8 @@ public class ActionEndRepeat extends Action{
 
     @Override
     public ActionType getActionType() {
-        return ActionType.REPEAT;
+        return ActionType.ENDREPEAT;
     }
+
+
 }
