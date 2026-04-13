@@ -4,6 +4,8 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -245,16 +247,51 @@ public class Program {
         return res != 0;
     }
 
-
+// r
+    // r
+    // fr
     public void indentAction() {
-        int level = 0;
-        for (Action action : getActionsProgList()) {
-            if (action.getActionType() == ActionType.ENDREPEAT) {
-                level--;
-            }
-            action.setIndentLevel(level);
-            if (action.getActionType() == ActionType.REPEAT) {
-                level++;
+        for (int i = 0; i < getActionsProgList().size(); i++) {
+            getActionProg(i).setIndentLevel(nbRepeatBefore(i));
+        }
+    }
+
+
+    public int nbRepeatBefore(int idx) {
+        long countRep = getActionsProgList().stream()
+                .limit(idx)  // éléments strictement avant idx
+                .filter(a -> a.getActionType() == ActionType.REPEAT)
+                .count();
+
+        long countEndR = getActionsProgList().stream()
+                .limit(idx)
+                .filter(a -> a.getActionType() == ActionType.ENDREPEAT)
+                .count();
+        int count = (int)(countRep - countEndR);
+        if (count < 0) count = 0;
+
+        // Un ENDREPEAT ferme le bloc → il s'affiche un cran en arrière
+        if (getActionProg(idx).getActionType() == ActionType.ENDREPEAT) {
+            return Math.max(0, count - 1);
+        }
+
+        return count;
+    }
+
+
+    public void buildRepeatChildren() {
+        List<ActionRepeat> list = new ArrayList<>();
+
+        for (Action a : getActionsProgList()) {
+            if (a.getActionType() == ActionType.REPEAT) {
+                ((ActionRepeat) a).getChildren().clear();
+                list.add((ActionRepeat) a);
+            } else if (a.getActionType() == ActionType.ENDREPEAT) {
+                if (!list.isEmpty()) list.removeLast(); // retire le dernier = LIFO
+            } else {
+                for (ActionRepeat r : list) {
+                    r.addChild(a);
+                }
             }
         }
     }

@@ -273,6 +273,7 @@ public class ActionViewModel {
         reinitialiserListeScene();
         sceneActions.setCurrentActionPenDown(true);
         setHasChargerScene(true);
+        program.buildRepeatChildren();
     }
 
     public void executer() {
@@ -313,7 +314,8 @@ public class ActionViewModel {
             progIndex.set(sceneIndex.get());
 
     }
-
+    private int repeatCount = 0;
+    private int repeatStart = 0;
     public void executeAction() {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
@@ -322,7 +324,21 @@ public class ActionViewModel {
         action.setHasError(!success);
         hasRuntimeError.set(!success);
         if (success) {
-            getNext();
+            if (action.getActionType() == ActionType.REPEAT) {
+                repeatStart = sceneIndex.get();
+                repeatCount = action.getValue(action.getMeasure()) - 1;
+                getNext();
+            } else if (action.getActionType() == ActionType.ENDREPEAT) {
+                if (repeatCount > 0) {
+                    repeatCount--;
+                    sceneIndex.set(repeatStart + 1);
+                    progIndex.set(sceneIndex.get());
+                } else {
+                    getNext();
+                }
+            } else {
+                getNext();
+            }
             refreshVariableTable();
         }
         isExecuting = false;
