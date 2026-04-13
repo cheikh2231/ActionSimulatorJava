@@ -10,6 +10,7 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -31,7 +32,18 @@ public class ActionViewModel {
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
     private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
     private boolean isExecuting = false;
+    private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
 
+    public ObservableList<Map.Entry<String, Variable>> getVariableList() {
+        return variableList;
+    }
+    public void refreshVariableTable() {
+        variableList.setAll(Variable.variableMap.entrySet());
+    }
+
+    public void removeAllVariableTable(){
+        variableList.clear();
+    }
     public BooleanProperty isValidVariableNameProperty() {
         return isValidVariableNameProperty;
     }
@@ -273,6 +285,8 @@ public class ActionViewModel {
         sceneIndex.set(0);
         sceneActions.reset();
         hasRuntimeError.setValue(false);
+        removeAllVariableTable();
+        Variable.variableMap.clear();
         getActionsProg().stream().filter(action -> action.hasErrorProperty().get()).forEach(action -> action.setHasError(false));
     }
 
@@ -302,8 +316,10 @@ public class ActionViewModel {
 
         action.setHasError(!success);
         hasRuntimeError.set(!success);
-        if (success)
+        if (success) {
             getNext();
+            refreshVariableTable();
+        }
         isExecuting = false;
     }
 
@@ -312,7 +328,6 @@ public class ActionViewModel {
             return program.existIndex(progIndex.get());
         }, progIndex);
     }
-
 
     public List<Line> getLines() {
         return sceneActions.getLines();
