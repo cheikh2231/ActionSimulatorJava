@@ -1,20 +1,28 @@
 package scratch.view;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
+import scratch.model.Action;
 import scratch.model.Cursor;
 import scratch.model.Line;
+import scratch.model.Variable;
 import scratch.viewmodel.ActionViewModel;
+
+import java.util.Map;
 
 
 public class ActionSceneView extends VBox {
@@ -30,6 +38,7 @@ public class ActionSceneView extends VBox {
     private final Circle turtleHead = new Circle(TURTLE_HEAD_SIZE);
     private Polygon turtle;
     private Pane drawingPane = new Pane();
+    TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
 
     public ActionSceneView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
@@ -37,8 +46,10 @@ public class ActionSceneView extends VBox {
         setupCanvas();
         setupView();
         drawingPane.getChildren().addAll(canvas, turtleHead, turtle);
-        this.getChildren().addAll(titleLabel, drawingPane, createControlButtons());
+        this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons());
         bindings();
+
+
     }
 
 
@@ -157,6 +168,33 @@ public class ActionSceneView extends VBox {
     private void setupView() {
         this.setSpacing(10);
         this.setPadding(new Insets(5));
+    }
+
+
+    private HBox tableVariableContainer(){
+        HBox hbox = new HBox();
+        hbox.setMaxHeight(150);
+
+        // 1.Création des nom de colums et pour chaque column on indique quel type de data y afficher, ou trouver cette data, a l'occurence là c'est Variable.getValue().nameVariableProperty qu'il trouve car il extend action
+        TableColumn<Map.Entry<String, Variable>, String> nomColumn = new TableColumn<>("Nom");
+        nomColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().nameVariableProperty());
+        TableColumn<Map.Entry<String, Variable>, String> valueColumn = new TableColumn<>("Valeur");
+        valueColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().measureProperty());
+        // 2. Je rajoute les deux columns dans la tableview
+        variableTable.getColumns().setAll(nomColumn, valueColumn);
+
+        hbox.setMinWidth(500);
+        nomColumn.setMinWidth(249);
+        valueColumn.setMinWidth(249);
+        // 3. Je desactive le sorted par ordre alphabetique et numeric
+        nomColumn.setSortable(false);
+        valueColumn.setSortable(false);
+
+        // 4. J'ajoute dans ma table tout ce que je récupère de l'observableList crée dans actionVM
+        variableTable.setItems(actionVm.getVariableList());
+
+        hbox.getChildren().add(variableTable);
+        return hbox;
     }
 
 }

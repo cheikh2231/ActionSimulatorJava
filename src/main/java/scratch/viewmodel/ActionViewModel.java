@@ -10,6 +10,7 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -31,7 +32,18 @@ public class ActionViewModel {
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
     private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
     private boolean isExecuting = false;
+    private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
 
+    public ObservableList<Map.Entry<String, Variable>> getVariableList() {
+        return variableList;
+    }
+    public void refreshVariableTable() {
+        variableList.setAll(Variable.variableMap.entrySet());
+    }
+
+    public void removeAllVariableTable(){
+        variableList.clear();
+    }
     public BooleanProperty isValidVariableNameProperty() {
         return isValidVariableNameProperty;
     }
@@ -159,9 +171,10 @@ public class ActionViewModel {
             if (isSelected) return;
             System.out.println(Variable.variableMap.size());
             boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
-            System.out.println(succes);
             isValidVariableNameProperty.set(succes);
         });
+
+
 
     }
 
@@ -248,7 +261,6 @@ public class ActionViewModel {
             if (hasChargerScene.get()) {
                 if (!isExecuting) {
                     hasChargerScene.set(false);
-
                     return true;
                 }
             }
@@ -299,7 +311,7 @@ public class ActionViewModel {
             progIndex.set(program.size() - 1);
         } else
             progIndex.set(sceneIndex.get());
-        System.out.println(progIndex.get());
+
     }
 
     public void executeAction() {
@@ -309,8 +321,10 @@ public class ActionViewModel {
 
         action.setHasError(!success);
         hasRuntimeError.set(!success);
-        if (success)
+        if (success) {
             getNext();
+            refreshVariableTable();
+        }
         isExecuting = false;
     }
 
@@ -447,7 +461,6 @@ public class ActionViewModel {
 
     public BooleanBinding canIncrDecr() {
         return Bindings.createBooleanBinding(() -> {
-            System.out.println(measureProperty.get());
             return program.canIncrDecr(measureProperty.get(), progIndex.get());
         }, progIndex, getActionsProg(), measureProperty);
     }

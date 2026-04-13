@@ -20,9 +20,7 @@ public class App extends Application {
 
         var mainView = new MainView(vm,stage);
         createScene(stage,mainView);
-
         stage.show();
-
     }
 
     private void createScene(Stage stage, MainView view){
@@ -31,12 +29,7 @@ public class App extends Application {
                 getClass().getResource("/style.css").toExternalForm()
         );
         stage.setTitle("Scratch");
-
-
         stage.setScene(scene);
-
-
-
     }
 
     public static void main(String[] args) {
