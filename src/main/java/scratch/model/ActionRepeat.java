@@ -57,10 +57,19 @@ public class ActionRepeat extends Action{
         setNbRead(getValue(getMeasure()));
     }
 
-    public boolean hasConflictWithChildren() {
-        return children.stream()
-                .filter(action -> action.getActionType() == ActionType.VARIABLEASSIGNATION
-                        || action.getActionType() == ActionType.VARIABLEINCRDECR)
-                .anyMatch(action -> action.getNameVariable().equals(this.getMeasure()));
+    public boolean hasConflictWithChildren(){
+        return hasConflictWithChildrenRecursive(this.getMeasure());
+    }
+
+    public boolean hasConflictWithChildrenRecursive(String variableName) {
+        for(Action a : getChildren()){
+           if((a.getActionType() == ActionType.VARIABLEASSIGNATION || a.getActionType() == ActionType.VARIABLEINCRDECR) && a.getNameVariable().equals(variableName)){
+              return true;
+           }
+           if(a.getActionType() == ActionType.REPEAT && ((ActionRepeat) a).hasConflictWithChildrenRecursive(variableName) ){
+              return true;
+           }
+        }
+        return false;
     }
 }

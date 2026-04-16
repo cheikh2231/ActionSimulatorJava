@@ -544,13 +544,13 @@ public class ActionViewModel {
     }
 
     public boolean hasNameVariableUsingByRepeatInScope(){
-        boolean hasConflict=false;
         for(Action a : getActionsProg()){
             if(a.getActionType()==ActionType.REPEAT){
-                System.out.println(((ActionRepeat) a).hasConflictWithChildren());
-                hasConflict= ((ActionRepeat) a).hasConflictWithChildren();
+                if (((ActionRepeat) a).hasConflictWithChildren()) {
+                    return true;
+                }
             }
         }
-        return hasConflict;
+        return false;
     }
 }
