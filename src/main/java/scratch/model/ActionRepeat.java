@@ -56,4 +56,11 @@ public class ActionRepeat extends Action{
     public void resetNbRead(){
         setNbRead(getValue(getMeasure()));
     }
+
+    public boolean hasConflictWithChildren() {
+        return children.stream()
+                .filter(action -> action.getActionType() == ActionType.VARIABLEASSIGNATION
+                        || action.getActionType() == ActionType.VARIABLEINCRDECR)
+                .anyMatch(action -> action.getNameVariable().equals(this.getMeasure()));
+    }
 }

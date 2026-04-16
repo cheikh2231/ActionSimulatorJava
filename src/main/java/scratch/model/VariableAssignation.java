@@ -29,4 +29,8 @@ public class VariableAssignation extends Variable {
     public String getFormatName() {
         return super.getFormatName()+"_ASSIGNATION";
     }
+
+
 }
+
+

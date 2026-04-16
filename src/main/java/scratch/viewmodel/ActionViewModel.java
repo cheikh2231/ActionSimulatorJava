@@ -250,13 +250,14 @@ public class ActionViewModel {
     // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
+            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get() || hasNameVariableUsingByRepeatInScope();
         }, measureProperty,getActionsProg(), isvalidMesureProperty, isValidVariableNameProperty);
     }
 
     public BooleanBinding hasProgChange(){
         return Bindings.createBooleanBinding(()->{
             program.indentAction();
+            program.buildRepeatChildren();
             if (hasChargerScene.get()) {
                 if (!isExecuting) {
                     hasChargerScene.set(false);
@@ -272,7 +273,6 @@ public class ActionViewModel {
         reinitialiserListeScene();
         sceneActions.setCurrentActionPenDown(true);
         setHasChargerScene(true);
-        program.buildRepeatChildren();
     }
 
     public void executer() {
@@ -362,7 +362,6 @@ public class ActionViewModel {
 
     public ActionRepeat getMyRepeat(int idx){
         for (Integer a:startAndCountMap.keySet()){
-//            System.out.println("(a + getAllchildren(startAndCountMap.get(a)))    " +(a + getAllchildren(startAndCountMap.get(a))) );
             if (idx == (a + getAllchildren(startAndCountMap.get(a)))){
                 return startAndCountMap.get(a);
             }
@@ -544,4 +543,14 @@ public class ActionViewModel {
         );
     }
 
+    public boolean hasNameVariableUsingByRepeatInScope(){
+        boolean hasConflict=false;
+        for(Action a : getActionsProg()){
+            if(a.getActionType()==ActionType.REPEAT){
+                System.out.println(((ActionRepeat) a).hasConflictWithChildren());
+                hasConflict= ((ActionRepeat) a).hasConflictWithChildren();
+            }
+        }
+        return hasConflict;
+    }
 }
