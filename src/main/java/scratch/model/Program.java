@@ -3,7 +3,7 @@ package scratch.model;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +51,8 @@ public class Program {
 
     public void up(int idx) {
         if (idx > 0 && idx < actionsProg.size()) {
-            Action actionPrec = actionsProg.get(idx - 1);
-            Action action = actionsProg.get(idx);
-            actionsProg.set(idx - 1, action);
-            actionsProg.set(idx, actionPrec);
+            Action a = actionsProg.remove(idx);
+            actionsProg.add(idx - 1, a);
         }
     }
 
@@ -68,10 +66,7 @@ public class Program {
 
     public void down(int idx) {
         if (canMoveDown(idx)) {
-            Action action = actionsProg.get(idx);
-            Action actionSuivant = actionsProg.get(idx + 1);
-            actionsProg.set(idx + 1, action);
-            actionsProg.set(idx, actionSuivant);
+            up(idx+1);
         }
     }
 
@@ -270,7 +265,7 @@ public class Program {
         int count = (int)(countRep - countEndR);
         if (count < 0) count = 0;
 
-        // Un ENDREPEAT ferme le bloc → il s'affiche un cran en arrière
+        // Un ENDREPEAT ferme le bloc  il s'affiche un cran en arrière
         if (getActionProg(idx).getActionType() == ActionType.ENDREPEAT) {
             return Math.max(0, count - 1);
         }
@@ -285,12 +280,15 @@ public class Program {
         for (Action a : getActionsProgList()) {
             if (a.getActionType() == ActionType.REPEAT) {
                 ((ActionRepeat) a).getChildren().clear();
+                if (!list.isEmpty()) {
+                    list.getLast().addChild(a); // le REPEAT interne est enfant du parent
+                }
                 list.add((ActionRepeat) a);
             } else if (a.getActionType() == ActionType.ENDREPEAT) {
-                if (!list.isEmpty()) list.removeLast(); // retire le dernier = LIFO
+                if (!list.isEmpty()) list.removeLast();
             } else {
-                for (ActionRepeat r : list) {
-                    r.addChild(a);
+                if (!list.isEmpty()) {
+                    list.getLast().addChild(a); // seulement le repeat le plus profond
                 }
             }
         }

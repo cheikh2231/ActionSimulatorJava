@@ -104,23 +104,14 @@ public class SceneActions {
                     } else
                         return false;
                 }
-            else if (action.getActionType() == ActionType.REPEAT) {
-                int mesure = action.getValue(action.getMeasure());
-                for (int j = 0; j < mesure; j++) {
-                    System.out.println(j  + "j" + "and children" + ((ActionRepeat) action).getChildren());
-                    for (Action a : ((ActionRepeat) action).getChildren()) {
-                        a.executeAction(this);
-                    }
+            else {
+                    action.executeAction(this);
+                    return true;
                 }
-                return true;
-            } else
-                action.executeAction(this);
-            return true;
         } catch(Exception e){
             return false;
         }
     }
         return false;
-}
-
+  }
 }

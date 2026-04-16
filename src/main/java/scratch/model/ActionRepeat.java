@@ -8,7 +8,7 @@ public class ActionRepeat extends Action{
         super("Répéter ","4");
     }
     private ObservableList<Action> children = FXCollections.observableArrayList();
-
+    private int nbRead = getValue(getMeasure());
     public ObservableList<Action> getChildren() { return children; }
 
     public void addChild(Action a){
@@ -43,5 +43,17 @@ public class ActionRepeat extends Action{
     @Override
     public boolean canIncrDecr(String measureProperty) {
         return false;
+    }
+
+    public int getNbRead() {
+        return nbRead;
+    }
+
+    public void setNbRead(int nbRead) {
+        this.nbRead = nbRead;
+    }
+
+    public void resetNbRead(){
+        setNbRead(getValue(getMeasure()));
     }
 }

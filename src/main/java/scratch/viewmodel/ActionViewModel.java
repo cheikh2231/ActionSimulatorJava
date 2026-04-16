@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import scratch.model.*;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -33,7 +34,7 @@ public class ActionViewModel {
     private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
     private boolean isExecuting = false;
     private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
-
+    private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
     public ObservableList<Map.Entry<String, Variable>> getVariableList() {
         return variableList;
     }
@@ -175,7 +176,6 @@ public class ActionViewModel {
         });
 
 
-
     }
 
     public void removeAction() {
@@ -224,7 +224,6 @@ public class ActionViewModel {
     public void moveDown() {
         if (canMoveDown().get()) {
             program.down(progIndex.get());
-            progIndex.set(progIndex.get() + 1);
         }
     }
 
@@ -291,6 +290,7 @@ public class ActionViewModel {
         sceneIndex.set(0);
         sceneActions.reset();
         hasRuntimeError.setValue(false);
+        startAndCountMap.clear();
         getActionsProg().stream()
                 .filter(action -> action.hasErrorProperty().get())
                 .forEach(action -> action.setHasError(false));
@@ -314,8 +314,6 @@ public class ActionViewModel {
             progIndex.set(sceneIndex.get());
 
     }
-    private int repeatCount = 0;
-    private int repeatStart = 0;
     public void executeAction() {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
@@ -325,12 +323,30 @@ public class ActionViewModel {
         hasRuntimeError.set(!success);
         if (success) {
             if (action.getActionType() == ActionType.REPEAT) {
-                repeatStart = sceneIndex.get();
-                repeatCount = action.getValue(action.getMeasure()) - 1;
+                ActionRepeat repeat = (ActionRepeat) action;
+                repeat.resetNbRead(); // remet le compteur à sa valeur initiale
+                startAndCountMap.put(sceneIndex.get(), repeat);
+                //r 2fois  {0,2}
+                //   r  2fois  {1,2}
+                //     av
+                //     av
+                //
+                //   er        4
+                //er
+
+                //r 2fois  {0,2}
+                //   r  2fois  {1,2} 19
+                //     av 17
+                //     av
+                //
+                //   er        4
+                //er
                 getNext();
             } else if (action.getActionType() == ActionType.ENDREPEAT) {
-                if (repeatCount > 0) {
-                    repeatCount--;
+                ActionRepeat repeat = getMyRepeat(sceneIndex.get());
+                int repeatStart = getStart(repeat); //16
+                if (repeat.getNbRead() > 1) { //2
+                    repeat.setNbRead(repeat.getNbRead()-1);
                     sceneIndex.set(repeatStart + 1);
                     progIndex.set(sceneIndex.get());
                 } else {
@@ -342,6 +358,37 @@ public class ActionViewModel {
             refreshVariableTable();
         }
         isExecuting = false;
+    }
+
+    public ActionRepeat getMyRepeat(int idx){
+        for (Integer a:startAndCountMap.keySet()){
+//            System.out.println("(a + getAllchildren(startAndCountMap.get(a)))    " +(a + getAllchildren(startAndCountMap.get(a))) );
+            if (idx == (a + getAllchildren(startAndCountMap.get(a)))){
+                return startAndCountMap.get(a);
+            }
+        }
+        return null;
+    }
+
+    public int getAllchildren(ActionRepeat actionRepeat){
+        int size = 1;
+        for (Action a : actionRepeat.getChildren()){
+            if (a.getActionType() == ActionType.REPEAT){
+                size += 1;
+                size += getAllchildren((ActionRepeat) a);
+            }else
+                size += 1;
+        }
+        System.out.println(size);
+        return size;
+    }
+
+    public int getStart(Action a){
+        for(Integer start : startAndCountMap.keySet()){
+            if (startAndCountMap.get(start).equals(a))
+                return start;
+        }
+        return -1;
     }
 
     public BooleanBinding existIndex() {
