@@ -41,7 +41,7 @@ public class ActionViewModel {
     public void refreshVariableTable() {
         variableList.setAll(Variable.variableMap.entrySet());
     }
-
+    public boolean isLoading = false;
     public void removeAllVariableTable(){
         variableList.clear();
     }
@@ -156,7 +156,7 @@ public class ActionViewModel {
         });
 
         measureProperty.addListener((obs, o, n) -> {
-            if (isSelected) return;
+            if (isSelected || isLoading) return;
             if (n.isEmpty()) {
                 isvalidMesureProperty.set(false);
                 return;
@@ -169,10 +169,12 @@ public class ActionViewModel {
 
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
             // si on est entrain de selectionner on fait rien
-            if (isSelected) return;
+            if (isSelected || isLoading) return;
             System.out.println(Variable.variableMap.size());
-            boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
-            isValidVariableNameProperty.set(succes);
+            if (progIndex.get() != -1) {
+                boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
+                isValidVariableNameProperty.set(succes);
+            }
         });
 
 
@@ -223,10 +225,12 @@ public class ActionViewModel {
 
     public void moveDown() {
         if (canMoveDown().get()) {
+            Action selected = getAction(progIndex.get());
             program.down(progIndex.get());
+            int newIndex = getActionsProg().indexOf(selected);
+            progIndex.set(newIndex);
         }
     }
-
     public BooleanProperty isValidMesureProperty() {
         return isvalidMesureProperty;
     }
@@ -250,7 +254,7 @@ public class ActionViewModel {
     // when => duplication pen || listProgEmpty || have something devant declaration !
     public BooleanBinding hasAnomalies() {
         return Bindings.createBooleanBinding(() -> {
-            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get() || hasNameVariableUsingByRepeatInScope();
+            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
         }, measureProperty,getActionsProg(), isvalidMesureProperty, isValidVariableNameProperty);
     }
 
@@ -273,6 +277,7 @@ public class ActionViewModel {
         reinitialiserListeScene();
         sceneActions.setCurrentActionPenDown(true);
         setHasChargerScene(true);
+        removeAllVariableTable();
     }
 
     public void executer() {
@@ -291,6 +296,10 @@ public class ActionViewModel {
         sceneActions.reset();
         hasRuntimeError.setValue(false);
         startAndCountMap.clear();
+        variableNameProperty.set("");
+        isvalidMesureProperty.set(true);
+        isValidVariableNameProperty.set(true);
+        removeAllVariableTable();
         getActionsProg().stream()
                 .filter(action -> action.hasErrorProperty().get())
                 .forEach(action -> action.setHasError(false));
@@ -324,23 +333,8 @@ public class ActionViewModel {
         if (success) {
             if (action.getActionType() == ActionType.REPEAT) {
                 ActionRepeat repeat = (ActionRepeat) action;
-                repeat.resetNbRead(); // remet le compteur à sa valeur initiale
+                repeat.resetNbRead();
                 startAndCountMap.put(sceneIndex.get(), repeat);
-                //r 2fois  {0,2}
-                //   r  2fois  {1,2}
-                //     av
-                //     av
-                //
-                //   er        4
-                //er
-
-                //r 2fois  {0,2}
-                //   r  2fois  {1,2} 19
-                //     av 17
-                //     av
-                //
-                //   er        4
-                //er
                 getNext();
             } else if (action.getActionType() == ActionType.ENDREPEAT) {
                 ActionRepeat repeat = getMyRepeat(sceneIndex.get());
@@ -420,17 +414,27 @@ public class ActionViewModel {
                 VariableAssignation va = new VariableAssignation();
                 va.setMeasure(reste);
                 va.setNameVariable(actionMeasureOrNameVariable);
-                // met à jour la valeur dans la map si la variable existe
-                if (Variable.variableMap.containsKey(actionMeasureOrNameVariable)) {
-                    Variable.variableMap.get(actionMeasureOrNameVariable).setMeasure(reste);
-                }
                 yield va;
             }
             case "VARIABLE_DECLARATION" -> {
                 VariableDeclaration vd = new VariableDeclaration();
                 vd.setNameVariable(actionMeasureOrNameVariable);
-                vd.addToVariableMap();
                 yield vd;
+            }
+            case "REPEAT" -> {
+                ActionRepeat aR = new ActionRepeat();
+                aR.setMeasure(actionMeasureOrNameVariable);
+                yield aR;
+            }
+            case "END_REPEAT" -> {
+                yield new ActionEndRepeat();
+            }
+
+            case "INCREMENT_VARIABLE" -> {
+                VariableIncrDecr ai = new VariableIncrDecr();
+                ai.setMeasure(reste);
+                ai.setNameVariable(actionMeasureOrNameVariable);
+                yield ai;
             }
             default -> null;
         };
@@ -448,6 +452,7 @@ public class ActionViewModel {
     }
 
     public void loadFile(File file) {
+        isLoading = true;
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
@@ -476,6 +481,10 @@ public class ActionViewModel {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        isLoading = false;
+
+        reinitialiserListeScene();
     }
 
     public StringBinding getSeparatorLabel() {
@@ -543,14 +552,4 @@ public class ActionViewModel {
         );
     }
 
-    public boolean hasNameVariableUsingByRepeatInScope(){
-        for(Action a : getActionsProg()){
-            if(a.getActionType()==ActionType.REPEAT){
-                if (((ActionRepeat) a).hasConflictWithChildren()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

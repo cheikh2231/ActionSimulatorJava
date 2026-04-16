@@ -66,7 +66,7 @@ public class FileView extends HBox{
         if (selectedFile != null) {
             try (BufferedWriter bw = Files.newBufferedWriter(selectedFile.toPath(),StandardCharsets.UTF_8)) {
                 for(Action action : actionVm.getActionsProg()){
-                    if(action.getActionType() == ActionType.VARIABLEASSIGNATION)
+                    if(action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType()==ActionType.VARIABLEINCRDECR)
                         bw.write(action.getFormatName()+";"+action.getNameVariable()+";"+action.getMeasure()+"\n");
                     else if(action.getActionType() == ActionType.VARIABLEDECLARATION)
                         bw.write(action.getFormatName()+";"+action.getNameVariable()+"\n");

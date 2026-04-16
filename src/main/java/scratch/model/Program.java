@@ -66,7 +66,8 @@ public class Program {
 
     public void down(int idx) {
         if (canMoveDown(idx)) {
-            up(idx+1);
+            Action a = actionsProg.remove(idx);
+            actionsProg.add(idx + 1, a);
         }
     }
 
@@ -121,7 +122,7 @@ public class Program {
     }
 
     public boolean hasUndefinedValues() {
-        return getActionsProgList().stream().anyMatch(action -> notInt(action.getMeasure()) && !isDeclared(action.getMeasure()));
+        return getActionsProgList().stream().anyMatch(action ->!action.getMeasure().isEmpty() && notInt(action.getMeasure()) && !isDeclared(action.getMeasure()));
     }
 
     private boolean notInt(String val) {
@@ -148,9 +149,8 @@ public class Program {
     }
 
     public boolean hasAnomalies() {
-//        return hasDuplicatePenStatus() || hasActionBeforeDecla() || haveDifferenceBetweenMapAndList() || !allAssignationsAreValid() || hasUndefinedValues();
         return hasActionBeforeDecla() || hasDuplicatePenStatus() || !declarationCanGetAMeasure() || hasUndefinedValues()
-                || hasUndefinedDeclaration() || hasErrorWithAllRepeat();
+                || hasUndefinedDeclaration() || hasErrorWithAllRepeat() || hasNameVariableUsingByRepeatInScope();
     }
 
     private boolean hasActionBeforeDecla() {
@@ -294,4 +294,14 @@ public class Program {
         }
     }
 
+    public boolean hasNameVariableUsingByRepeatInScope(){
+        for(Action a : actionsProg){
+            if(a.getActionType()==ActionType.REPEAT){
+                if (((ActionRepeat) a).hasConflictWithChildren()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

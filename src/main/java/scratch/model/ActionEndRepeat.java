@@ -3,7 +3,7 @@ package scratch.model;
 public class ActionEndRepeat extends Action{
 
     public ActionEndRepeat() {
-        super("Fin répéter ","0");
+        super("Fin répéter ","");
     }
 
 
