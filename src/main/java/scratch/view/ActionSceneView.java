@@ -2,6 +2,9 @@ package scratch.view;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -15,7 +18,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
-import scratch.model.Action;
 import scratch.model.Cursor;
 import scratch.model.Line;
 import scratch.model.Variable;
@@ -42,7 +44,7 @@ public class ActionSceneView extends VBox {
     private RadioButton rbManuel = new RadioButton("Exécution manuelle");
     // 1. (min,max,defaut)
     private Slider slider = new Slider(0.01, 5, 0.5);
-    TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
+    private TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
 
     public ActionSceneView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
@@ -50,15 +52,14 @@ public class ActionSceneView extends VBox {
         setupCanvas();
         setupView();
         drawingPane.getChildren().addAll(canvas, turtleHead, turtle);
+
         this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons(),radioButtonsExecutions(),executionSpeedSlider());
 
         bindings();
 
-
     }
+
     public HBox radioButtonsExecutions(){
-
-
         // 1. On lie les buttons en les mettant dans notre groupeExecution
         rbAuto.setToggleGroup(groupeExecution);
         rbManuel.setToggleGroup(groupeExecution);
@@ -124,6 +125,7 @@ public class ActionSceneView extends VBox {
     }
 
     public void bindings() {
+
         loadButton.disableProperty().bind(actionVm.hasAnomalies());
         loadButton.visibleProperty().bind(((actionVm.hasProgChange().not().and(actionVm.hasRuntimeError().not())).or(actionVm.hasChargerSceneProperty().not())));
         loadButton.managedProperty().bind(actionVm.hasChargerSceneProperty().not());
@@ -135,14 +137,12 @@ public class ActionSceneView extends VBox {
         executeButton.managedProperty().bind(nextButton.visibleProperty().not());
         nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())).and(actionVm.hasRuntimeError().not()));
         nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
+        slider.visibleProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
+        slider.managedProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
 
-        slider.visibleProperty().bind(isAutoExecutionSelected());
     }
-    public BooleanBinding isAutoExecutionSelected(){
-        return Bindings.createBooleanBinding(() -> {
-            return groupeExecution.getSelectedToggle() == rbAuto;
-        },groupeExecution.selectedToggleProperty());
-    }
+
+
     public void setupCanvas() {
         // Design exterieur du canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -216,12 +216,11 @@ public class ActionSceneView extends VBox {
     private HBox tableVariableContainer(){
         HBox hbox = new HBox();
         hbox.setMaxHeight(150);
-
         // 1.Création des nom de colums et pour chaque column on indique quel type de data y afficher, ou trouver cette data, a l'occurence là c'est Variable.getValue().nameVariableProperty qu'il trouve car il extend action
         TableColumn<Map.Entry<String, Variable>, String> nomColumn = new TableColumn<>("Nom");
         nomColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().nameVariableProperty());
         TableColumn<Map.Entry<String, Variable>, String> valueColumn = new TableColumn<>("Valeur");
-        valueColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().measureProperty());
+        valueColumn.setCellValueFactory(entryStringCellDataFeatures -> new SimpleStringProperty(String.valueOf(entryStringCellDataFeatures.getValue().getValue().getValue(entryStringCellDataFeatures.getValue().getValue().getMeasure()))));
         // 2. Je rajoute les deux columns dans la tableview
         variableTable.getColumns().setAll(nomColumn, valueColumn);
 

@@ -42,9 +42,11 @@ public class ActionViewModel {
         variableList.setAll(Variable.variableMap.entrySet());
     }
     public boolean isLoading = false;
+
     public void removeAllVariableTable(){
         variableList.clear();
     }
+
     public BooleanProperty isValidVariableNameProperty() {
         return isValidVariableNameProperty;
     }
@@ -176,8 +178,6 @@ public class ActionViewModel {
                 isValidVariableNameProperty.set(succes);
             }
         });
-
-
     }
 
     public void removeAction() {
@@ -299,6 +299,7 @@ public class ActionViewModel {
         variableNameProperty.set("");
         isvalidMesureProperty.set(true);
         isValidVariableNameProperty.set(true);
+        Variable.clear();
         removeAllVariableTable();
         getActionsProg().stream()
                 .filter(action -> action.hasErrorProperty().get())

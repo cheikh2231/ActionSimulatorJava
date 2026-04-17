@@ -12,13 +12,13 @@ public class VariableDeclaration extends Variable {
 
     public void addToVariableMap() {
         if (getNameVariable() != null && !getNameVariable().isBlank()){
-            variableMap.put(getNameVariable(), this);
+            variableMap.put(getNameVariable(), this.copy());
             System.out.println(variableMap);
         }
     }
 
     @Override
-    public Action copy() {
+    public VariableDeclaration copy() {
         VariableDeclaration vD = new VariableDeclaration();
         vD.setNameVariable(getNameVariable());
         vD.setMeasure(getMeasure());
