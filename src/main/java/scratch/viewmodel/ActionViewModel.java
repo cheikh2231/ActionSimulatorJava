@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
@@ -9,10 +10,7 @@ import javafx.collections.ObservableList;
 import scratch.model.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class ActionViewModel {
@@ -328,7 +326,7 @@ public class ActionViewModel {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
         boolean success = sceneActions.executeAction(action);
-
+        System.out.println(sceneIndex.get());
         action.setHasError(!success);
         hasRuntimeError.set(!success);
         if (success) {
@@ -551,6 +549,18 @@ public class ActionViewModel {
                            existIndex().get() && program.getActionProg(progIndex.get()).hasErrorProperty().get();
                 }, hasRuntimeError, progIndex
         );
+    }
+
+    public void automaticExecution(){
+        Timer timer = new Timer();
+        TimerTask tt = new TimerTask(){
+            @Override
+            public void run() {
+                if(!fullyTraversedSceneList().get())
+                    Platform.runLater(() -> executeAction());
+            }
+        };
+        timer.schedule(tt,1000,1000);
     }
 
 }

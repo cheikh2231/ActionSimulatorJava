@@ -109,7 +109,10 @@ public class ActionSceneView extends VBox {
             actionVm.charger();
         });
 
-        executeButton.setOnAction(actionEvent -> actionVm.executer());
+        executeButton.setOnAction(actionEvent -> {
+            actionVm.executer();
+            actionVm.automaticExecution();
+        });
 
         resetButton.setOnAction(actionEvent -> {
             resetCanvasView();
