@@ -1,15 +1,14 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -38,6 +37,11 @@ public class ActionSceneView extends VBox {
     private final Circle turtleHead = new Circle(TURTLE_HEAD_SIZE);
     private Polygon turtle;
     private Pane drawingPane = new Pane();
+    private ToggleGroup groupeExecution = new ToggleGroup();
+    private RadioButton rbAuto = new RadioButton("Exécution automatique");
+    private RadioButton rbManuel = new RadioButton("Exécution manuelle");
+    // 1. (min,max,defaut)
+    private Slider slider = new Slider(0.01, 5, 0.5);
     TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
 
     public ActionSceneView(ActionViewModel actionVm) {
@@ -46,10 +50,43 @@ public class ActionSceneView extends VBox {
         setupCanvas();
         setupView();
         drawingPane.getChildren().addAll(canvas, turtleHead, turtle);
-        this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons());
+        this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons(),radioButtonsExecutions(),executionSpeedSlider());
+
         bindings();
 
 
+    }
+    public HBox radioButtonsExecutions(){
+
+
+        // 1. On lie les buttons en les mettant dans notre groupeExecution
+        rbAuto.setToggleGroup(groupeExecution);
+        rbManuel.setToggleGroup(groupeExecution);
+
+        // 2. Par défaut c'est le manuel qui est selectionné
+        rbManuel.setSelected(true);
+
+        HBox hboxRadioButtons = new HBox(15);
+        hboxRadioButtons.setAlignment(Pos.CENTER);
+        hboxRadioButtons.getChildren().addAll(rbAuto,rbManuel);
+        return hboxRadioButtons;
+    }
+
+
+    public Slider executionSpeedSlider() {
+        //2. ajout des traits entre chaque graduation
+        slider.setShowTickMarks(true);
+
+        //3. on affiche les numéros sous les traits principaux
+        slider.setShowTickLabels(true);
+
+        // 4. on ne laisse qu'une unité entre chaque chiffre
+        slider.setMajorTickUnit(1);
+
+        //5. Personnalisation de la largeur du slider
+        slider.setPrefWidth(400);
+
+        return slider;
     }
 
 
@@ -99,8 +136,13 @@ public class ActionSceneView extends VBox {
         nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())).and(actionVm.hasRuntimeError().not()));
         nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
 
+        slider.visibleProperty().bind(isAutoExecutionSelected());
     }
-
+    public BooleanBinding isAutoExecutionSelected(){
+        return Bindings.createBooleanBinding(() -> {
+            return groupeExecution.getSelectedToggle() == rbAuto;
+        },groupeExecution.selectedToggleProperty());
+    }
     public void setupCanvas() {
         // Design exterieur du canvas
         GraphicsContext gc = canvas.getGraphicsContext2D();
