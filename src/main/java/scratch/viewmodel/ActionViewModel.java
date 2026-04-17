@@ -33,6 +33,9 @@ public class ActionViewModel {
     private boolean isExecuting = false;
     private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
     private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
+    private Timer timer;
+    private BooleanProperty isExecutionAuto = new SimpleBooleanProperty(false);
+
     public ObservableList<Map.Entry<String, Variable>> getVariableList() {
         return variableList;
     }
@@ -49,6 +52,9 @@ public class ActionViewModel {
         return isValidVariableNameProperty;
     }
 
+    public BooleanProperty isExecutionAutoProperty() {
+        return isExecutionAuto;
+    }
 
     public BooleanProperty getResetCanvasProperty() {
         return resetCanvasProperty;
@@ -278,12 +284,16 @@ public class ActionViewModel {
         removeAllVariableTable();
     }
 
-    public void executer() {
+    public void executer(double sliderValue) {
         Variable.clear();
         if (!program.isEmpty()){
             progIndex.set(-1);
             progIndex.set(0);
             sceneIndex.setValue(0);
+        }
+
+        if (isExecutionAutoProperty().get()){
+            automaticExecution(sliderValue);
         }
     }
 
@@ -322,6 +332,7 @@ public class ActionViewModel {
             progIndex.set(sceneIndex.get());
 
     }
+
     public void executeAction() {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
@@ -409,13 +420,13 @@ public class ActionViewModel {
             case "TURN_LEFT" -> new ActionTurnLeft(actionMeasureOrNameVariable);
             case "PEN_UP" -> new ActionPen(false);
             case "PEN_DOWN" -> new ActionPen(true);
-            case "VARIABLE_ASSIGNATION" -> {
+            case "VAR_ASSIGNMENT" -> {
                 VariableAssignation va = new VariableAssignation();
                 va.setMeasure(reste);
                 va.setNameVariable(actionMeasureOrNameVariable);
                 yield va;
             }
-            case "VARIABLE_DECLARATION" -> {
+            case "VAR_DECLARATION" -> {
                 VariableDeclaration vd = new VariableDeclaration();
                 vd.setNameVariable(actionMeasureOrNameVariable);
                 yield vd;
@@ -551,16 +562,32 @@ public class ActionViewModel {
         );
     }
 
-    public void automaticExecution(){
-        Timer timer = new Timer();
-        TimerTask tt = new TimerTask(){
+    public Timer getTimer() {
+        return timer;
+    }
+
+    public void automaticExecution(double delai) {
+        if (timer != null) {
+            timer.cancel();
+        }
+        timer = new Timer();
+
+        int delaiInMs = (int) (delai * 1000);
+
+        TimerTask tt = new TimerTask() {
             @Override
             public void run() {
-                if(!fullyTraversedSceneList().get())
-                    Platform.runLater(() -> executeAction());
+                Platform.runLater(() -> {
+                    if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
+                        executeAction();
+                    } else {
+                        timer.cancel();
+                    }
+                });
             }
         };
-        timer.schedule(tt,1000,1000);
+        timer.schedule(tt, delaiInMs, delaiInMs);
     }
+
 
 }

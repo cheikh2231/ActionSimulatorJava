@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.IntegerProperty;
@@ -24,6 +25,8 @@ import scratch.model.Variable;
 import scratch.viewmodel.ActionViewModel;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ActionSceneView extends VBox {
@@ -45,6 +48,7 @@ public class ActionSceneView extends VBox {
     // 1. (min,max,defaut)
     private Slider slider = new Slider(0.01, 5, 0.5);
     private TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
+    private Timer timer = new Timer();
 
     public ActionSceneView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
@@ -95,13 +99,7 @@ public class ActionSceneView extends VBox {
         HBox controlButtons = new HBox(10);
         nextButton.setOnAction(actionEvent -> {
             actionVm.executeAction();
-            drawLine();
-            drawingPane.getChildren().removeAll(turtle, turtleHead);
-            double x = actionVm.getCursor().getPosition().getX();
-            double y = actionVm.getCursor().getPosition().getY();
-            double angle = (actionVm.getCursor().getAngle());
-            drawTurtle(x, y, angle);
-            drawingPane.getChildren().addAll(turtle, turtleHead);
+            draw();
         });
 
         loadButton.setOnAction(actionEvent -> {
@@ -110,12 +108,12 @@ public class ActionSceneView extends VBox {
         });
 
         executeButton.setOnAction(actionEvent -> {
-            actionVm.executer();
-            actionVm.automaticExecution();
+            actionVm.executer(slider.getValue());
         });
 
         resetButton.setOnAction(actionEvent -> {
             resetCanvasView();
+            timer.cancel();
             // On réinitialiser notre liste
             actionVm.reinitialiserListeScene();
         });
@@ -128,7 +126,6 @@ public class ActionSceneView extends VBox {
     }
 
     public void bindings() {
-
         loadButton.disableProperty().bind(actionVm.hasAnomalies());
         loadButton.visibleProperty().bind(((actionVm.hasProgChange().not().and(actionVm.hasRuntimeError().not())).or(actionVm.hasChargerSceneProperty().not())));
         loadButton.managedProperty().bind(actionVm.hasChargerSceneProperty().not());
@@ -140,9 +137,9 @@ public class ActionSceneView extends VBox {
         executeButton.managedProperty().bind(nextButton.visibleProperty().not());
         nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())).and(actionVm.hasRuntimeError().not()));
         nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
-        slider.visibleProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
-        slider.managedProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
-
+        actionVm.isExecutionAutoProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
+        slider.visibleProperty().bind(actionVm.isExecutionAutoProperty());
+        slider.managedProperty().bind(actionVm.isExecutionAutoProperty());
     }
 
 
@@ -240,5 +237,16 @@ public class ActionSceneView extends VBox {
         hbox.getChildren().add(variableTable);
         return hbox;
     }
+
+    public void draw(){
+        drawLine();
+        drawingPane.getChildren().removeAll(turtle, turtleHead);
+        double x = actionVm.getCursor().getPosition().getX();
+        double y = actionVm.getCursor().getPosition().getY();
+        double angle = (actionVm.getCursor().getAngle());
+        drawTurtle(x, y, angle);
+        drawingPane.getChildren().addAll(turtle, turtleHead);
+    }
+
 
 }

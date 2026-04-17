@@ -27,7 +27,7 @@ public class VariableAssignation extends Variable {
 
     @Override
     public String getFormatName() {
-        return super.getFormatName()+"_ASSIGNATION";
+        return super.getFormatName()+"_ASSIGNMENT";
     }
 
 
