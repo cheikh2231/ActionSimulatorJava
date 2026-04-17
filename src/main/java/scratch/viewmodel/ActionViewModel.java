@@ -1,5 +1,7 @@
 package scratch.viewmodel;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.*;
@@ -7,6 +9,7 @@ import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import scratch.model.*;
 
 import java.io.File;
@@ -35,6 +38,9 @@ public class ActionViewModel {
     private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
     private Timer timer;
     private BooleanProperty isExecutionAuto = new SimpleBooleanProperty(false);
+    private IntegerProperty ok = new SimpleIntegerProperty(0);
+
+
 
     public ObservableList<Map.Entry<String, Variable>> getVariableList() {
         return variableList;
@@ -298,17 +304,20 @@ public class ActionViewModel {
     }
 
     public void reinitialiserListeScene() {
+        stopAutomaticExec();
+        Variable.clear();
+        removeAllVariableTable();
+        sceneIndex.set(0);
         progIndex.set(-1);
         measureProperty.set("");
-        sceneIndex.set(0);
+
         sceneActions.reset();
         hasRuntimeError.setValue(false);
         startAndCountMap.clear();
         variableNameProperty.set("");
         isvalidMesureProperty.set(true);
         isValidVariableNameProperty.set(true);
-        Variable.clear();
-        removeAllVariableTable();
+
         getActionsProg().stream()
                 .filter(action -> action.hasErrorProperty().get())
                 .forEach(action -> action.setHasError(false));
@@ -562,31 +571,35 @@ public class ActionViewModel {
         );
     }
 
-    public Timer getTimer() {
-        return timer;
-    }
 
-    public void automaticExecution(double delai) {
-        if (timer != null) {
-            timer.cancel();
-        }
-        timer = new Timer();
+    private Timeline timeline;
 
-        int delaiInMs = (int) (delai * 1000);
+    public void automaticExecution(double delay) {
+        stopAutomaticExec();
 
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                Platform.runLater(() -> {
+        timeline = new Timeline(new KeyFrame(
+                Duration.millis(delay * 1000),
+                event -> {
                     if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
                         executeAction();
                     } else {
-                        timer.cancel();
+                        stopAutomaticExec();
                     }
-                });
-            }
-        };
-        timer.schedule(tt, delaiInMs, delaiInMs);
+                }
+        ));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    public void stopAutomaticExec() {
+        if (timeline != null) {
+            timeline.stop();
+            timeline = null;
+        }
+    }
+
+    public IntegerProperty sceneIndexProperty() {
+        return sceneIndex;
     }
 
 

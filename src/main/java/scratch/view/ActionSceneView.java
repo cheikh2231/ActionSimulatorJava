@@ -99,7 +99,6 @@ public class ActionSceneView extends VBox {
         HBox controlButtons = new HBox(10);
         nextButton.setOnAction(actionEvent -> {
             actionVm.executeAction();
-            draw();
         });
 
         loadButton.setOnAction(actionEvent -> {
@@ -113,8 +112,6 @@ public class ActionSceneView extends VBox {
 
         resetButton.setOnAction(actionEvent -> {
             resetCanvasView();
-            timer.cancel();
-            // On réinitialiser notre liste
             actionVm.reinitialiserListeScene();
         });
 
@@ -140,6 +137,10 @@ public class ActionSceneView extends VBox {
         actionVm.isExecutionAutoProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
         slider.visibleProperty().bind(actionVm.isExecutionAutoProperty());
         slider.managedProperty().bind(actionVm.isExecutionAutoProperty());
+        actionVm.sceneIndexProperty().addListener((observableValue, oldV, newV) -> {
+            if (newV.intValue()>oldV.intValue())
+                draw();
+        });
     }
 
 
