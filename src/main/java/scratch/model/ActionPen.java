@@ -5,13 +5,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 
 public class ActionPen extends Action{
     private final BooleanProperty penDowStatus = new SimpleBooleanProperty(true);
-
     public ActionPen(boolean penDowStatus) {
-        super(penDowStatus ? "Abaisser stylo":"Lever stylo",0);
+        super(penDowStatus ? "Abaisser stylo":"Lever stylo","");
         setPenDownStatus(penDowStatus);
     }
 
-    public boolean getPenDowStatus() {
+    public boolean getPenDownStatus() {
         return penDowStatus.get();
     }
 
@@ -25,7 +24,12 @@ public class ActionPen extends Action{
 
     @Override
     public Action copy() {
-        return new ActionPen(getPenDowStatus());
+        return new ActionPen(getPenDownStatus());
+    }
+
+    @Override
+    public void executeAction(SceneActions sceneActions) {
+        sceneActions.switchPenStatus();
     }
 
     @Override
@@ -50,6 +54,11 @@ public class ActionPen extends Action{
 
     @Override
     public String getFormatName() {
-        return "PEN_"+(getPenDowStatus() ? "DOWN":"UP");
+        return "PEN_"+(getPenDownStatus() ? "DOWN":"UP");
+    }
+
+    @Override
+    public ActionType getActionType() {
+        return ActionType.ACTIONPEN;
     }
 }

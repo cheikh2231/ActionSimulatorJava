@@ -2,7 +2,7 @@ package scratch.model;
 
 public class ActionTurnLeft extends ActionTurn {
 
-    public ActionTurnLeft(int mesure) {
+    public ActionTurnLeft(String mesure) {
         super("gauche de ", mesure);
     }
 
@@ -14,9 +14,17 @@ public class ActionTurnLeft extends ActionTurn {
     public Action copy() {
         return new ActionTurnLeft(getMeasure());
     }
+
+    @Override
+    public void executeAction(SceneActions sceneActions) {
+        super.executeAction(sceneActions);
+        if (getValue(getMeasure()) != null)
+            sceneActions.turn(getValue(this.getMeasure()));
+    }
+
     @Override
     public String toString() {
-        return  super.getName()  + getMeasure();
+        return super.getName() + getMeasure();
     }
 
     @Override
@@ -26,7 +34,11 @@ public class ActionTurnLeft extends ActionTurn {
 
     @Override
     public String getFormatName() {
-        return super.getFormatName()+"LEFT";
+        return super.getFormatName() + "LEFT";
     }
 
+    @Override
+    public ActionType getActionType() {
+        return ActionType.ACTIONTURNLEFT;
+    }
 }

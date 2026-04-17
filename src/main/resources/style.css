@@ -10,3 +10,7 @@
     -fx-fill:green;
     -fx-text-fill:green;
 }
+.text-turquoise{
+    -fx-fill: #3bcdbd;
+    -fx-text-fill:#3bcdbd;
+}

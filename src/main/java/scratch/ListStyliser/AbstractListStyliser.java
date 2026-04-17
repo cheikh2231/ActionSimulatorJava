@@ -1,5 +1,7 @@
 package scratch.ListStyliser;
 
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -25,6 +27,13 @@ public abstract class AbstractListStyliser extends ListCell<Action> {
         HBox box = new HBox(10, circle, label);
         box.setAlignment(Pos.CENTER_LEFT);
 
+        box.styleProperty().bind(
+                Bindings.createStringBinding(
+                        () -> "-fx-padding: 0 0 0 " + (action.getIndentLevel() * 20) + ";",
+                        action.indentLevelProperty()
+                )
+        );
+//        box.setPadding(new javafx.geometry.Insets(0, 0, 0, indent));
         actionStyliser(action, circle, label);
         setGraphic(box);
     }
@@ -40,9 +49,12 @@ public abstract class AbstractListStyliser extends ListCell<Action> {
         } else if (name.contains("tourner")) {
             circle.getStyleClass().add("text-red");
             label.getStyleClass().add("text-red");
-        } else {
+        } else if(name.contains("stylo")) {
             circle.getStyleClass().add("text-green");
             label.getStyleClass().add("text-green");
+        }else{
+            circle.getStyleClass().add("text-turquoise");
+            label.getStyleClass().add("text-turquoise");
         }
     }
 }

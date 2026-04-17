@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Scanner;
 
 public class FileView extends HBox{
     private ActionViewModel actionVm;
@@ -41,13 +40,12 @@ public class FileView extends HBox{
     }
 
     public void resetAll(){
-        actionVm.clearAllActionsProg();
+        actionVm.clearAllActionsProgAndVariables();
         actionVm.reinitialiserListeScene();
         actionVm.setResetCanvasProperty();
     }
 
     public void openFile(Stage stage){
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open SCR file");
         fileChooser.getExtensionFilters().addAll(
@@ -55,7 +53,7 @@ public class FileView extends HBox{
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             resetAll();
-           actionVm.loadFile(selectedFile);
+            actionVm.loadFile(selectedFile);
         }
     }
 
@@ -68,7 +66,12 @@ public class FileView extends HBox{
         if (selectedFile != null) {
             try (BufferedWriter bw = Files.newBufferedWriter(selectedFile.toPath(),StandardCharsets.UTF_8)) {
                 for(Action action : actionVm.getActionsProg()){
-                    bw.write(action.getFormatName()+";"+action.getMeasure()+"\n");
+                    if(action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType()==ActionType.VARIABLEINCRDECR)
+                        bw.write(action.getFormatName()+";"+action.getNameVariable()+";"+action.getMeasure()+"\n");
+                    else if(action.getActionType() == ActionType.VARIABLEDECLARATION)
+                        bw.write(action.getFormatName()+";"+action.getNameVariable()+"\n");
+                    else
+                        bw.write(action.getFormatName()+";"+action.getMeasure()+"\n");
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

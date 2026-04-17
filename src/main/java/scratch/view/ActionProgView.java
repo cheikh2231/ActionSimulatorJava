@@ -1,5 +1,6 @@
 package scratch.view;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -15,36 +16,49 @@ public class ActionProgView extends VBox {
     private final Label actionProgLabel = new Label("Programme");
     private final Label measureUnitLabel = new Label();
     private final TextField measureTextField = new TextField();
+    private final TextField variableNameTextField = new TextField();
     private final Label actionNameLabel = new Label();
-    private final Label measureErrorLabel = new Label(" invalid value");
-    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
+    private final Label textfieldsErrorLabel = new Label(" invalid value");
+    private final Label separatorLabel = new Label("");
     private final Button btnUp = new Button("Monter");
     private final Button btnDown = new Button("Descendre");
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider Tout");
-
+    private final Button btnIncrement = new Button("+");
+    private final Button btnDecrement = new Button("-");
+    private final Label runtimeError = new Label("Runtime Error");
+    private final TitledPane detailsAction = new TitledPane("Details de l'action", createActionDetailsBox());
 
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
         btnDelete.setOnAction(actionEvent -> actionVm.removeAction());
-        btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProg());
+        btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProgAndVariables());
         btnDuplicate.setOnAction(actionEvent -> actionVm.duplicateAction());
         btnUp.setOnAction(actionEvent -> actionVm.moveUp());
         btnDown.setOnAction(actionEvent -> actionVm.moveDown());
+        btnIncrement.setOnAction(actionEvent -> actionVm.increment());
+        btnDecrement.setOnAction(actionEvent -> actionVm.decrement());
         btnsManager.setSpacing(12);
         return btnsManager;
     }
 
+    public HBox btnsIncrDecr(){
+        HBox btnsIncrDecr = new HBox(2);
+        btnsIncrDecr.getChildren().addAll(btnIncrement,btnDecrement);
+        btnIncrement.setPrefWidth(36);
+        btnDecrement.setPrefWidth(36);
+        HBox.setMargin(btnIncrement, new Insets(0, 3, 0, 5)); // left margin = 55
+        return btnsIncrDecr;
+    }
     public ActionProgView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         bindings();
         setupLayout();
         this.progListView.setItems(actionVm.getActionsProg());
-        setupMeasureTextfield();
+        setupMeasureVariableNameTextfield();
         configListViewProg();
-
         this.getChildren().addAll(actionProgLabel, progListView, btnsManage(), detailsAction);
     }
 
@@ -52,7 +66,7 @@ public class ActionProgView extends VBox {
         final VBox principalBox = new VBox();
         final HBox detailsHBox = new HBox();
 
-        detailsHBox.getChildren().addAll(actionNameLabel, measureTextField, measureUnitLabel);
+        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, separatorLabel,measureTextField,btnsIncrDecr(), measureUnitLabel);
         principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
 
         return principalBox;
@@ -61,34 +75,50 @@ public class ActionProgView extends VBox {
 
     private HBox createErrorLabelBox() {
         final HBox errorBox = new HBox();
-        measureErrorLabel.setTextFill(Color.RED);
-        errorBox.getChildren().add(measureErrorLabel);
+        textfieldsErrorLabel.setTextFill(Color.RED);
+        runtimeError.setTextFill(Color.RED);
+        errorBox.getChildren().addAll(textfieldsErrorLabel,runtimeError);
         return errorBox;
     }
 
-    private void setupMeasureTextfield() {
-        measureTextField.setPrefWidth(36);
+    private void setupMeasureVariableNameTextfield() {
+        variableNameTextField.setPrefWidth(42);
+        measureTextField.setPrefWidth(42);
         measureTextField.setAlignment(Pos.CENTER);
     }
 
     private void bindings() {
+        separatorLabel.textProperty().bind(actionVm.getSeparatorLabel());
         actionVm.progIndexProperty().addListener((observableValue, number, n) ->
                 progListView.getSelectionModel().select(n.intValue()));
         measureUnitLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
         actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
-        measureTextField.textProperty().bindBidirectional(actionVm.getMesureProperty());
+        separatorLabel.visibleProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
+        separatorLabel.managedProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
+        measureTextField.textProperty().bindBidirectional(actionVm.getMeasureProperty());
+        measureTextField.visibleProperty().bind(actionVm.isDeclaration().not().and(actionVm.isEndRepeat().not()));
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
+        variableNameTextField.visibleProperty().bind(actionVm.textFieldValueVariableRules());
+        variableNameTextField.managedProperty().bind(actionVm.textFieldValueVariableRules());
+        variableNameTextField.textProperty().bindBidirectional(actionVm.getVariableNameProperty());
         btnUp.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
         btnDown.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
-        measureErrorLabel.managedProperty().bind(actionVm.isValidMesureProperty().not());
-        measureErrorLabel.visibleProperty().bind(actionVm.isValidMesureProperty().not());
+        textfieldsErrorLabel.managedProperty().bind(actionVm.isValidVariableNameProperty().not().or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind((actionVm.isValidVariableNameProperty().not()).or(actionVm.isValidMesureProperty().not()));
         progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
             actionVm.progIndexProperty().set(n.intValue());
         });
-        actionVm.actionSelectedProperty().bind(progListView.getSelectionModel().selectedItemProperty());
+
+        runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+        runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+        btnIncrement.visibleProperty().bind(actionVm.canIncrDecr());
+        btnIncrement.managedProperty().bind(actionVm.canIncrDecr());
+        btnDecrement.visibleProperty().bind(actionVm.canIncrDecr());
+        btnDecrement.managedProperty().bind(actionVm.canIncrDecr());
+
     }
 
     private void configListViewProg() {

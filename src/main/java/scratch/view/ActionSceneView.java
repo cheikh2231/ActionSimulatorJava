@@ -1,11 +1,18 @@
 package scratch.view;
 
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -14,7 +21,12 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
 import scratch.model.Cursor;
 import scratch.model.Line;
+import scratch.model.Variable;
 import scratch.viewmodel.ActionViewModel;
+
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class ActionSceneView extends VBox {
@@ -30,6 +42,13 @@ public class ActionSceneView extends VBox {
     private final Circle turtleHead = new Circle(TURTLE_HEAD_SIZE);
     private Polygon turtle;
     private Pane drawingPane = new Pane();
+    private ToggleGroup groupeExecution = new ToggleGroup();
+    private RadioButton rbAuto = new RadioButton("Exécution automatique");
+    private RadioButton rbManuel = new RadioButton("Exécution manuelle");
+    // 1. (min,max,defaut)
+    private Slider slider = new Slider(0.01, 5, 0.5);
+    private TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
+    private Timer timer = new Timer();
 
     public ActionSceneView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
@@ -37,8 +56,42 @@ public class ActionSceneView extends VBox {
         setupCanvas();
         setupView();
         drawingPane.getChildren().addAll(canvas, turtleHead, turtle);
-        this.getChildren().addAll(titleLabel, drawingPane, createControlButtons());
+
+        this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons(),radioButtonsExecutions(),executionSpeedSlider());
+
         bindings();
+
+    }
+
+    public HBox radioButtonsExecutions(){
+        // 1. On lie les buttons en les mettant dans notre groupeExecution
+        rbAuto.setToggleGroup(groupeExecution);
+        rbManuel.setToggleGroup(groupeExecution);
+
+        // 2. Par défaut c'est le manuel qui est selectionné
+        rbManuel.setSelected(true);
+
+        HBox hboxRadioButtons = new HBox(15);
+        hboxRadioButtons.setAlignment(Pos.CENTER);
+        hboxRadioButtons.getChildren().addAll(rbAuto,rbManuel);
+        return hboxRadioButtons;
+    }
+
+
+    public Slider executionSpeedSlider() {
+        //2. ajout des traits entre chaque graduation
+        slider.setShowTickMarks(true);
+
+        //3. on affiche les numéros sous les traits principaux
+        slider.setShowTickLabels(true);
+
+        // 4. on ne laisse qu'une unité entre chaque chiffre
+        slider.setMajorTickUnit(1);
+
+        //5. Personnalisation de la largeur du slider
+        slider.setPrefWidth(400);
+
+        return slider;
     }
 
 
@@ -46,13 +99,6 @@ public class ActionSceneView extends VBox {
         HBox controlButtons = new HBox(10);
         nextButton.setOnAction(actionEvent -> {
             actionVm.executeAction();
-            drawLine();
-            drawingPane.getChildren().removeAll(turtle, turtleHead);
-            double x = actionVm.getCursor().getPosition().getX();
-            double y = actionVm.getCursor().getPosition().getY();
-            double angle = (actionVm.getCursor().getAngle());
-            drawTurtle(x, y, angle);
-            drawingPane.getChildren().addAll(turtle, turtleHead);
         });
 
         loadButton.setOnAction(actionEvent -> {
@@ -60,11 +106,12 @@ public class ActionSceneView extends VBox {
             actionVm.charger();
         });
 
-        executeButton.setOnAction(actionEvent -> actionVm.executer());
+        executeButton.setOnAction(actionEvent -> {
+            actionVm.executer(slider.getValue());
+        });
 
         resetButton.setOnAction(actionEvent -> {
             resetCanvasView();
-            // On réinitialiser notre liste
             actionVm.reinitialiserListeScene();
         });
 
@@ -77,18 +124,25 @@ public class ActionSceneView extends VBox {
 
     public void bindings() {
         loadButton.disableProperty().bind(actionVm.hasAnomalies());
-        loadButton.visibleProperty().bind(actionVm.hasActionsProgChange().or(actionVm.hasChargerSceneProperty().not()));
+        loadButton.visibleProperty().bind(((actionVm.hasProgChange().not().and(actionVm.hasRuntimeError().not())).or(actionVm.hasChargerSceneProperty().not())));
         loadButton.managedProperty().bind(actionVm.hasChargerSceneProperty().not());
-        resetButton.visibleProperty().bind(actionVm.hasActionsProgChange().not().and(actionVm.hasChargerSceneProperty()));
-        resetButton.managedProperty().bind(actionVm.hasActionsProgChange().not().and(actionVm.hasChargerSceneProperty()));
+        resetButton.visibleProperty().bind((actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty())));
+        resetButton.managedProperty().bind(actionVm.hasProgChange().not().and(actionVm.hasChargerSceneProperty()));
 
-        executeButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.fullyTraversedSceneList()));
+        executeButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.fullyTraversedSceneList()).or(actionVm.hasRuntimeError()));
         executeButton.visibleProperty().bind(nextButton.visibleProperty().not());
         executeButton.managedProperty().bind(nextButton.visibleProperty().not());
-        nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
+        nextButton.visibleProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())).and(actionVm.hasRuntimeError().not()));
         nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty().and(actionVm.existIndex().and(actionVm.fullyTraversedSceneList().not())));
-
+        actionVm.isExecutionAutoProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
+        slider.visibleProperty().bind(actionVm.isExecutionAutoProperty());
+        slider.managedProperty().bind(actionVm.isExecutionAutoProperty());
+        actionVm.sceneIndexProperty().addListener((observableValue, oldV, newV) -> {
+            if (newV.intValue()>oldV.intValue())
+                draw();
+        });
     }
+
 
     public void setupCanvas() {
         // Design exterieur du canvas
@@ -158,5 +212,42 @@ public class ActionSceneView extends VBox {
         this.setSpacing(10);
         this.setPadding(new Insets(5));
     }
+
+
+    private HBox tableVariableContainer(){
+        HBox hbox = new HBox();
+        hbox.setMaxHeight(150);
+        // 1.Création des nom de colums et pour chaque column on indique quel type de data y afficher, ou trouver cette data, a l'occurence là c'est Variable.getValue().nameVariableProperty qu'il trouve car il extend action
+        TableColumn<Map.Entry<String, Variable>, String> nomColumn = new TableColumn<>("Nom");
+        nomColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().nameVariableProperty());
+        TableColumn<Map.Entry<String, Variable>, String> valueColumn = new TableColumn<>("Valeur");
+        valueColumn.setCellValueFactory(entryStringCellDataFeatures -> new SimpleStringProperty(String.valueOf(entryStringCellDataFeatures.getValue().getValue().getValue(entryStringCellDataFeatures.getValue().getValue().getMeasure()))));
+        // 2. Je rajoute les deux columns dans la tableview
+        variableTable.getColumns().setAll(nomColumn, valueColumn);
+
+        hbox.setMinWidth(500);
+        nomColumn.setMinWidth(249);
+        valueColumn.setMinWidth(249);
+        // 3. Je desactive le sorted par ordre alphabetique et numeric
+        nomColumn.setSortable(false);
+        valueColumn.setSortable(false);
+
+        // 4. J'ajoute dans ma table tout ce que je récupère de l'observableList crée dans actionVM
+        variableTable.setItems(actionVm.getVariableList());
+
+        hbox.getChildren().add(variableTable);
+        return hbox;
+    }
+
+    public void draw(){
+        drawLine();
+        drawingPane.getChildren().removeAll(turtle, turtleHead);
+        double x = actionVm.getCursor().getPosition().getX();
+        double y = actionVm.getCursor().getPosition().getY();
+        double angle = (actionVm.getCursor().getAngle());
+        drawTurtle(x, y, angle);
+        drawingPane.getChildren().addAll(turtle, turtleHead);
+    }
+
 
 }

@@ -7,11 +7,17 @@ import javafx.collections.ObservableList;
 public class Actions {
 
     private static ObservableList<Action> actions = FXCollections.observableArrayList(
+            new VariableDeclaration(),
+            new VariableAssignation(),
+            new VariableIncrDecr(),
             new ActionMoveForward(),
             new ActionTurnLeft(),
             new ActionTurnRight(),
+            new ActionRepeat(),
+            new ActionEndRepeat(),
             new ActionPen(false),
             new ActionPen(true)
+
     );
 
     public static ObservableList<Action> getActions() {
