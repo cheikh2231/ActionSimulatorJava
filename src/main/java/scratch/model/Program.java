@@ -15,15 +15,15 @@ public class Program {
                     action -> new Observable[]{action.measureProperty(), action.nameVariableProperty()}
             );
 
-    public void addAction(int idx, int pos) {
-        Action action = Actions.getAction(idx);
+    public void addAction(int paletteIdx, int progIdx) {
+        // si rien de sélectionné, on ajoute en fin de liste
+        int pos = progIdx == -1 ? size() : progIdx + 1;
+        Action action = Actions.getAction(paletteIdx);
         if (action != null) {
             actionsProg.add(pos, action.copy());
             indentAction();
         }
     }
-
-
     public void removeAction(int idx) {
         if (existIndex(idx)) {
             Action selected = getActionProg(idx);

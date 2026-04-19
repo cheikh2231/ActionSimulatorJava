@@ -33,6 +33,8 @@ public class ActionProgView extends VBox {
     public HBox btnsManage() {
         HBox btnsManager = new HBox(5);
         btnsManager.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
+
+        // Actions de gestion du programme
         btnDelete.setOnAction(actionEvent -> actionVm.removeAction());
         btnClear.setOnAction(actionEvent -> actionVm.clearAllActionsProgAndVariables());
         btnDuplicate.setOnAction(actionEvent -> actionVm.duplicateAction());
@@ -40,18 +42,20 @@ public class ActionProgView extends VBox {
         btnDown.setOnAction(actionEvent -> actionVm.moveDown());
         btnIncrement.setOnAction(actionEvent -> actionVm.increment());
         btnDecrement.setOnAction(actionEvent -> actionVm.decrement());
+
         btnsManager.setSpacing(12);
         return btnsManager;
     }
 
-    public HBox btnsIncrDecr(){
+    public HBox btnsIncrDecr() {
         HBox btnsIncrDecr = new HBox(2);
-        btnsIncrDecr.getChildren().addAll(btnIncrement,btnDecrement);
+        btnsIncrDecr.getChildren().addAll(btnIncrement, btnDecrement);
         btnIncrement.setPrefWidth(36);
         btnDecrement.setPrefWidth(36);
-        HBox.setMargin(btnIncrement, new Insets(0, 3, 0, 5)); // left margin = 55
+        HBox.setMargin(btnIncrement, new Insets(0, 3, 0, 5));
         return btnsIncrDecr;
     }
+
     public ActionProgView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         bindings();
@@ -66,18 +70,18 @@ public class ActionProgView extends VBox {
         final VBox principalBox = new VBox();
         final HBox detailsHBox = new HBox();
 
-        detailsHBox.getChildren().addAll(actionNameLabel,variableNameTextField, separatorLabel,measureTextField,btnsIncrDecr(), measureUnitLabel);
+        // Ligne : nom action | nom variable | séparateur | valeur | +/- | unité
+        detailsHBox.getChildren().addAll(actionNameLabel, variableNameTextField, separatorLabel,
+                measureTextField, btnsIncrDecr(), measureUnitLabel);
         principalBox.getChildren().addAll(detailsHBox, createErrorLabelBox());
-
         return principalBox;
     }
-
 
     private HBox createErrorLabelBox() {
         final HBox errorBox = new HBox();
         textfieldsErrorLabel.setTextFill(Color.RED);
         runtimeError.setTextFill(Color.RED);
-        errorBox.getChildren().addAll(textfieldsErrorLabel,runtimeError);
+        errorBox.getChildren().addAll(textfieldsErrorLabel, runtimeError);
         return errorBox;
     }
 
@@ -88,43 +92,56 @@ public class ActionProgView extends VBox {
     }
 
     private void bindings() {
+        // Libellés liés à l'action sélectionnée
         separatorLabel.textProperty().bind(actionVm.getSeparatorLabel());
-        actionVm.progIndexProperty().addListener((observableValue, number, n) ->
-                progListView.getSelectionModel().select(n.intValue()));
         measureUnitLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsUnity());
         actionNameLabel.textProperty().bind(actionVm.getSelectedActionProgDetailsName());
+
+        // Sync sélection ListView ↔ progIndex du ViewModel
+        actionVm.progIndexProperty().addListener((observableValue, number, n) ->
+                progListView.getSelectionModel().select(n.intValue()));
+        progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) ->
+                actionVm.progIndexProperty().set(n.intValue()));
+
+        // Visibilité du séparateur (ex: "valeur :" ou "de") selon le type d'action
         separatorLabel.visibleProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
         separatorLabel.managedProperty().bind(actionVm.isAssignation().or(actionVm.isIncrDecr()));
+
+        // Champ mesure : caché pour déclaration et fin répéter, désactivé si non éditable
         measureTextField.textProperty().bindBidirectional(actionVm.getMeasureProperty());
         measureTextField.visibleProperty().bind(actionVm.isDeclaration().not().and(actionVm.isEndRepeat().not()));
         measureTextField.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.IsDetailableProperty().not()));
+
+        // Champ nom de variable : visible uniquement pour déclaration, assignation, incrément
         variableNameTextField.visibleProperty().bind(actionVm.textFieldValueVariableRules());
         variableNameTextField.managedProperty().bind(actionVm.textFieldValueVariableRules());
         variableNameTextField.textProperty().bindBidirectional(actionVm.getVariableNameProperty());
+
+        // Boutons de gestion désactivés selon l'état de la sélection
         btnUp.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveUp().not()));
         btnDown.disableProperty().bind(actionVm.isSelectedActionProg().not().or(actionVm.canMoveDown().not()));
         btnDuplicate.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnDelete.disableProperty().bind(actionVm.isSelectedActionProg().not());
         btnClear.disableProperty().bind(actionVm.isEmptyActionProg());
-        textfieldsErrorLabel.managedProperty().bind(actionVm.isValidVariableNameProperty().not().or(actionVm.isValidMesureProperty().not()));
-        textfieldsErrorLabel.visibleProperty().bind((actionVm.isValidVariableNameProperty().not()).or(actionVm.isValidMesureProperty().not()));
-        progListView.getSelectionModel().selectedIndexProperty().addListener((obs, o, n) -> {
-            actionVm.progIndexProperty().set(n.intValue());
-        });
 
+        // Erreur de saisie (mesure ou nom de variable invalide)
+        textfieldsErrorLabel.managedProperty().bind(actionVm.isValidVariableNameProperty().not().or(actionVm.isValidMesureProperty().not()));
+        textfieldsErrorLabel.visibleProperty().bind(actionVm.isValidVariableNameProperty().not().or(actionVm.isValidMesureProperty().not()));
+
+        // Erreur runtime : affichée uniquement si l'action en cours a planté
         runtimeError.visibleProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
         runtimeError.managedProperty().bind(actionVm.hasActionSelectedRuntime().and(actionVm.isValidMesureProperty()));
+
+        // Boutons +/- visibles uniquement si l'action courante est incrémentable
         btnIncrement.visibleProperty().bind(actionVm.canIncrDecr());
         btnIncrement.managedProperty().bind(actionVm.canIncrDecr());
         btnDecrement.visibleProperty().bind(actionVm.canIncrDecr());
         btnDecrement.managedProperty().bind(actionVm.canIncrDecr());
-
     }
 
     private void configListViewProg() {
-        progListView.setCellFactory(lc -> new ProgListStyliser() {
-
-        });
+        // Applique le style personnalisé à chaque cellule de la liste
+        progListView.setCellFactory(lc -> new ProgListStyliser());
     }
 
     private void setupLayout() {
