@@ -28,7 +28,7 @@ public class ActionViewModel {
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
     private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
-    private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
+    private IntegerProperty sceneIndex = new SimpleIntegerProperty(-1);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
     private boolean isSelected = false;
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
@@ -37,8 +37,6 @@ public class ActionViewModel {
     private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
     private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
     private BooleanProperty isExecutionAuto = new SimpleBooleanProperty(false);
-
-
 
     public ObservableList<Map.Entry<String, Variable>> getVariableList() {
         return variableList;
@@ -305,7 +303,7 @@ public class ActionViewModel {
         stopAutomaticExec();
         Variable.clear();
         removeAllVariableTable();
-        sceneIndex.set(0);
+        sceneIndex.set(-1);
         progIndex.set(-1);
         measureProperty.set("");
 
@@ -573,20 +571,23 @@ public class ActionViewModel {
     private Timeline timeline;
 
     public void automaticExecution(double delay) {
-        stopAutomaticExec();
+        if (hasChargerScene.get() && isExecutionAuto.get() && program.existIndex(sceneIndex.get())){
+            stopAutomaticExec();
 
-        timeline = new Timeline(new KeyFrame(
-                Duration.millis(delay * 1000),
-                event -> {
-                    if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
-                        executeAction();
-                    } else {
-                        stopAutomaticExec();
+            timeline = new Timeline(new KeyFrame(
+                    Duration.millis(delay * 1000),
+                    event -> {
+                        if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
+                            executeAction();
+                        } else {
+                            stopAutomaticExec();
+                        }
                     }
-                }
-        ));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+            ));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        }
+
     }
 
     public void stopAutomaticExec() {
@@ -600,5 +601,14 @@ public class ActionViewModel {
         return sceneIndex;
     }
 
+    public StringBinding getLabelVariables(double canvasWidth,double canvasHeight){
+
+        return Bindings.createStringBinding(()->{
+            double x= (getCursor().getPosition().getX() - (canvasWidth/2));
+            double y =  (getCursor().getPosition().getY() - (canvasHeight/2));
+            int angle = ((getCursor().getAngle() % 360) + 360) % 360;
+            return "Tortue : x = " +  x  + " ," +  "y = " +( y == 0 ? y : -y) + " ," + " direction = " +  angle +" °";
+        },sceneIndex);
+    }
 
 }

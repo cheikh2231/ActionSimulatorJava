@@ -6,9 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polygon;
@@ -24,7 +22,7 @@ import java.util.Timer;
 public class ActionSceneView extends VBox {
     private final ActionViewModel actionVm;
     private final Label titleLabel = new Label("Scene");
-    private final Canvas canvas = new Canvas(500, 500);
+    private final Canvas canvas = new Canvas(400, 400);
     private final Button resetButton = new Button("Ré-initialiser");
     private final Button loadButton = new Button("Charger");
     private final Button executeButton = new Button("Executer");
@@ -40,15 +38,14 @@ public class ActionSceneView extends VBox {
     // 1. (min,max,defaut)
     private Slider slider = new Slider(0.01, 5, 0.5);
     private TableView<Map.Entry<String,Variable>> variableTable = new TableView<>();
-    private Timer timer = new Timer();
-
+    private final Label varTitle = new Label("Variables");
+    private final Label turtlePosition = new Label();
     public ActionSceneView(ActionViewModel actionVm) {
         this.actionVm = actionVm;
         drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         setupCanvas();
         setupView();
         drawingPane.getChildren().addAll(canvas, turtleHead, turtle);
-
         this.getChildren().addAll(titleLabel, drawingPane,tableVariableContainer(), createControlButtons(),radioButtonsExecutions(),executionSpeedSlider());
 
         bindings();
@@ -134,7 +131,10 @@ public class ActionSceneView extends VBox {
                 draw();
         });
 
-        slider.valueProperty().addListener((observableValue, number, t1) -> actionVm.automaticExecution((Double) t1));
+        slider.valueProperty().addListener((observableValue, number, t1) -> {
+            actionVm.automaticExecution(t1.doubleValue());
+        });
+        turtlePosition.textProperty().bind(actionVm.getLabelVariables(canvas.getWidth(),canvas.getHeight()));
     }
 
 
@@ -200,17 +200,29 @@ public class ActionSceneView extends VBox {
         // on ajout une nouvelle tortue a la bonne position
         drawTurtle(canvas.getWidth() / 2, canvas.getHeight() / 2, 0);
         drawingPane.getChildren().addAll(turtle, turtleHead);
+
     }
 
     private void setupView() {
         this.setSpacing(10);
         this.setPadding(new Insets(5));
+
     }
 
 
-    private HBox tableVariableContainer(){
+    private VBox tableVariableContainer(){
+        VBox container = new VBox();
         HBox hbox = new HBox();
-        hbox.setMaxHeight(150);
+        container.setMaxHeight(150);
+        container.setPadding(new Insets(10, 10, 10, 10));
+
+        // 2. Ajouter une Bordure
+        container.setBorder(new Border(new BorderStroke(
+                Color.GRAY,
+                BorderStrokeStyle.SOLID,
+                CornerRadii.EMPTY,
+                new BorderWidths(1)
+        )));
         // 1.Création des nom de colums et pour chaque column on indique quel type de data y afficher, ou trouver cette data, a l'occurence là c'est Variable.getValue().nameVariableProperty qu'il trouve car il extend action
         TableColumn<Map.Entry<String, Variable>, String> nomColumn = new TableColumn<>("Nom");
         nomColumn.setCellValueFactory(entryStringCellDataFeatures -> entryStringCellDataFeatures.getValue().getValue().nameVariableProperty());
@@ -230,7 +242,8 @@ public class ActionSceneView extends VBox {
         variableTable.setItems(actionVm.getVariableList());
 
         hbox.getChildren().add(variableTable);
-        return hbox;
+        container.getChildren().addAll(turtlePosition,varTitle,hbox);
+        return container;
     }
 
     public void draw(){
@@ -242,6 +255,5 @@ public class ActionSceneView extends VBox {
         drawTurtle(x, y, angle);
         drawingPane.getChildren().addAll(turtle, turtleHead);
     }
-
 
 }
