@@ -1,24 +1,61 @@
 @startuml
-class Action {
+
+abstract class Action {
     - name
     - measure
     + copy()
+    + executeAction()
+    + isValidMeasure()
+    + getValue()
 }
 
 class ActionMoveForward
+class ActionTurn <<abstract>>
 class ActionTurnLeft
 class ActionTurnRight
-class ActionPen
+class ActionPen {
+    - penDown
+    + switchPenStatus()
+}
+enum ActionType {
+    ACTIONMOVEFORWARD
+    ACTIONPEN
+    ACTIONTURNLEFT
+    ACTIONTURNRIGHT
+    VARIABLEDECLARATION
+    VARIABLEASSIGNATION
+    VARIABLEINCRDECR
+    REPEAT
+    ENDREPEAT
+}
 
-Action <|-- ActionMoveForward
-Action <|-- ActionTurnLeft
-Action <|-- ActionTurnRight
-Action <|-- ActionPen
+class ActionRepeat {
+    - nbRepetitions
+}
+class ActionEndRepeat
+
+abstract class Variable {
+    + {static} variableMap
+}
+class VariableDeclaration {
+    - nom
+    - valeurInitiale
+}
+class VariableAssignation {
+    - nom
+    - valeur
+}
+class VariableIncrDecr {
+    - nom
+    - delta
+}
 
 class Program {
     - actions
     + addAction()
     + removeAction()
+    + up() / down()
+    + hasAnomalies()
 }
 
 class SceneActions {
@@ -26,6 +63,8 @@ class SceneActions {
     - cursor
     + moveForward()
     + turn()
+    + switchPenStatus()
+    + executeAction()
 }
 
 class Cursor {
@@ -40,21 +79,37 @@ class Line {
     - end
 }
 
-class ActionViewModel
-class MainViewModel
-class ActionProgView
-class ActionSceneView
-class ActionPaletteView
-class MainView
+class Point {
+    - x
+    - y
+}
+class Actions {
+    - {static} actions : List<Action>
+    + {static} getActions() : List<Action>
+    + {static} getAction(idx) : Action
+}
 
-Program --> Action   : contient
-SceneActions --> Cursor
-SceneActions --> Line : dessine
-ActionViewModel --> Program
-ActionViewModel --> SceneActions
-ActionProgView --> ActionViewModel
-ActionSceneView --> ActionViewModel
-ActionPaletteView --> ActionViewModel
-MainView --> MainViewModel
-MainViewModel --> ActionViewModel
+'Les héritages
+Action <|-- ActionMoveForward
+Action <|-- ActionTurn
+Action <|-- ActionPen
+Action <|-- ActionRepeat
+Action <|-- ActionEndRepeat
+Action <|-- Variable
+
+ActionTurn <|-- ActionTurnLeft
+ActionTurn <|-- ActionTurnRight
+
+Variable <|-- VariableDeclaration
+Variable <|-- VariableAssignation
+Variable <|-- VariableIncrDecr
+Action --> ActionType : getActionType()
+
+'LEs associations avec metiers
+Program --> Action       : contient
+SceneActions --> Cursor  : pilote
+SceneActions --> Line    : dessine
+Cursor --> Point         : position
+Line --> Point           : debutDessin / finDessin
+Actions --> Action : catalogue de
 @enduml

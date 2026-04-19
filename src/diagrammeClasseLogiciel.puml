@@ -1,113 +1,300 @@
 @startuml
-class Action {
-    +copy()
-    +isValidMeasure()
-    +isDetailable()
-    +getUnity()
-    +getDetailsName()
-    +getFormatName()
+package "scratch.model" {
+'Nous avons délibéremment décidé de ne pas tout mettre après recherche,
+' il est déconseillé de noter tout ce qui concerne les getters et setter quand les listes sont trop importante afin de faciliter la lisibilité
+    abstract class Action {
+        - name : StringProperty
+        - measure : StringProperty
+        - indentLevel : IntegerProperty
+        - hasError : BooleanProperty
+        - nameVariableProperty : StringProperty
+        + copy() : Action
+        + executeAction(sceneActions : SceneActions)
+        + isValidMeasure(mesure : String) : boolean
+        + isDetailable() : boolean
+        + getValue(value : String) : Integer
+        + getUnity() : String
+        + getDetailsName() : String
+        + getFormatName() : String
+        + getActionType() : ActionType
+        + increment()
+        + decrement()
+        + canIncrDecr(measure : String) : boolean
+    }
+
+    abstract class ActionTurn {
+        + isValidMeasure(mesure : String) : boolean
+        + getUnity() : String
+    }
+
+    class ActionMoveForward {
+        + executeAction(sceneActions : SceneActions)
+        + isValidMeasure(mesure : String) : boolean
+        + copy() : Action
+    }
+
+    class ActionTurnLeft {
+        + executeAction(sceneActions : SceneActions)
+        + copy() : Action
+    }
+
+    class ActionTurnRight {
+        + executeAction(sceneActions : SceneActions)
+        + copy() : Action
+    }
+
+    class ActionPen {
+        - penDowStatus : BooleanProperty
+        + getPenDownStatus() : boolean
+        + setPenDownStatus(etat : boolean)
+        + executeAction(sceneActions : SceneActions)
+        + copy() : Action
+    }
+
+    class ActionRepeat {
+        - children : ObservableList<Action>
+        - nbRead : int
+        + getChildren() : ObservableList<Action>
+        + resetNbRead()
+        + setNbRead(n : int)
+        + hasConflictWithChildren() : boolean
+        + copy() : Action
+    }
+
+    class ActionEndRepeat {
+        + copy() : Action
+    }
+
+    abstract class Variable {
+        + {static} variableMap : ObservableMap<String, Variable>
+        + isValidVariableName(name : String) : boolean
+        + {static} clear()
+    }
+
+    class VariableDeclaration {
+        + addToVariableMap()
+        + copy() : VariableDeclaration
+        + canIncrDecr(measure : String) : boolean
+    }
+
+    class VariableAssignation {
+        + copy() : VariableAssignation
+    }
+
+    class VariableIncrDecr {
+        + copy() : VariableIncrDecr
+    }
+
+    class Actions {
+        - {static} actions : ObservableList<Action>
+        + {static} getActions() : ObservableList<Action>
+        + {static} getAction(idx : int) : Action
+    }
+
+    enum ActionType {
+        ACTIONMOVEFORWARD
+        ACTIONPEN
+        ACTIONTURNLEFT
+        ACTIONTURNRIGHT
+        VARIABLEDECLARATION
+        VARIABLEASSIGNATION
+        VARIABLEINCRDECR
+        REPEAT
+        ENDREPEAT
+    }
+
+    class Program {
+        - actionsProg : ObservableList<Action>
+        + addAction(paletteIdx : int, progIdx : int)
+        + removeAction(idx : int)
+        + dupplicate(idx : int)
+        + up(idx : int)
+        + down(idx : int)
+        + clear()
+        + size() : int
+        + existIndex(idx : int) : boolean
+        + canMoveDown(idx : int) : boolean
+        + hasAnomalies() : boolean
+        + hasErrorWithAllRepeat() : boolean
+        + indentAction()
+        + buildRepeatChildren()
+        + updateActionFromUI(name : String, idx : int, value : String) : boolean
+        + increment(idx : int)
+        + decrement(idx : int)
+    }
+
+    class SceneActions {
+        - lines : ObservableList<Line>
+        - cursor : Cursor
+        - currentActionPen : ActionPen
+        + moveForward(distance : double)
+        + turn(measure : int)
+        + switchPenStatus()
+        + resetLines()
+        + reset()
+        + resetCursorToCenter(w : double, h : double)
+        + executeAction(action : Action) : boolean
+        + getLines() : ObservableList<Line>
+        + getCursor() : Cursor
+    }
+
+    class Cursor {
+        - position : Point
+        - angle : int
+        + {static} TURTLE_SIZE : int
+        + {static} TURTLE_HEAD_SIZE : int
+        + moveForward(distance : double)
+        + turn(angle : int)
+        + setPosition(p : Point)
+        + getAngle() : int
+    }
+
+    class Line {
+        - start : Point
+        - stop : Point
+        + getStart() : Point
+        + getStop() : Point
+    }
+
+    class Point {
+        - x : double
+        - y : double
+        + getX() : double
+        + getY() : double
+        + setX(x : double)
+        + setY(y : double)
+    }
+
+'     Les héritages
+    Action      <|-- ActionMoveForward
+    Action      <|-- ActionTurn
+    Action      <|-- ActionPen
+    Action      <|-- ActionRepeat
+    Action      <|-- ActionEndRepeat
+    Action      <|-- Variable
+
+    ActionTurn  <|-- ActionTurnLeft
+    ActionTurn  <|-- ActionTurnRight
+
+    Variable    <|-- VariableDeclaration
+    Variable    <|-- VariableAssignation
+    Variable    <|-- VariableIncrDecr
+    Action --> ActionType : getActionType()
+
+    ' Associations avec les model
+    Program      "1" --> "0..*" Action      : contient
+    SceneActions "1" --> "1"   Cursor       : pilote
+    SceneActions "1" --> "0..*" Line        : dessine
+    SceneActions "1" --> "1"   ActionPen   : currentPen
+    Cursor       "1" --> "1"   Point       : position
+    Line         "1" --> "2"   Point       : start/stop
+    Actions           ..>      Action      : catalogue
+    ActionRepeat "1" --> "0..*" Action     : children
+
 }
 
-Action <|-- ActionMoveForward
-Action <|-- ActionTurnLeft
-Action <|-- ActionTurnRight
-Action <|-- ActionPen
+'////////////////
+'  VIEWMODEL
+'////////////////
 
-class Program {
-    -actionsProg : List<Action>
-    +addAction(idx)
-    +removeAction(idx)
-    +dupplicate(idx)
-    +up(idx)
-    +down(idx)
-    +clear()
-    +size()
-    +existIndex(idx)
-}
+package "scratch.viewmodel" {
 
-class Cursor {
-    -position : Point
-    -angle : int
-    +moveForward(distance)
-    +turn(angle)
-    +setPosition(Point)
-}
+    class MainViewModel {
+        - actionVm : ActionViewModel
+        + getActionVm() : ActionViewModel
+    }
 
-class Point {
-    -x : double
-    -y : double
-}
+    class ActionViewModel {
+        - program : Program
+        - sceneActions : SceneActions
+        - actionsPalette : ObservableList<Action>
+        - paletteIndex : IntegerProperty
+        - progIndex : IntegerProperty
+        - sceneIndex : IntegerProperty
+        - measureProperty : StringProperty
+        - variableNameProperty : StringProperty
+        - isValidMesureProperty : BooleanProperty
+        - isValidVariableNameProperty : BooleanProperty
+        - hasChargerScene : BooleanProperty
+        - hasRuntimeError : BooleanProperty
+        - isExecutionAuto : BooleanProperty
+        - sliderValue : DoubleProperty
+        - canvasWidth : DoubleProperty
+        - canvasHeight : DoubleProperty
+        + addPaletteToProg()
+        + executeAction()
+        + charger()
+        + executer()
+        + reinitialiserListeScene()
+        + loadFile(file : File)
+        + removeAction()
+        + clearAllActionsProgAndVariables()
+        + duplicateAction()
+        + moveUp()
+        + moveDown()
+        + increment()
+        + decrement()
+        + automaticExecution()
+        + stopAutomaticExec()
+        + resetCursorToCenter()
+        + getCursor() : Cursor
+        + getLines() : List<Line>
+        + hasAnomalies() : BooleanBinding
+        + generateActionFromFileAndAddToProg(type, measure, reste)
+    }
 
-class Line {
-    -start : Point
-    -stop : Point
-}
-
-class SceneActions {
-    -lines : List<Line>
-    -cursor : Cursor
-    -currentActionPen : ActionPen
-    +moveForward(distance)
-    +turn(angle)
-    +switchPenStatus()
-    +resetLines()
-    +getLines()
-    +getCursor()
-}
-
-Program --> Action
-SceneActions --> Cursor
-SceneActions --> Line
-
-class ActionViewModel {
-    -program : Program
-    -sceneActions : SceneActions
-    +addPaletteToProg()
-    +executeAction()
-    +loadFile(file)
-    +reinitialiserListeScene()
-    +generateActionAndAddToProg(type, mesure)
-    +removeAction()
-    +clearAllActionsProg()
-    +duplicateAction()
-    +moveUp()
-    +moveDown()
+    MainViewModel  "1" --> "1" ActionViewModel : possède
+    ActionViewModel "1" --> "1" Program        : utilise
+    ActionViewModel "1" --> "1" SceneActions   : utilise
 }
 
-class MainViewModel {
-    -actionVm : ActionViewModel
-    +getActionVm()
-}
+'////////////////
+'VIEW
+'////////////////
 
-ActionViewModel --> Program
-ActionViewModel --> SceneActions
-MainViewModel --> ActionViewModel
+package "scratch.view" {
 
+    class MainView {
+        + MainView(vm : MainViewModel, stage : Stage)
+    }
 
-class ActionPaletteView {
-    -listAction
-    -btnAdd
+    class ActionPaletteView {
+        - listAction : ListView<Action>
+        - btnAdd : Button
+    }
+
+    class ActionProgView {
+        - progListView : ListView<Action>
+        - measureTextField : TextField
+        - variableNameTextField : TextField
+        - detailsAction : TitledPane
+    }
+
+    class ActionSceneView {
+        - canvas : Canvas
+        - drawingPane : Pane
+        - turtle : Polygon
+        - variableTable : TableView
+        + draw()
+        + resetCanvasView()
+    }
+
+    class FileView {
+        + openFile(stage : Stage)
+        + saveFileAs(stage : Stage)
+        + resetAll()
+    }
+
+    MainView         --> MainViewModel      : utilise
+    ActionPaletteView --> ActionViewModel  : utilise
+    ActionProgView    --> ActionViewModel  : utilise
+    ActionSceneView   --> ActionViewModel  : utilise
+    FileView          --> ActionViewModel  : utilise
+
+    MainView *-- ActionPaletteView
+    MainView *-- ActionProgView
+    MainView *-- ActionSceneView
+    MainView *-- FileView
 }
-class ActionProgView {
-    -progListView
-    -detailsAction
-}
-class ActionSceneView {
-    -canvas
-    -drawingPane
-}
-class FileView {
-    -actionVm : ActionViewModel
-}
-class MainView {
-}
-class ActionPen{
-    -penDowStatus: BooleanProperty
-}
-ActionPaletteView --> ActionViewModel
-ActionProgView --> ActionViewModel
-ActionSceneView --> ActionViewModel
-FileView --> ActionViewModel
-MainView --> MainViewModel
 
 @enduml

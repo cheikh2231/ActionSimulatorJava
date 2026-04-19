@@ -13,7 +13,7 @@
 
 ## Notes de version itération 2
 
-...
+* Pas de bugs connus
 
 ## Notes de version itération 3
 
