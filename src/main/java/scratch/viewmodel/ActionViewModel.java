@@ -2,8 +2,6 @@ package scratch.viewmodel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.*;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
@@ -14,7 +12,6 @@ import scratch.model.*;
 
 import java.io.File;
 import java.util.*;
-
 
 public class ActionViewModel {
 
@@ -27,30 +24,56 @@ public class ActionViewModel {
     private StringProperty variableNameProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
-     BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
-    private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
+    private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
+    // -1 = pas encore démarré
+    private IntegerProperty sceneIndex = new SimpleIntegerProperty(-1);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
+    // flag : vrai pendant la sélection d'une action, pour ignorer les listeners
     private boolean isSelected = false;
     private BooleanProperty isValidVariableNameProperty = new SimpleBooleanProperty(true);
     private BooleanProperty hasRuntimeError = new SimpleBooleanProperty(false);
+    // flag : vrai pendant l'exécution d'une action
     private boolean isExecuting = false;
     private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
-    private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
-    private Timer timer;
+    // associe l'index de début d'un REPEAT à son ActionRepeat
+    private final Map<Integer, ActionRepeat> startAndCountMap = new HashMap<>();
     private BooleanProperty isExecutionAuto = new SimpleBooleanProperty(false);
-    private IntegerProperty ok = new SimpleIntegerProperty(0);
+    private DoubleProperty sliderValue = new SimpleDoubleProperty();
+    private final DoubleProperty canvasHeight = new SimpleDoubleProperty();
+    private final DoubleProperty canvasWidth = new SimpleDoubleProperty();
 
 
+
+    public BooleanProperty canStopAutoExecutionProperty() {
+        return canStopAutoExecution;
+    }
+
+    private final BooleanProperty canStopAutoExecution = new SimpleBooleanProperty(false);
+
+    public DoubleProperty sliderValue() {
+        return sliderValue;
+    }
+
+    public DoubleProperty canvasHeight() {
+        return canvasHeight;
+    }
+
+    public DoubleProperty canvasWidth() {
+        return canvasWidth;
+    }
 
     public ObservableList<Map.Entry<String, Variable>> getVariableList() {
         return variableList;
     }
+
     public void refreshVariableTable() {
         variableList.setAll(Variable.variableMap.entrySet());
     }
+
+    // flag : vrai pendant le chargement d'un fichier, pour ignorer les listeners
     public boolean isLoading = false;
 
-    public void removeAllVariableTable(){
+    public void removeAllVariableTable() {
         variableList.clear();
     }
 
@@ -70,7 +93,6 @@ public class ActionViewModel {
         resetCanvasProperty.set(!resetCanvasProperty.get());
     }
 
-
     public BooleanProperty hasRuntimeError() {
         return hasRuntimeError;
     }
@@ -87,7 +109,6 @@ public class ActionViewModel {
         this.program = program;
         this.sceneActions = sceneActions;
         listeners();
-
     }
 
     public IntegerProperty paletteIndexProperty() {
@@ -99,38 +120,22 @@ public class ActionViewModel {
     }
 
     public StringBinding getSelectedActionProgDetailsName() {
-
         return Bindings.createStringBinding(() -> {
-                    Action actionSelected = program.getActionProg(progIndex.get());
-                    if (actionSelected != null) {
-                        return actionSelected.getDetailsName();
-                    }
-                    return " No action selected ";
-                }, progIndex, getActionsProg()
-        );
-
+            Action actionSelected = program.getActionProg(progIndex.get());
+            return actionSelected != null ? actionSelected.getDetailsName() : " No action selected ";
+        }, progIndex, getActionsProg());
     }
 
     public StringBinding getSelectedActionProgDetailsUnity() {
         return Bindings.createStringBinding(() -> {
-                    Action actionSelected = program.getActionProg(progIndex.get());
-                    if (actionSelected != null) {
-                        return actionSelected.getUnity();
-                    }
-                    return "";
-                }, progIndex, getActionsProg()
-        );
+            Action actionSelected = program.getActionProg(progIndex.get());
+            return actionSelected != null ? actionSelected.getUnity() : "";
+        }, progIndex, getActionsProg());
     }
 
     public void addPaletteToProg() {
-        int idx = paletteIndexProperty().get();
-        int idxProg = progIndex.get();
         if (canAddToProgram().get()) {
-            if (idxProg == -1) {
-                program.addAction(idx, program.size());
-                return;
-            }
-            program.addAction(idx, idxProg + 1);
+            program.addAction(paletteIndex.get(), progIndex.get());
         }
     }
 
@@ -142,20 +147,19 @@ public class ActionViewModel {
         return isDetailableProperty;
     }
 
-
     public StringProperty getMeasureProperty() {
         return measureProperty;
     }
 
-    // val   autre var
     public void listeners() {
+        // Quand on sélectionne une action dans la liste, on met à jour les champs de détail
         progIndex.addListener((obs, o, newVal) -> {
-            // flag pour la selection
             isSelected = true;
             if (newVal != null && newVal.intValue() != -1) {
                 Action n = getAction(newVal.intValue());
                 if (n != null) {
-                    measureProperty.set((String.valueOf(n.getMeasure()).equals("0")) ? "" : String.valueOf(n.getMeasure()));
+                    // "0" est la valeur par défaut → on affiche vide
+                    measureProperty.set(n.getMeasure().equals("0") ? "" : n.getMeasure());
                     variableNameProperty.set(n.getNameVariable());
                     this.setIsDetailableProperty(n.isDetailable());
                 }
@@ -163,10 +167,11 @@ public class ActionViewModel {
                 measureProperty.setValue("");
                 this.setIsDetailableProperty(false);
             }
-            isvalidMesureProperty.set(true); // pour stylo//remet la selection a faux
+            isvalidMesureProperty.set(true);
             isSelected = false;
         });
 
+        // Quand l'utilisateur modifie la mesure dans le TextField
         measureProperty.addListener((obs, o, n) -> {
             if (isSelected || isLoading) return;
             if (n.isEmpty()) {
@@ -179,25 +184,52 @@ public class ActionViewModel {
             isvalidMesureProperty.set(success);
         });
 
+        // Quand l'utilisateur modifie le nom de variable dans le TextField
         variableNameProperty.addListener((observableValue, oldName, newName) -> {
-            // si on est entrain de selectionner on fait rien
             if (isSelected || isLoading) return;
-            System.out.println(Variable.variableMap.size());
             if (progIndex.get() != -1) {
-                boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), !program.getActionProg(progIndex.get()).getMeasure().equals("0") ? program.getActionProg(progIndex.get()).getMeasure() : "0");
+                String measure = !program.getActionProg(progIndex.get()).getMeasure().equals("0")
+                        ? program.getActionProg(progIndex.get()).getMeasure() : "0";
+                boolean succes = program.updateActionFromUI(newName.trim(), progIndex.get(), measure);
                 isValidVariableNameProperty.set(succes);
+            }
+        });
+
+        // Basculement manuel ↔ automatique
+        isExecutionAutoProperty().addListener((observableValue, aBoolean, isAuto) -> {
+            if (!isAuto) {
+                stopAutomaticExec();
+            }
+            else {
+                automaticExecution();
+            }
+        });
+
+        // Changement de vitesse du slider → relance l'exécution automatique
+        sliderValue.addListener((observableValue, number, t1) -> automaticExecution());
+
+        // Toute modification de la liste du programme réinitialise l'état d'exécution
+        getActionsProg().addListener((ListChangeListener<Action>) change -> {
+            stopAutomaticExec();
+            program.indentAction();
+            program.buildRepeatChildren();
+            hasRuntimeError.setValue(false);
+            getActionsProg().stream()
+                    .filter(action -> action.hasErrorProperty().get())
+                    .forEach(action -> action.setHasError(false));
+            if (hasChargerScene.get() && !isExecuting) {
+                hasChargerScene.set(false);
             }
         });
     }
 
     public void removeAction() {
         program.removeAction(progIndex.get());
-
+        // force le rafraîchissement si on supprime le premier élément
         if (progIndex.get() == 0) {
             progIndex.set(-1);
             progIndex.set(0);
         }
-
     }
 
     public void clearAllActionsProgAndVariables() {
@@ -221,9 +253,8 @@ public class ActionViewModel {
     }
 
     public BooleanBinding canMoveDown() {
-        return Bindings.createBooleanBinding(() -> {
-            return program.canMoveDown(progIndex.get());
-        }, progIndex, getActionsProg());
+        return Bindings.createBooleanBinding(() ->
+                program.canMoveDown(progIndex.get()), progIndex, getActionsProg());
     }
 
     public void moveUp() {
@@ -237,10 +268,10 @@ public class ActionViewModel {
         if (canMoveDown().get()) {
             Action selected = getAction(progIndex.get());
             program.down(progIndex.get());
-            int newIndex = getActionsProg().indexOf(selected);
-            progIndex.set(newIndex);
+            progIndex.set(getActionsProg().indexOf(selected));
         }
     }
+
     public BooleanProperty isValidMesureProperty() {
         return isvalidMesureProperty;
     }
@@ -259,29 +290,13 @@ public class ActionViewModel {
         }
     }
 
-    // program has anomalies
-    // consequences => btn charger desactiver
-    // when => duplication pen || listProgEmpty || have something devant declaration !
+    // Anomalie = stylo dupliqué, liste vide, déclaration mal placée, mesure/nom invalide
     public BooleanBinding hasAnomalies() {
-        return Bindings.createBooleanBinding(() -> {
-            return program.hasAnomalies() || program.isEmpty() || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get();
-        }, measureProperty,getActionsProg(), isvalidMesureProperty, isValidVariableNameProperty);
+        return Bindings.createBooleanBinding(() ->
+                        program.hasAnomalies() || program.isEmpty()
+                                || !isvalidMesureProperty.get() || !isValidVariableNameProperty.get(),
+                measureProperty, getActionsProg(), isvalidMesureProperty, isValidVariableNameProperty);
     }
-
-    public BooleanBinding hasProgChange(){
-        return Bindings.createBooleanBinding(()->{
-            program.indentAction();
-            program.buildRepeatChildren();
-            if (hasChargerScene.get()) {
-                if (!isExecuting) {
-                    hasChargerScene.set(false);
-                    return true;
-                }
-            }
-            return false;
-        },getActionsProg());
-    }
-
 
     public void charger() {
         reinitialiserListeScene();
@@ -290,39 +305,36 @@ public class ActionViewModel {
         removeAllVariableTable();
     }
 
-    public void executer(double sliderValue) {
-        Variable.clear();
-        if (!program.isEmpty()){
+    public void executer() {
+        reinitialiserListeScene();
+        if (!program.isEmpty()) {
             progIndex.set(-1);
             progIndex.set(0);
             sceneIndex.setValue(0);
         }
-
-        if (isExecutionAutoProperty().get()){
-            automaticExecution(sliderValue);
+        if (isExecutionAutoProperty().get()) {
+            automaticExecution();
         }
     }
 
     public void reinitialiserListeScene() {
         stopAutomaticExec();
+        resetCursorToCenter();
         Variable.clear();
         removeAllVariableTable();
-        sceneIndex.set(0);
+        sceneIndex.set(-1);
         progIndex.set(-1);
         measureProperty.set("");
-
         sceneActions.reset();
         hasRuntimeError.setValue(false);
         startAndCountMap.clear();
         variableNameProperty.set("");
         isvalidMesureProperty.set(true);
         isValidVariableNameProperty.set(true);
-
         getActionsProg().stream()
                 .filter(action -> action.hasErrorProperty().get())
                 .forEach(action -> action.setHasError(false));
     }
-
 
     public void setHasChargerScene(boolean hasChargerScene) {
         this.hasChargerScene.set(hasChargerScene);
@@ -333,36 +345,38 @@ public class ActionViewModel {
     }
 
     public void getNext() {
-        int idx = sceneIndex.get();
-        sceneIndex.set(idx + 1);
-        if (fullyTraversedSceneList().get()) {
+        sceneIndex.set(sceneIndex.get() + 1);
+        // si on a tout parcouru, on pointe sur la dernière action
+        if (fullyTraversedSceneList().get())
             progIndex.set(program.size() - 1);
-        } else
+        else
             progIndex.set(sceneIndex.get());
-
     }
 
     public void executeAction() {
         isExecuting = true;
         Action action = program.getActionProg(sceneIndex.get());
         boolean success = sceneActions.executeAction(action);
-        System.out.println(sceneIndex.get());
         action.setHasError(!success);
         hasRuntimeError.set(!success);
+
         if (success) {
             if (action.getActionType() == ActionType.REPEAT) {
+                // on mémorise le REPEAT et son nombre d'itérations restantes
                 ActionRepeat repeat = (ActionRepeat) action;
                 repeat.resetNbRead();
                 startAndCountMap.put(sceneIndex.get(), repeat);
                 getNext();
             } else if (action.getActionType() == ActionType.ENDREPEAT) {
                 ActionRepeat repeat = getMyRepeat(sceneIndex.get());
-                int repeatStart = getStart(repeat); //16
-                if (repeat.getNbRead() > 1) { //2
-                    repeat.setNbRead(repeat.getNbRead()-1);
+                int repeatStart = getStart(repeat);
+                if (repeat.getNbRead() > 1) {
+                    // on décrémente et on retourne au premier enfant du REPEAT
+                    repeat.setNbRead(repeat.getNbRead() - 1);
                     sceneIndex.set(repeatStart + 1);
                     progIndex.set(sceneIndex.get());
                 } else {
+                    // répétition terminée, on passe à la suite
                     getNext();
                 }
             } else {
@@ -373,30 +387,33 @@ public class ActionViewModel {
         isExecuting = false;
     }
 
-    public ActionRepeat getMyRepeat(int idx){
-        for (Integer a:startAndCountMap.keySet()){
-            if (idx == (a + getAllchildren(startAndCountMap.get(a)))){
+    // Retrouve le REPEAT associé à un END_REPEAT à partir de son index
+    public ActionRepeat getMyRepeat(int idx) {
+        for (Integer a : startAndCountMap.keySet()) {
+            if (idx == (a + getAllchildren(startAndCountMap.get(a)))) {
                 return startAndCountMap.get(a);
             }
         }
         return null;
     }
 
-    public int getAllchildren(ActionRepeat actionRepeat){
-        int size = 1;
-        for (Action a : actionRepeat.getChildren()){
-            if (a.getActionType() == ActionType.REPEAT){
+    // Compte récursivement tous les enfants d'un REPEAT (y compris les REPEAT imbriqués)
+    public int getAllchildren(ActionRepeat actionRepeat) {
+        int size = 1; // le END_REPEAT lui-même
+        for (Action a : actionRepeat.getChildren()) {
+            if (a.getActionType() == ActionType.REPEAT) {
                 size += 1;
                 size += getAllchildren((ActionRepeat) a);
-            }else
+            } else {
                 size += 1;
+            }
         }
-        System.out.println(size);
         return size;
     }
 
-    public int getStart(Action a){
-        for(Integer start : startAndCountMap.keySet()){
+    // Retrouve l'index de début d'un ActionRepeat dans startAndCountMap
+    public int getStart(Action a) {
+        for (Integer start : startAndCountMap.keySet()) {
             if (startAndCountMap.get(start).equals(a))
                 return start;
         }
@@ -404,18 +421,17 @@ public class ActionViewModel {
     }
 
     public BooleanBinding existIndex() {
-        return Bindings.createBooleanBinding(() -> {
-            return program.existIndex(progIndex.get());
-        }, progIndex);
+        return Bindings.createBooleanBinding(() ->
+                program.existIndex(progIndex.get()), progIndex);
     }
-
 
     public List<Line> getLines() {
         return sceneActions.getLines();
     }
 
     public BooleanBinding fullyTraversedSceneList() {
-        return Bindings.createBooleanBinding(() -> sceneIndex.get() == program.size(), sceneIndex, getActionsProg());
+        return Bindings.createBooleanBinding(() ->
+                sceneIndex.get() == program.size(), sceneIndex, getActionsProg());
     }
 
     public Cursor getCursor() {
@@ -423,6 +439,7 @@ public class ActionViewModel {
     }
 
     public void generateActionFromFileAndAddToProg(String actionType, String actionMeasureOrNameVariable, String reste) {
+        reinitialiserListeScene();
         Action action = switch (actionType) {
             case "MOVE_FORWARD" -> new ActionMoveForward(actionMeasureOrNameVariable);
             case "TURN_RIGHT" -> new ActionTurnRight(actionMeasureOrNameVariable);
@@ -445,10 +462,7 @@ public class ActionViewModel {
                 aR.setMeasure(actionMeasureOrNameVariable);
                 yield aR;
             }
-            case "END_REPEAT" -> {
-                yield new ActionEndRepeat();
-            }
-
+            case "END_REPEAT" -> new ActionEndRepeat();
             case "INCREMENT_VARIABLE" -> {
                 VariableIncrDecr ai = new VariableIncrDecr();
                 ai.setMeasure(reste);
@@ -466,8 +480,8 @@ public class ActionViewModel {
         return paletteIndex.greaterThanOrEqualTo(0);
     }
 
-    public void resetCursorToCenter(double canvasWidth, double canvasHeight) {
-        sceneActions.resetCursorToCenter(canvasWidth, canvasHeight);
+    public void resetCursorToCenter() {
+        sceneActions.resetCursorToCenter(canvasWidth.get(), canvasHeight.get());
     }
 
     public void loadFile(File file) {
@@ -475,84 +489,63 @@ public class ActionViewModel {
         try (Scanner fileScanner = new Scanner(file)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
-                String actionType = "";
-                String actionMeasure = "";
-                String actionNameVariable = "";
-                String reste = "";
-                // trouver le premier séparateur
+                String actionType = "", actionMeasure = "", reste = "";
+
                 int firstIndex = line.indexOf(";");
                 if (firstIndex != -1) {
                     actionType = line.substring(0, firstIndex);
-                    // chercher le deuxième en commençant APRES le premier (firstIndex + 1)
                     int secondIndex = line.indexOf(";", firstIndex + 1);
                     if (secondIndex != -1) {
-                        // Si on trouve un deuxième ;
+                        // deux séparateurs : TYPE;nomVariable;valeur
                         actionMeasure = line.substring(firstIndex + 1, secondIndex);
                         reste = line.substring(secondIndex + 1);
                     } else {
-                        // S'il n'y a qu un seul ;
+                        // un seul séparateur : TYPE;mesure
                         actionMeasure = line.substring(firstIndex + 1);
                     }
                 }
                 generateActionFromFileAndAddToProg(actionType, actionMeasure, reste);
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         isLoading = false;
-
-        reinitialiserListeScene();
     }
 
+    // Libellé du séparateur entre nom de variable et valeur
     public StringBinding getSeparatorLabel() {
-        return Bindings.createStringBinding(() -> {
-            if (isAssignation().get())
-                return " valeur : ";
-            return " de ";
-        }, progIndex);
+        return Bindings.createStringBinding(() ->
+                isAssignation().get() ? " valeur : " : " de ", progIndex);
     }
 
+    // Vrai si l'action sélectionnée implique un nom de variable (déclaration, assignation, incrément)
     public BooleanBinding textFieldValueVariableRules() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.isDeclaration(progIndex.get()) || program.isAssignation(progIndex.get()) || program.isIncrDecr(progIndex.get());
-                }, progIndex
-        );
+        return Bindings.createBooleanBinding(() ->
+                program.isDeclaration(progIndex.get())
+                        || program.isAssignation(progIndex.get())
+                        || program.isIncrDecr(progIndex.get()), progIndex);
     }
 
     public BooleanBinding isDeclaration() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.isDeclaration(progIndex.get());
-                }, progIndex
-        );
+        return Bindings.createBooleanBinding(() -> program.isDeclaration(progIndex.get()), progIndex);
     }
 
     public BooleanBinding isEndRepeat() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.isEndRepeat(progIndex.get());
-                }, progIndex
-        );
+        return Bindings.createBooleanBinding(() -> program.isEndRepeat(progIndex.get()), progIndex);
     }
 
     public BooleanBinding isAssignation() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.isAssignation(progIndex.get());
-                }, progIndex
-        );
+        return Bindings.createBooleanBinding(() -> program.isAssignation(progIndex.get()), progIndex);
     }
 
     public BooleanBinding isIncrDecr() {
-        return Bindings.createBooleanBinding(() -> {
-                    return program.isIncrDecr(progIndex.get());
-                }, progIndex
-        );
+        return Bindings.createBooleanBinding(() -> program.isIncrDecr(progIndex.get()), progIndex);
     }
 
     public BooleanBinding canIncrDecr() {
-        return Bindings.createBooleanBinding(() -> {
-            return program.canIncrDecr(measureProperty.get(), progIndex.get());
-        }, progIndex, getActionsProg(), measureProperty);
+        return Bindings.createBooleanBinding(() ->
+                        program.canIncrDecr(measureProperty.get(), progIndex.get()),
+                progIndex, getActionsProg(), measureProperty);
     }
 
     public StringProperty getVariableNameProperty() {
@@ -564,31 +557,34 @@ public class ActionViewModel {
     }
 
     public BooleanBinding hasActionSelectedRuntime() {
-        return Bindings.createBooleanBinding(() -> {
-                    return hasRuntimeError.get() &&
-                           existIndex().get() && program.getActionProg(progIndex.get()).hasErrorProperty().get();
-                }, hasRuntimeError, progIndex
-        );
+        return Bindings.createBooleanBinding(() ->
+                        hasRuntimeError.get() && existIndex().get()
+                                && program.getActionProg(progIndex.get()).hasErrorProperty().get(),
+                hasRuntimeError, progIndex);
     }
-
 
     private Timeline timeline;
 
-    public void automaticExecution(double delay) {
+    public void automaticExecution() {
         stopAutomaticExec();
-
-        timeline = new Timeline(new KeyFrame(
-                Duration.millis(delay * 1000),
-                event -> {
-                    if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
-                        executeAction();
-                    } else {
-                        stopAutomaticExec();
+        // ne démarre que si le programme est chargé, en mode auto, et qu'il reste des actions
+        if (hasChargerScene.get() && isExecutionAuto.get() && program.existIndex(sceneIndex.get())) {
+            timeline = new Timeline(new KeyFrame(
+                    Duration.millis(sliderValue.get() * 1000),
+                    event -> {
+                        if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
+                            executeAction();
+                            canStopAutoExecution.set(true);
+                        }
+                        else {
+                            stopAutomaticExec();
+                            canStopAutoExecution.set(false);
+                        }
                     }
-                }
-        ));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+            ));
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        }
     }
 
     public void stopAutomaticExec() {
@@ -602,5 +598,15 @@ public class ActionViewModel {
         return sceneIndex;
     }
 
-
+    public StringBinding getLabelVariables() {
+        return Bindings.createStringBinding(() -> {
+            // on arrondit à 1 décimale pour éviter les résidus flottants (ex: 1.13E-13 → 0.0)
+            double x = Math.round((getCursor().getPosition().getX() - (canvasWidth.get() / 2)) * 10.0) / 10.0;
+            // inversion de l'axe Y : dans JavaFX Y croît vers le bas, on affiche l'inverse
+            double y = Math.round(((canvasHeight.get() / 2) - getCursor().getPosition().getY()) * 10.0) / 10.0;
+            // normalisation de l'angle dans [0, 359]
+            int angle = ((getCursor().getAngle() % 360) + 360) % 360;
+            return String.format("Tortue : x = %.1f , y = %.1f , direction = %d °", x, y, angle);
+        }, sceneIndex);
+    }
 }

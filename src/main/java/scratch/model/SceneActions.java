@@ -8,6 +8,7 @@ public class SceneActions {
 
     private ObservableList<Line> lines = FXCollections.observableArrayList();
     private Cursor cursor;
+    // Stylo courant (levé ou abaissé)
     private ActionPen currentActionPen;
 
     public boolean currentPenDownStatus() {
@@ -36,25 +37,22 @@ public class SceneActions {
     }
 
     public void moveForward(double distance) {
-
         Point oldPoints = new Point(cursor.getPosition().getX(), cursor.getPosition().getY());
         cursor.moveForward(distance);
 
         double newX = cursor.getPosition().getX();
         double newY = cursor.getPosition().getY();
 
-        // limites du canvas
+        // Empêche la tortue de sortir du canvas
         newX = Math.max(Cursor.TURTLE_SIZE, Math.min(newX, 500 - Cursor.TURTLE_SIZE));
         newY = Math.max(Cursor.TURTLE_SIZE, Math.min(newY, 500 - Cursor.TURTLE_SIZE));
 
         Point newPoints = new Point(newX, newY);
-
         cursor.setPosition(newPoints);
 
-        // dessine sssi stylo abaisse
+        // Trace une ligne uniquement si le stylo est abaissé
         if (currentPenDownStatus()) {
-            Line line = new Line(oldPoints, newPoints);
-            addLine(line);
+            addLine(new Line(oldPoints, newPoints));
         }
     }
 
@@ -85,33 +83,41 @@ public class SceneActions {
         getCursor().setAngle(0);
     }
 
-
     public boolean executeAction(Action action) {
-        if (action != null) {
-            try {
-                if (action.getActionType() == ActionType.VARIABLEDECLARATION) {
-                    VariableDeclaration vD = (VariableDeclaration) action;
-                    vD.addToVariableMap();
+        if (action == null) return false;
+        try {
+            if (action.getActionType() == ActionType.VARIABLEDECLARATION) {
+                // Ajoute la variable dans la map globale
+                ((VariableDeclaration) action).addToVariableMap();
+                return true;
+
+            } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION
+                    || action.getActionType() == ActionType.VARIABLEINCRDECR) {
+
+                boolean isAssignation = action.getActionType() == ActionType.VARIABLEASSIGNATION;
+
+                // Assignation d'une variable à elle-même : rien à faire
+                if (isAssignation && action.getNameVariable().equals(action.getMeasure())) return true;
+
+                if (Variable.variableMap.containsKey(action.getNameVariable())) {
+                    // Assignation : on remplace la valeur
+                    // Incrément : on additionne l'ancienne valeur et la mesure
+                    String newValue = isAssignation
+                            ? String.valueOf(action.getValue(action.getMeasure()))
+                            : String.valueOf(action.getValue(action.getMeasure())
+                            + action.getValue(Variable.variableMap.get(action.getNameVariable()).getMeasure()));
+                    Variable.variableMap.get(action.getNameVariable()).setMeasure(newValue);
                     return true;
-                } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType() == ActionType.VARIABLEINCRDECR) {
-                    boolean isAssignation = action.getActionType() == ActionType.VARIABLEASSIGNATION;
-                    if (isAssignation && action.getNameVariable().equals(action.getMeasure())) return true;
-                    if (action.getValue(action.getMeasure()) == 0)
-                        return false;
-                    if (Variable.variableMap.containsKey(action.getNameVariable())) {
-                        Variable.variableMap.get(action.getNameVariable()).setMeasure(isAssignation ? action.getMeasure() : String.valueOf(action.getValue(action.getMeasure()) + action.getValue(Variable.variableMap.get(action.getNameVariable()).getMeasure())));
-                        return true;
-                    } else
-                        return false;
                 }
-            else {
-                    action.executeAction(this);
-                    return true;
-                }
-        } catch(Exception e){
+                return false;
+
+            } else {
+                // Toutes les autres actions (MOVE, TURN, PEN...)
+                action.executeAction(this);
+                return true;
+            }
+        } catch (Exception e) {
             return false;
         }
     }
-        return false;
-  }
 }

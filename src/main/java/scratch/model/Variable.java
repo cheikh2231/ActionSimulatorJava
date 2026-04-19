@@ -1,12 +1,9 @@
 package scratch.model;
 
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class Variable extends Action{
 
