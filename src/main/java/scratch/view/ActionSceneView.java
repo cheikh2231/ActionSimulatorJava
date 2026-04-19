@@ -1,13 +1,6 @@
 package scratch.view;
 
-import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
@@ -26,7 +19,6 @@ import scratch.viewmodel.ActionViewModel;
 
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
 
 public class ActionSceneView extends VBox {
@@ -141,6 +133,8 @@ public class ActionSceneView extends VBox {
             if (newV.intValue()>oldV.intValue())
                 draw();
         });
+
+        slider.valueProperty().addListener((observableValue, number, t1) -> actionVm.automaticExecution((Double) t1));
     }
 
 

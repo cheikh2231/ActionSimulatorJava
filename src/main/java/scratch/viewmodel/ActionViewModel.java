@@ -27,7 +27,7 @@ public class ActionViewModel {
     private StringProperty variableNameProperty = new SimpleStringProperty();
     private BooleanProperty isvalidMesureProperty = new SimpleBooleanProperty(true);
     private BooleanProperty isDetailableProperty = new SimpleBooleanProperty(false);
-     BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
+    private BooleanProperty hasChargerScene = new SimpleBooleanProperty(false);
     private IntegerProperty sceneIndex = new SimpleIntegerProperty(0);
     private BooleanProperty resetCanvasProperty = new SimpleBooleanProperty(false);
     private boolean isSelected = false;
@@ -36,9 +36,7 @@ public class ActionViewModel {
     private boolean isExecuting = false;
     private final ObservableList<Map.Entry<String, Variable>> variableList = FXCollections.observableArrayList();
     private final Map<Integer,ActionRepeat> startAndCountMap = new HashMap<>();
-    private Timer timer;
     private BooleanProperty isExecutionAuto = new SimpleBooleanProperty(false);
-    private IntegerProperty ok = new SimpleIntegerProperty(0);
 
 
 
