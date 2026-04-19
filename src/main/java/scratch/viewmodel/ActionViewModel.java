@@ -42,6 +42,14 @@ public class ActionViewModel {
     private final DoubleProperty canvasHeight = new SimpleDoubleProperty();
     private final DoubleProperty canvasWidth = new SimpleDoubleProperty();
 
+
+
+    public BooleanProperty canStopAutoExecutionProperty() {
+        return canStopAutoExecution;
+    }
+
+    private final BooleanProperty canStopAutoExecution = new SimpleBooleanProperty(false);
+
     public DoubleProperty sliderValue() {
         return sliderValue;
     }
@@ -189,10 +197,12 @@ public class ActionViewModel {
 
         // Basculement manuel ↔ automatique
         isExecutionAutoProperty().addListener((observableValue, aBoolean, isAuto) -> {
-            if (!isAuto)
+            if (!isAuto) {
                 stopAutomaticExec();
-            else
+            }
+            else {
                 automaticExecution();
+            }
         });
 
         // Changement de vitesse du slider → relance l'exécution automatique
@@ -562,10 +572,14 @@ public class ActionViewModel {
             timeline = new Timeline(new KeyFrame(
                     Duration.millis(sliderValue.get() * 1000),
                     event -> {
-                        if (!fullyTraversedSceneList().get() && !hasRuntimeError().get())
+                        if (!fullyTraversedSceneList().get() && !hasRuntimeError().get()) {
                             executeAction();
-                        else
+                            canStopAutoExecution.set(true);
+                        }
+                        else {
                             stopAutomaticExec();
+                            canStopAutoExecution.set(false);
+                        }
                     }
             ));
             timeline.setCycleCount(Timeline.INDEFINITE);

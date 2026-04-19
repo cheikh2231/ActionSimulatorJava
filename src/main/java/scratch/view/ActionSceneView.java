@@ -14,9 +14,7 @@ import scratch.model.Cursor;
 import scratch.model.Line;
 import scratch.model.Variable;
 import scratch.viewmodel.ActionViewModel;
-
 import java.util.Map;
-import java.util.Timer;
 
 
 public class ActionSceneView extends VBox {
@@ -28,6 +26,7 @@ public class ActionSceneView extends VBox {
     private final Button loadButton = new Button("Charger");
     private final Button executeButton = new Button("Executer");
     private final Button nextButton = new Button("Suivant");
+    private final Button stopButton = new Button("Arreter");
     public int TURTLE_HEAD_SIZE = Cursor.TURTLE_HEAD_SIZE;
     public int TURTLE_SIZE = Cursor.TURTLE_SIZE;
     private final Circle turtleHead = new Circle(TURTLE_HEAD_SIZE);
@@ -90,7 +89,8 @@ public class ActionSceneView extends VBox {
             actionVm.reinitialiserListeScene();
         });
 
-        controlButtons.getChildren().addAll(loadButton, resetButton, executeButton, nextButton);
+        stopButton.setOnAction(actionEvent -> actionVm.stopAutomaticExec());
+        controlButtons.getChildren().addAll(loadButton, resetButton, executeButton, nextButton, stopButton);
         controlButtons.setAlignment(Pos.CENTER);
         return controlButtons;
     }
@@ -116,14 +116,17 @@ public class ActionSceneView extends VBox {
                 .and(actionVm.fullyTraversedSceneList().not())
                 .and(actionVm.hasRuntimeError().not())
                 .and(actionVm.isExecutionAutoProperty().not()));
-        nextButton.managedProperty().bind(actionVm.hasChargerSceneProperty()
-                .and(actionVm.existIndex())
-                .and(actionVm.fullyTraversedSceneList().not()));
+        nextButton.managedProperty().bind(nextButton.visibleProperty());
 
         // Slider visible uniquement en mode automatique
         actionVm.isExecutionAutoProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
         slider.visibleProperty().bind(actionVm.isExecutionAutoProperty());
         slider.managedProperty().bind(actionVm.isExecutionAutoProperty());
+
+        // Arreter visible uniquement en mode automatique
+        stopButton.visibleProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
+        stopButton.managedProperty().bind(groupeExecution.selectedToggleProperty().isEqualTo(rbAuto));
+        stopButton.disableProperty().bind(actionVm.hasChargerSceneProperty().not().or(actionVm.canStopAutoExecutionProperty().not()));
 
         // Redessine la tortue à chaque avancement du sceneIndex
         actionVm.sceneIndexProperty().addListener((observableValue, oldV, newV) -> {
