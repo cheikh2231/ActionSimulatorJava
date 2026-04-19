@@ -99,14 +99,11 @@ public class SceneActions {
                 // Assignation d'une variable à elle-même : rien à faire
                 if (isAssignation && action.getNameVariable().equals(action.getMeasure())) return true;
 
-                // La mesure doit être non nulle pour continuer
-                if (action.getValue(action.getMeasure()) == 0) return false;
-
                 if (Variable.variableMap.containsKey(action.getNameVariable())) {
                     // Assignation : on remplace la valeur
                     // Incrément : on additionne l'ancienne valeur et la mesure
                     String newValue = isAssignation
-                            ? action.getMeasure()
+                            ? String.valueOf(action.getValue(action.getMeasure()))
                             : String.valueOf(action.getValue(action.getMeasure())
                             + action.getValue(Variable.variableMap.get(action.getNameVariable()).getMeasure()));
                     Variable.variableMap.get(action.getNameVariable()).setMeasure(newValue);

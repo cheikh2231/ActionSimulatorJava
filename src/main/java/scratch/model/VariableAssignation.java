@@ -1,8 +1,6 @@
 package scratch.model;
 
 
-import javafx.beans.property.StringProperty;
-
 public class VariableAssignation extends Variable {
     public VariableAssignation() {
         super("Assignation ", "");

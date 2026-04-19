@@ -3,6 +3,7 @@ package scratch.model;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,13 +11,14 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Program {
+    // Observable sur measure et nameVariable pour que les listeners se déclenchent quand ces propriétés changent
     private ObservableList<Action> actionsProg =
             FXCollections.observableArrayList(
                     action -> new Observable[]{action.measureProperty(), action.nameVariableProperty()}
             );
 
     public void addAction(int paletteIdx, int progIdx) {
-        // si rien de sélectionné, on ajoute en fin de liste
+        // si rien de sélectionné (progIdx == -1), on ajoute en fin de liste
         int pos = progIdx == -1 ? size() : progIdx + 1;
         Action action = Actions.getAction(paletteIdx);
         if (action != null) {
@@ -24,25 +26,11 @@ public class Program {
             indentAction();
         }
     }
-    public void removeAction(int idx) {
-        if (existIndex(idx)) {
-            Action selected = getActionProg(idx);
-            if (selected.getActionType() == ActionType.VARIABLEDECLARATION) {
-                // on vérifie que celle selectionné est celle qui est dans la liste
-                if (Variable.variableMap.get(selected.getNameVariable()) == selected) {
-                    Variable.variableMap.remove(selected.getNameVariable());
 
-                    if (actionsProg.stream().filter(n -> Objects.equals(n.getNameVariable(), selected.getNameVariable())).count() > 1) {
-                        String name = selected.getNameVariable();
-                        actionsProg.remove(idx);
-                        Variable.variableMap.put(name, (Variable) actionsProg.stream().filter(m -> Objects.equals(m.getNameVariable(), name)).findFirst().get());
-                        return;
-                    }
-                }
-            }
-            actionsProg.remove(idx);
-            indentAction();
-        }
+    public void removeAction(int idx) {
+        if (!existIndex(idx)) return;
+        actionsProg.remove(idx);
+        indentAction();
     }
 
     public boolean canIncrDecr(String measureProperty, int idx) {
@@ -76,16 +64,12 @@ public class Program {
     }
 
     public Action getActionProg(int idx) {
-        if (existIndex(idx))
-            return actionsProg.get(idx);
-        return null;
+        return existIndex(idx) ? actionsProg.get(idx) : null;
     }
 
-
     public void dupplicate(int idx) {
-        if (existIndex(idx)) {
+        if (existIndex(idx))
             actionsProg.add(actionsProg.get(idx).copy());
-        }
     }
 
     public boolean canMoveDown(int idx) {
@@ -100,7 +84,6 @@ public class Program {
         return actionsProg.size();
     }
 
-
     public void clear() {
         Variable.variableMap.clear();
         actionsProg.clear();
@@ -110,19 +93,26 @@ public class Program {
         return actionsProg.isEmpty();
     }
 
-
+    // vrai si toutes les assignations/incréments référencent une variable déclarée avec une mesure non vide
     public boolean declarationCanGetAMeasure() {
         return getActionsProgList().stream()
-                .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION || a.getActionType() == ActionType.VARIABLEINCRDECR)
+                .filter(a -> a.getActionType() == ActionType.VARIABLEASSIGNATION
+                        || a.getActionType() == ActionType.VARIABLEINCRDECR)
                 .allMatch(a -> isDeclared(a.getNameVariable()) && !a.getMeasure().isEmpty());
     }
 
     private boolean isDeclared(String var) {
-        return getActionsProgList().stream().anyMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION && a.getNameVariable().equals(var));
+        return getActionsProgList().stream()
+                .anyMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION
+                        && a.getNameVariable().equals(var));
     }
 
+    // vrai si une action utilise une valeur qui n'est ni un entier ni une variable déclarée
     public boolean hasUndefinedValues() {
-        return getActionsProgList().stream().anyMatch(action ->!action.getMeasure().isEmpty() && notInt(action.getMeasure()) && !isDeclared(action.getMeasure()));
+        return getActionsProgList().stream()
+                .anyMatch(action -> !action.getMeasure().isEmpty()
+                        && notInt(action.getMeasure())
+                        && !isDeclared(action.getMeasure()));
     }
 
     private boolean notInt(String val) {
@@ -134,6 +124,7 @@ public class Program {
         }
     }
 
+    // vrai si deux stylos consécutifs ont le même état (ex: PEN_DOWN suivi de PEN_DOWN)
     private boolean hasDuplicatePenStatus() {
         boolean abaisser = true;
         for (Action action : getActionsProgList()) {
@@ -147,23 +138,39 @@ public class Program {
         }
         return false;
     }
-
-    public boolean hasAnomalies() {
-        return hasActionBeforeDecla() || hasDuplicatePenStatus() || !declarationCanGetAMeasure() || hasUndefinedValues()
-                || hasUndefinedDeclaration() || hasErrorWithAllRepeat() || hasNameVariableUsingByRepeatInScope();
+    // vrai si une même variable est déclarée plus d'une fois
+    //ex  {val,val,nb} map sur nameVariable avec distinct donne {val,nb} 2  on verfie si egual a toutes les declaration {val,val,nb} 3
+    private boolean hasDuplicateDeclaration() {
+        return getActionsProgList().stream()
+                .filter(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)
+                .map(Action::getNameVariable)
+                .distinct().count()
+                != getActionsProgList().stream()
+                .filter(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)
+                .count();
     }
 
+    public boolean hasAnomalies() {
+        return hasActionBeforeDecla()
+                || hasDuplicatePenStatus()
+                || !declarationCanGetAMeasure()
+                || hasUndefinedValues()
+                || hasUndefinedDeclaration()
+                || hasDuplicateDeclaration()
+                || hasErrorWithAllRepeat()
+                || hasNameVariableUsingByRepeatInScope();
+    }
+
+    // vrai si une action non-déclaration apparaît avant une déclaration
     private boolean hasActionBeforeDecla() {
-        boolean hasActionNotDecla = false;
-        if (getActionsProgList().stream().noneMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION)) {
+        if (getActionsProgList().stream().noneMatch(a -> a.getActionType() == ActionType.VARIABLEDECLARATION))
             return false;
-        }
+        boolean hasActionNotDecla = false;
         for (Action a : getActionsProgList()) {
-            if (a.getActionType() != ActionType.VARIABLEDECLARATION) {
+            if (a.getActionType() != ActionType.VARIABLEDECLARATION)
                 hasActionNotDecla = true;
-            } else if (hasActionNotDecla) {
+            else if (hasActionNotDecla)
                 return true;
-            }
         }
         return false;
     }
@@ -173,21 +180,21 @@ public class Program {
         if (action == null) return false;
 
         if (action.getActionType() == ActionType.VARIABLEDECLARATION) {
-
             VariableDeclaration vD = (VariableDeclaration) action;
             vD.setNameVariable(newName);
-            System.out.println(vD.getNameVariable());
             if (newName == null || newName.equals(vD.getNameVariable())) return true;
             if (!newName.isEmpty() && !vD.isValidVariableName(newName)) return false;
-
             return true;
 
-        } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION || action.getActionType() == ActionType.VARIABLEINCRDECR) {
+        } else if (action.getActionType() == ActionType.VARIABLEASSIGNATION
+                || action.getActionType() == ActionType.VARIABLEINCRDECR) {
             if (!action.isValidVariableName(newName)) return false;
             action.setNameVariable(newName);
             action.setMeasure(value);
             return true;
+
         } else {
+            // actions de mouvement, stylo, repeat...
             if (value == null) return false;
             if (!action.isValidMeasure(value)) return false;
             if (!action.isValidVariableName(value)) return false;
@@ -195,12 +202,9 @@ public class Program {
                 action.setMeasure(value);
                 return true;
             }
-
         }
         return false;
     }
-
-
 
     public boolean isDeclaration(int idx) {
         return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEDECLARATION;
@@ -214,92 +218,89 @@ public class Program {
         return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.VARIABLEINCRDECR;
     }
 
+    // vrai si une déclaration a un nom de variable vide
     private boolean hasUndefinedDeclaration() {
-        return getActionsProgList().stream().anyMatch(action -> action.getActionType() == ActionType.VARIABLEDECLARATION && (action.getNameVariable().isEmpty()));
+        return getActionsProgList().stream()
+                .anyMatch(action -> action.getActionType() == ActionType.VARIABLEDECLARATION
+                        && action.getNameVariable().isEmpty());
     }
 
-
-    public boolean hasErrorToRepeatAndEndSize(){
-        return getActionsProgList().stream().filter(a->a.getActionType()==ActionType.REPEAT).count() != getActionsProgList().stream().filter(a->a.getActionType()==ActionType.ENDREPEAT).count();
+    // vrai si le nombre de REPEAT ne correspond pas au nombre de END_REPEAT
+    public boolean hasErrorToRepeatAndEndSize() {
+        return getActionsProgList().stream().filter(a -> a.getActionType() == ActionType.REPEAT).count()
+                != getActionsProgList().stream().filter(a -> a.getActionType() == ActionType.ENDREPEAT).count();
     }
 
-    public boolean isEndRepeat(int idx){
+    public boolean isEndRepeat(int idx) {
         return getActionProg(idx) != null && getActionProg(idx).getActionType() == ActionType.ENDREPEAT;
     }
 
-    // r er
-    public boolean hasErrorWithAllRepeat(){
+    // vrai si la structure REPEAT/END_REPEAT est invalide (mal imbriquée ou déséquilibrée)
+    public boolean hasErrorWithAllRepeat() {
         int res = 0;
         if (hasErrorToRepeatAndEndSize()) return true;
         for (int i = 0; i < getActionsProgList().size(); i++) {
-            if (getActionProg(i).getActionType()==ActionType.REPEAT){
-                res+=1;
-            }else if (getActionProg(i).getActionType()==ActionType.ENDREPEAT)
+            if (getActionProg(i).getActionType() == ActionType.REPEAT)
+                res += 1;
+            else if (getActionProg(i).getActionType() == ActionType.ENDREPEAT)
                 res -= 1;
-            if (res<0)
-                return true;
+            // res < 0 = END_REPEAT sans REPEAT correspondant
+            if (res < 0) return true;
         }
         return res != 0;
     }
 
-// r
-    // r
-    // fr
+    // calcule et applique le niveau d'indentation de chaque action
     public void indentAction() {
         for (int i = 0; i < getActionsProgList().size(); i++) {
             getActionProg(i).setIndentLevel(nbRepeatBefore(i));
         }
     }
 
-
+    // compte les REPEAT ouverts avant l'index donné (= niveau d'imbrication)
     public int nbRepeatBefore(int idx) {
         long countRep = getActionsProgList().stream()
-                .limit(idx)  // éléments strictement avant idx
+                .limit(idx)
                 .filter(a -> a.getActionType() == ActionType.REPEAT)
                 .count();
-
         long countEndR = getActionsProgList().stream()
                 .limit(idx)
                 .filter(a -> a.getActionType() == ActionType.ENDREPEAT)
                 .count();
-        int count = (int)(countRep - countEndR);
-        if (count < 0) count = 0;
 
-        // Un ENDREPEAT ferme le bloc  il s'affiche un cran en arrière
-        if (getActionProg(idx).getActionType() == ActionType.ENDREPEAT) {
+        int count = (int) Math.max(0, countRep - countEndR);
+
+        // END_REPEAT se place un cran en arrière par rapport à son bloc
+        if (getActionProg(idx).getActionType() == ActionType.ENDREPEAT)
             return Math.max(0, count - 1);
-        }
 
         return count;
     }
 
-
+    // construit la liste des enfants de chaque REPEAT (pour le calcul des boucles imbriquées)
     public void buildRepeatChildren() {
-        List<ActionRepeat> list = new ArrayList<>();
-
+        List<ActionRepeat> stack = new ArrayList<>();
         for (Action a : getActionsProgList()) {
             if (a.getActionType() == ActionType.REPEAT) {
                 ((ActionRepeat) a).getChildren().clear();
-                if (!list.isEmpty()) {
-                    list.getLast().addChild(a); // le REPEAT interne est enfant du parent
-                }
-                list.add((ActionRepeat) a);
+                // ce REPEAT est enfant du REPEAT parent s'il y en a un
+                if (!stack.isEmpty()) stack.getLast().addChild(a);
+                stack.add((ActionRepeat) a);
             } else if (a.getActionType() == ActionType.ENDREPEAT) {
-                if (!list.isEmpty()) list.removeLast();
+                if (!stack.isEmpty()) stack.removeLast();
             } else {
-                if (!list.isEmpty()) {
-                    list.getLast().addChild(a); // seulement le repeat le plus profond
-                }
+                // action normale → enfant du REPEAT le plus profond
+                if (!stack.isEmpty()) stack.getLast().addChild(a);
             }
         }
     }
 
-    public boolean hasNameVariableUsingByRepeatInScope(){
-        for(Action a : actionsProg){
-            if(a.getActionType()==ActionType.REPEAT){
-                if (((ActionRepeat) a).hasConflictWithChildren()) {
+    // vrai si un REPEAT utilise une variable comme mesure qui entre en conflit avec ses enfants
+    public boolean hasNameVariableUsingByRepeatInScope() {
+        for (Action a : actionsProg) {
+            if (a.getActionType() == ActionType.REPEAT) {
+                if (((ActionRepeat) a).hasConflictWithChildren())
                     return true;
-                }
             }
         }
         return false;

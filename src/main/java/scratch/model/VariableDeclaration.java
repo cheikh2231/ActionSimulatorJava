@@ -1,9 +1,5 @@
 package scratch.model;
 
-import javafx.beans.property.StringProperty;
-
-import java.util.Locale;
-
 public class VariableDeclaration extends Variable {
 
     public VariableDeclaration() {
