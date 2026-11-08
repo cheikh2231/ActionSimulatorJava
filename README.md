@@ -31,7 +31,8 @@ Une application de bureau interactive permettant de simuler et visualiser l'éxe
 | :---: | :---: |
 | <img width="400" alt="ajout action" src="https://github.com/user-attachments/assets/09c68026-c2de-4f7e-bcf4-e18dec765f42" /> | <img width="400" alt="après simulation" src="https://github.com/user-attachments/assets/3843c701-7661-4ecb-8906-79a2cd6bd131" /> |
 
-Utilisation variable (déclaration et assignation) 
+| Utilisation variable (déclaration et assignation) |
+| :---: |
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/8051eb8f-2ce6-472c-81c1-92bf7b19288f" />
 
 | Erreur d'éxecution  | Erreur valeur impossible de charger le programme |
