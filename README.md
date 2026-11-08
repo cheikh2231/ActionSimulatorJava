@@ -27,10 +27,9 @@ Une application de bureau interactive permettant de simuler et visualiser l'éxe
 ### Étapes de la Simulation
 *Évolution du système au cours de l'exécution.*
 
-| Ajout d'action  | Simulation en cours (Étape 2 / Résultat) |
+| Ajout d'action  | Simulation  |
 | :---: | :---: |
-| <img width="400" alt="ajout action" src="https://github.com/user-attachments/assets/09c68026-c2de-4f7e-bcf4-e18dec765f42" />
- | <img width="400" alt="après simulation" src="https://github.com/user-attachments/assets/3843c701-7661-4ecb-8906-79a2cd6bd131" /> |
+| <img width="400" alt="ajout action" src="https://github.com/user-attachments/assets/09c68026-c2de-4f7e-bcf4-e18dec765f42" /> | <img width="400" alt="après simulation" src="https://github.com/user-attachments/assets/3843c701-7661-4ecb-8906-79a2cd6bd131" /> |
 
 ## ⚙️ Installation locale
 
