@@ -1,6 +1,6 @@
 # 🖥️ Simulateur Interactif (Java | JavaFX)
 
-Une application de bureau interactive permettant de simuler et visualiser [insérer ici ce que ça simule : ex. la gestion de tâches, des processus physiques, un système de trafic, etc.]. Ce projet met en avant la programmation orientée objet, la gestion d'interfaces graphiques (GUI) et l'exécution de processus dynamiques.
+Une application de bureau interactive permettant de simuler et visualiser l'éxecution d'une suite d'actions avec un turle. Ce projet met en avant la programmation orientée objet, la gestion d'interfaces graphiques (GUI) et l'exécution de processus dynamiques.
 
 ## 🚀 Fonctionnalités principales
 
