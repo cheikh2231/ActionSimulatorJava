@@ -31,6 +31,14 @@ Une application de bureau interactive permettant de simuler et visualiser l'éxe
 | :---: | :---: |
 | <img width="400" alt="ajout action" src="https://github.com/user-attachments/assets/09c68026-c2de-4f7e-bcf4-e18dec765f42" /> | <img width="400" alt="après simulation" src="https://github.com/user-attachments/assets/3843c701-7661-4ecb-8906-79a2cd6bd131" /> |
 
+| Utilisation variable (déclaration et assignation)  |
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/8051eb8f-2ce6-472c-81c1-92bf7b19288f" />
+
+| Erreur d'éxecution  | Erreur valeur impossible de charger le programme |
+| :---: | :---: |
+| <img width="1586" height="1000" alt="image" src="https://github.com/user-attachments/assets/1da3c0ca-6f03-493d-8a79-08540719a8ec" /> | <img width="1228" height="191" alt="image" src="https://github.com/user-attachments/assets/5902c0ab-929d-4177-9488-831283891b16" />
+
+
 ## ⚙️ Installation locale
 
 1. **Prérequis :** Assurez-vous d'avoir installé le **JDK (Java Development Kit)** (version X ou supérieure) et les bibliothèques **JavaFX**.
