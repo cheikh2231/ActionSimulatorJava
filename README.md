@@ -1,20 +1,40 @@
-# Projet ANC4 2526 - Groupe a07 - Scratch
+# 🖥️ Simulateur Interactif (Java | JavaFX)
 
-## Notes de version itération 1
+Une application de bureau interactive permettant de simuler et visualiser [insérer ici ce que ça simule : ex. la gestion de tâches, des processus physiques, un système de trafic, etc.]. Ce projet met en avant la programmation orientée objet, la gestion d'interfaces graphiques (GUI) et l'exécution de processus dynamiques.
 
-### Liste des bugs connus
+## 🚀 Fonctionnalités principales
 
-* Bug 1 : lorsqu'une action de la palette est sélectionnée, un double-clic sur une zone vide de la palette ajoute quand même l'action, même si le curseur n'est pas sur une action.
+- **Visualisation dynamique :** Interface graphique fluide mettant à jour les états en temps réel.
+- **Paramétrage interactif :** Contrôle de la simulation via [ex: des boutons, des curseurs, des champs de texte].
+- **Gestion d'événements :** [ex: Pause/Reprise de la simulation, réinitialisation des paramètres].
+- **Architecture Modulaire :** Séparation claire entre la logique métier (modèle) et l'interface utilisateur (vue).
 
+## 🛠️ Stack Technique
+- **Langage :** Java
+- **Interface Graphique (GUI) :** JavaFX
+- **Outil de build (optionnel) :** [ex: Maven ou Gradle]
 
-### Liste des fonctionnalités supplémentaires
+## 📸 Aperçu de la Simulation
 
-### Divers
+### Interface Principale
+*Tableau de bord de la simulation et contrôles de l'utilisateur.*
 
-## Notes de version itération 2
+| Vue d'ensemble du Simulateur |
+| :---: |
+| <img width="500"  alt="image" src="https://github.com/user-attachments/assets/93ec9216-60d8-4b14-a337-5711e5a4f5a5" />
+ |
 
-* Pas de bugs connus
+### Étapes de la Simulation
+*Évolution du système au cours de l'exécution.*
 
-## Notes de version itération 3
+| Ajout d'action  | Simulation en cours (Étape 2 / Résultat) |
+| :---: | :---: |
+| <img width="400" alt="ajout action" src="https://github.com/user-attachments/assets/09c68026-c2de-4f7e-bcf4-e18dec765f42" />
+ | <img width="400" alt="après simulation" src="https://github.com/user-attachments/assets/3843c701-7661-4ecb-8906-79a2cd6bd131" /> |
 
-...
+## ⚙️ Installation locale
+
+1. **Prérequis :** Assurez-vous d'avoir installé le **JDK (Java Development Kit)** (version X ou supérieure) et les bibliothèques **JavaFX**.
+2. Cloner le dépôt : 
+```bash
+git clone [https://github.com/cheikh2231/ActionSimulatorJava.git](https://github.com/cheikh2231/ActionSimulatorJava.git)
