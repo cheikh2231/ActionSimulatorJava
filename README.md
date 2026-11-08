@@ -5,7 +5,7 @@ Une application de bureau interactive permettant de simuler et visualiser l'éxe
 ##  Fonctionnalités principales
 
 - **Visualisation dynamique :** Interface graphique fluide mettant à jour les états en temps réel.
-- **Paramétrage interactif :** Contrôle de la simulation via  des boutons, des curseurs, des champs de texte].
+- **Paramétrage interactif :** Contrôle de la simulation via  des boutons, des curseurs, des champs de texte.
 - **Gestion d'événements :**  réinitialisation des paramètres, éxecution automatique, .
 - **Architecture Modulaire :** Séparation claire entre la logique métier (modèle) et l'interface utilisateur (vue).
 
